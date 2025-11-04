@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once "../models/Usuario.php";
+require_once "../controllers/UsuarioController.php";
 
 $usuario=new Usuario();
 $usuarioController = new UsuarioController();

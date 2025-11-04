@@ -1,0 +1,85 @@
+/* 🔧 Corrección del espacio lateral en el dashboard */
+
+.content-wrapper,
+.main-content-full-width,
+.main-dashboard {
+  margin-left: 0 !important;
+  padding-left: 0 !important;
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+/* Elimina márgenes automáticos si existían en Bootstrap */
+.container-fluid {
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+/* Si el header usa display flex, evita centrado forzado */
+header.main-header {
+  justify-content: flex-start !important;
+}
+
+.alert-modern {
+  padding: 15px;
+  margin-bottom: 20px;
+  border-radius: 8px;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.alert-modern .icon {
+  font-size: 1.5rem;
+}
+
+.alert-modern-success {
+  background: rgba(40, 167, 69, 0.1);
+  color: #28a745;
+  border-left: 4px solid #28a745;
+}
+
+.alert-modern-danger {
+  background: rgba(220, 53, 69, 0.1);
+  color: #dc3545;
+  border-left: 4px solid #dc3545;
+}
+
+.alert-modern-warning {
+  background: rgba(255, 193, 7, 0.1);
+  color: #ffc107;
+  border-left: 4px solid #ffc107;
+}
+
+.alert-modern-primary {
+  background: rgba(0, 123, 255, 0.1);
+  color: #007bff;
+  border-left: 4px solid #007bff;
+}
+
+.alert-modern-secondary {
+  background: rgba(108, 117, 125, 0.1);
+  color: #6c757d;
+  border-left: 4px solid #6c757d;
+}
+
+.alert-modern-dark {
+  background: rgba(52, 58, 64, 0.1);
+  color: #343a40;
+  border-left: 4px solid #343a40;
+}
+
+.alert-modern-light {
+  background: rgba(248, 249, 250, 0.1);
+  color: #f8f9fa;
+  border-left: 4px solid #f8f9fa;
+}
+
+.alert-modern-info {
+  background: rgba(90, 200, 250, 0.1);
+  color: #5ac8fa;
+  border-left: 4px solid #5ac8fa;
+}

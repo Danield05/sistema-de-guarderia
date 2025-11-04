@@ -1,23 +1,22 @@
-  <footer class="main-footer custom-footer">
-    <div class="container-fluid">
-      <div class="row">
-        <div class="col-md-6 text-center text-md-left">
-          <strong><i class="fa fa-copyright"></i> Copyright &copy; 2025 <a target="_blank" href="#" style="color: #fff; text-decoration: none;">Sistema de Guardería</a></strong> Todos los derechos reservados.
-        </div>
-        <div class="col-md-6 text-center text-md-right">
-          <b><i class="fa fa-code"></i> Versión</b> 1.0
-        </div>
-      </div>
+</section>
     </div>
-  </footer>
 
-<!-- jQuery 3 -->
+    <footer class="main-footer custom-footer">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-6 text-center text-md-left">
+                    <strong><i class="fa fa-copyright"></i> Copyright &copy; <?php echo date('Y'); ?> <a href="#">Sistema de Guardería</a>.</strong> Todos los derechos reservados.
+                </div>
+                <div class="col-md-6 text-center text-md-right">
+                    <b><i class="fa fa-code"></i> Versión</b> 1.0
+                </div>
+            </div>
+        </div>
+    </footer>
 
-  <script src="../public/js/jquery-3.1.1.min.js"></script>
-    <!-- Bootstrap 5 -->
-    <script src="../public/bootstrap/js/bootstrap.min.js"></script>
-    <!-- AdminLTE App -->
-    <script src="../public/js/app.min.js"></script>
+    <!-- SCRIPTS ESENCIALES -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
 
     <!-- DATATABLES -->
     <script src="../public/datatables/jquery.dataTables.min.js"></script>
@@ -28,8 +27,10 @@
     <script src="../public/datatables/pdfmake.min.js"></script>
     <script src="../public/datatables/vfs_fonts.js"></script>
 
+    <!-- BOOTBOX (para modales) -->
     <script src="../public/js/bootbox.min.js"></script>
-    <script src="../public/js/bootstrap-select.min.js"></script>
 
+    <!-- SCRIPTS PERSONALIZADOS -->
+    <script src="../public/js/frontend-modern.js"></script>
 </body>
 </html>

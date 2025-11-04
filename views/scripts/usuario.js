@@ -66,6 +66,8 @@ function cancelarform(){
 	$("#claves").show();
 	limpiar();
 	mostrarform(false);
+	// Redireccionar al escritorio
+	window.location.href = "escritorio.php";
 }
 function cancelarform_clave(){
 	limpiar();

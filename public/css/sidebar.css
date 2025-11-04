@@ -1,0 +1,118 @@
+/* Estilos personalizados para el sidebar */
+.main-sidebar {
+  background: #3c8dbc;
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar {
+  padding-top: 20px;
+}
+
+.sidebar .sidebar-menu {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.sidebar .sidebar-menu > li {
+  position: relative;
+  margin: 0;
+  padding: 0;
+}
+
+.sidebar .sidebar-menu > li > a {
+  padding: 12px 15px;
+  display: block;
+  border-left: 3px solid transparent;
+  color: #b8c7ce;
+  transition: all 0.3s ease;
+  font-weight: 500;
+}
+
+.sidebar .sidebar-menu > li > a:hover,
+.sidebar .sidebar-menu > li > a:focus {
+  background: rgba(255, 255, 255, 0.1);
+  border-left-color: #3c8dbc;
+  color: #fff;
+  text-decoration: none;
+}
+
+.sidebar .sidebar-menu > li.active > a {
+  background: rgba(255, 255, 255, 0.1);
+  border-left-color: #3c8dbc;
+  color: #fff;
+}
+
+.sidebar .sidebar-menu > li > a > .fa,
+.sidebar .sidebar-menu > li > a > .glyphicon,
+.sidebar .sidebar-menu > li > a > .ion {
+  width: 20px;
+  margin-right: 10px;
+  text-align: center;
+}
+
+.sidebar .sidebar-menu .treeview-menu {
+  background: rgba(0, 0, 0, 0.1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.sidebar .sidebar-menu .treeview-menu > li > a {
+  padding: 8px 15px 8px 35px;
+  color: #8aa4af;
+  font-size: 13px;
+  transition: all 0.3s ease;
+}
+
+.sidebar .sidebar-menu .treeview-menu > li > a:hover,
+.sidebar .sidebar-menu .treeview-menu > li > a:focus {
+  background: rgba(255, 255, 255, 0.05);
+  color: #fff;
+}
+
+.sidebar .sidebar-menu .treeview-menu > li.active > a {
+  background: rgba(255, 255, 255, 0.05);
+  color: #fff;
+}
+
+.sidebar .sidebar-menu .treeview > a > .pull-right-container > .fa-angle-left {
+  transition: transform 0.3s ease;
+}
+
+.sidebar .sidebar-menu .treeview.open > a > .pull-right-container > .fa-angle-left {
+  transform: rotate(-90deg);
+}
+
+/* Panel de usuario en sidebar */
+.user-panel {
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.user-panel .info {
+  color: #fff;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.user-panel .info a {
+  color: #fff;
+  text-decoration: none;
+}
+
+.user-panel .info a:hover {
+  color: #f0f0f0;
+}
+
+/* Responsive */
+@media (max-width: 767px) {
+  .main-sidebar {
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+  }
+
+  .main-sidebar.open {
+    transform: translateX(0);
+  }
+}

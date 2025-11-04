@@ -5,8 +5,17 @@ function init(){
    mostrarform(false);
    listar();
 
+   $("#formulario").on("submit",function(e){
+      guardaryeditar(e);
+   })
 }
 
+
+//funcion limpiar
+function limpiar(){
+   $("#idpermiso").val("");
+   $("#nombre").val("");
+}
 
 //funcion mostrar formulario
 function mostrarform(flag){
@@ -18,10 +27,17 @@ function mostrarform(flag){
 	}else{
 		$("#listadoregistros").show();
 		$("#formularioregistros").hide();
-		$("#btnagregar").hide();
+		$("#btnagregar").show();
 	}
 }
 
+//cancelar form
+function cancelarform(){
+   limpiar();
+   mostrarform(false);
+   // Redireccionar al escritorio
+   window.location.href = "escritorio.php";
+}
 
 //funcion listar
 function listar(){
@@ -50,5 +66,62 @@ function listar(){
 	}).DataTable();
 }
 
+//funcion para guardar o editar
+function guardaryeditar(e){
+   e.preventDefault(); //No se activará la acción predeterminada del evento
+   $("#btnGuardar").prop("disabled",true);
+   var formData = new FormData($("#formulario")[0]);
+
+   $.ajax({
+      url: "../ajax/permiso.php?op=guardaryeditar",
+      type: "POST",
+      data: formData,
+      contentType: false,
+      processData: false,
+
+      success: function(datos){
+         bootbox.alert(datos);
+         mostrarform(false);
+         tabla.ajax.reload();
+      }
+   });
+   limpiar();
+}
+
+//funcion mostrar
+function mostrar(idpermiso){
+   $.post("../ajax/permiso.php?op=mostrar",{idpermiso : idpermiso}, function(data, status)
+   {
+      data = JSON.parse(data);
+      mostrarform(true);
+
+      $("#idpermiso").val(data.idpermiso);
+      $("#nombre").val(data.nombre);
+   })
+}
+
+//funcion para desactivar
+function desactivar(idpermiso){
+   bootbox.confirm("¿Está seguro de desactivar el permiso?", function(result){
+      if(result){
+         $.post("../ajax/permiso.php?op=desactivar", {idpermiso : idpermiso}, function(e){
+            bootbox.alert(e);
+            tabla.ajax.reload();
+         });
+      }
+   })
+}
+
+//funcion para activar
+function activar(idpermiso){
+   bootbox.confirm("¿Está seguro de activar el permiso?", function(result){
+      if(result){
+         $.post("../ajax/permiso.php?op=activar", {idpermiso : idpermiso}, function(e){
+            bootbox.alert(e);
+            tabla.ajax.reload();
+         });
+      }
+   })
+}
 
 init();
