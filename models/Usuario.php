@@ -1,94 +1,111 @@
 <?php
 //incluir la conexion de base de datos
 require "../config/Conexion.php";
+require "../models/EstadosUsuario.php";
 class Usuario{
 
-
 	//implementamos nuestro constructor
-public function __construct(){
+	public function __construct(){
 
-}
+	}
 
-//metodo insertar regiustro
-public function insertar($nombre,$tipo_documento,$num_documento,$direccion,$telefono,$email,$cargo,$login,$clave,$imagen,$permisos){
-	$sql="INSERT INTO usuario (nombre,tipo_documento,num_documento,direccion,telefono,email,cargo,login,clave,imagen,condicion) VALUES ('$nombre','$tipo_documento','$num_documento','$direccion','$telefono','$email','$cargo','$login','$clave','$imagen','1')";
-	//return ejecutarConsulta($sql);
-	 $idusuarionew=ejecutarConsulta_retornarID($sql);
-	 $num_elementos=0;
-	 $sw=true;
-	 while ($num_elementos < count($permisos)) {
+	//metodo insertar registro
+	public function insertar($nombre_completo, $email, $password, $rol_id, $telefono, $direccion){
+		// Obtener ID del estado "Activo" por defecto
+		$estados = new EstadosUsuario();
+		$estadoActivo = $estados->obtenerActivo();
+		$estado_usuario_id = $estadoActivo ? $estadoActivo['id_estado_usuario'] : 1;
+		
+		$sql="INSERT INTO usuarios (nombre_completo, email, password, rol_id, telefono, direccion, estado_usuario_id) 
+		VALUES ('$nombre_completo', '$email', '$password', '$rol_id', '$telefono', '$direccion', '$estado_usuario_id')";
+		return ejecutarConsulta($sql);
+	}
 
-	 	$sql_detalle="INSERT INTO usuario_permiso (idusuario,idpermiso) VALUES('$idusuarionew','$permisos[$num_elementos]')";
+	public function editar($id_usuario, $nombre_completo, $email, $password, $rol_id, $telefono, $direccion, $estado_usuario_id){
+		$sql="UPDATE usuarios SET 
+		nombre_completo='$nombre_completo', 
+		email='$email', 
+		password='$password', 
+		rol_id='$rol_id', 
+		telefono='$telefono', 
+		direccion='$direccion', 
+		estado_usuario_id='$estado_usuario_id' 
+		WHERE id_usuario='$id_usuario'";
+		return ejecutarConsulta($sql);
+	}
 
-	 	ejecutarConsulta($sql_detalle) or $sw=false;
+	public function editar_sin_password($id_usuario, $nombre_completo, $email, $rol_id, $telefono, $direccion, $estado_usuario_id){
+		$sql="UPDATE usuarios SET 
+		nombre_completo='$nombre_completo', 
+		email='$email', 
+		rol_id='$rol_id', 
+		telefono='$telefono', 
+		direccion='$direccion', 
+		estado_usuario_id='$estado_usuario_id' 
+		WHERE id_usuario='$id_usuario'";
+		return ejecutarConsulta($sql);
+	}
 
-	 	$num_elementos=$num_elementos+1;
-	 }
-	 return $sw;
-}
+	public function desactivar($id_usuario){
+		// Obtener ID del estado "Inactivo"
+		$estados = new EstadosUsuario();
+		$estadoInactivo = $estados->obtenerInactivo();
+		$estado_usuario_id = $estadoInactivo ? $estadoInactivo['id_estado_usuario'] : 2;
+		
+		$sql="UPDATE usuarios SET estado_usuario_id='$estado_usuario_id' WHERE id_usuario='$id_usuario'";
+		return ejecutarConsulta($sql);
+	}
 
-public function editar($idusuario,$nombre,$tipo_documento,$num_documento,$direccion,$telefono,$email,$cargo,$login,$imagen,$permisos){
-	$sql="UPDATE usuario SET nombre='$nombre',tipo_documento='$tipo_documento',num_documento='$num_documento',direccion='$direccion',telefono='$telefono',email='$email',cargo='$cargo',login='$login',imagen='$imagen'
-	WHERE idusuario='$idusuario'";
-	 ejecutarConsulta($sql);
+	public function activar($id_usuario){
+		// Obtener ID del estado "Activo"
+		$estados = new EstadosUsuario();
+		$estadoActivo = $estados->obtenerActivo();
+		$estado_usuario_id = $estadoActivo ? $estadoActivo['id_estado_usuario'] : 1;
+		
+		$sql="UPDATE usuarios SET estado_usuario_id='$estado_usuario_id' WHERE id_usuario='$id_usuario'";
+		return ejecutarConsulta($sql);
+	}
 
-	 //eliminar permisos asignados
-	 $sqldel="DELETE FROM usuario_permiso WHERE idusuario='$idusuario'";
-	 ejecutarConsulta($sqldel);
+	//metodo para mostrar registros
+	public function mostrar($id_usuario){
+		$sql="SELECT u.*, r.nombre_rol as rol, eu.nombre_estado as estado_usuario 
+		FROM usuarios u 
+		LEFT JOIN roles r ON u.rol_id=r.id_rol 
+		LEFT JOIN estados_usuario eu ON u.estado_usuario_id=eu.id_estado_usuario 
+		WHERE u.id_usuario='$id_usuario'";
+		return ejecutarConsultaSimpleFila($sql);
+	}
 
-	 	 $num_elementos=0;
-	 $sw=true;
-	 while ($num_elementos < count($permisos)) {
+	//listar registros
+	public function listar(){
+		$sql="SELECT u.*, r.nombre_rol as rol, eu.nombre_estado as estado_usuario 
+		FROM usuarios u 
+		LEFT JOIN roles r ON u.rol_id=r.id_rol 
+		LEFT JOIN estados_usuario eu ON u.estado_usuario_id=eu.id_estado_usuario 
+		ORDER BY u.id_usuario DESC";
+		return ejecutarConsulta($sql);
+	}
 
-	 	$sql_detalle="INSERT INTO usuario_permiso (idusuario,idpermiso) VALUES('$idusuario','$permisos[$num_elementos]')";
-
-	 	ejecutarConsulta($sql_detalle) or $sw=false;
-
-	 	$num_elementos=$num_elementos+1;
-	 }
-	 return $sw;
-}
-public function editar_clave($idusuario,$clave){
-	$sql="UPDATE usuario SET clave='$clave' WHERE idusuario='$idusuario'";
-	return ejecutarConsulta($sql);
-}
-public function mostrar_clave($idusuario){
-	$sql="SELECT idusuario, clave FROM usuario WHERE idusuario='$idusuario'";
-	return ejecutarConsultaSimpleFila($sql);
-}
-public function desactivar($idusuario){
-	$sql="UPDATE usuario SET condicion='0' WHERE idusuario='$idusuario'";
-	return ejecutarConsulta($sql);
-}
-public function activar($idusuario){
-	$sql="UPDATE usuario SET condicion='1' WHERE idusuario='$idusuario'";
-	return ejecutarConsulta($sql);
-}
-
-//metodo para mostrar registros
-public function mostrar($idusuario){
-	$sql="SELECT * FROM usuario WHERE idusuario='$idusuario'";
-	return ejecutarConsultaSimpleFila($sql);
-}
-
-//listar registros
-public function listar(){
-	$sql="SELECT * FROM usuario";
-	return ejecutarConsulta($sql);
-}
-
-//metodo para listar permmisos marcados de un usuario especifico
-public function listarmarcados($idusuario){
-	$sql="SELECT * FROM usuario_permiso WHERE idusuario='$idusuario'";
-	return ejecutarConsulta($sql);
-}
-
-//Función para verificar el acceso al sistema
+	//Función para verificar el acceso al sistema
 	public function verificar($login,$clave)
-    {
-    	$sql="SELECT idusuario,nombre,tipo_documento,num_documento,telefono,email,cargo,imagen,login FROM usuario WHERE login='$login' AND clave='$clave' AND condicion='1'";
-    	return ejecutarConsulta($sql);
-    }
-}
+	{
+		$sql="SELECT u.id_usuario,u.nombre_completo,u.rol_id,u.telefono,u.email,u.password, r.nombre_rol
+		FROM usuarios u
+		LEFT JOIN roles r ON u.rol_id=r.id_rol
+		LEFT JOIN estados_usuario eu ON u.estado_usuario_id=eu.id_estado_usuario
+		WHERE u.email='$login' AND u.password='$clave' AND eu.nombre_estado='Activo'";
+		return ejecutarConsulta($sql);
+	}
 
+	//Metodos adicionales para gestionar estados de usuario
+	public function cambiarEstado($id_usuario, $estado_usuario_id){
+		$sql="UPDATE usuarios SET estado_usuario_id='$estado_usuario_id' WHERE id_usuario='$id_usuario'";
+		return ejecutarConsulta($sql);
+	}
+
+	public function listarEstados(){
+		$estados = new EstadosUsuario();
+		return $estados->listar();
+	}
+}
 ?>

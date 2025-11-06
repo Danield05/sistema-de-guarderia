@@ -33,7 +33,7 @@ if (strlen(session_id()) < 1) {
     <header class="main-header modern-navbar">
         <div class="navbar-left">
             <div class="user-profile-widget">
-                <img src="../files/usuarios/<?php echo $_SESSION['imagen']; ?>" class="user-image" alt="User Image">
+                <img src="../files/usuarios/1535417472.jpg" class="user-image" alt="User Image">
                 <div class="user-info">
                     <span class="user-name"><?php echo $_SESSION['nombre']; ?></span>
                     <small class="user-role"><?php echo $_SESSION['cargo']; ?></small>
@@ -47,13 +47,30 @@ if (strlen(session_id()) < 1) {
                     <?php if ($_SESSION['escritorio'] == 1): ?>
                         <li><a href="escritorio.php" class="nav-button"><i class="fa fa-home"></i> Inicio</a></li>
                     <?php endif; ?>
-                    <?php if ($_SESSION['grupos'] == 1): ?>
+                    
+                    <!-- Gestión Académica -->
+                    <?php if (isset($_SESSION['aulas']) && $_SESSION['aulas'] == 1): ?>
+                        <li><a href="aulas.php" class="nav-button"><i class="fa fa-university"></i> Aulas</a></li>
+                    <?php endif; ?>
+                    
+                    <?php if (isset($_SESSION['secciones']) && $_SESSION['secciones'] == 1): ?>
+                        <li><a href="secciones.php" class="nav-button"><i class="fa fa-sitemap"></i> Secciones</a></li>
+                    <?php endif; ?>
+                    
+                    <?php if (isset($_SESSION['ninos']) && $_SESSION['ninos'] == 1): ?>
+                        <li><a href="ninos.php" class="nav-button"><i class="fa fa-child"></i> Niños</a></li>
+                    <?php endif; ?>
+                    
+                    <!-- Gestión de Usuarios (Sistema Legacy) -->
+                    <?php if (isset($_SESSION['grupos']) && $_SESSION['grupos'] == 1): ?>
                         <li><a href="grupos.php" class="nav-button"><i class="fa fa-users"></i> Grupos</a></li>
                     <?php endif; ?>
-                    <?php if ($_SESSION['acceso'] == 1): ?>
-                        <li><a href="usuario.php" class="nav-button"><i class="fa fa-graduation-cap"></i> Profesores</a></li>
+                    
+                    <?php if (isset($_SESSION['acceso']) && $_SESSION['acceso'] == 1): ?>
+                        <li><a href="usuario.php" class="nav-button"><i class="fa fa-graduation-cap"></i> Usuarios</a></li>
                         <li><a href="permiso.php" class="nav-button"><i class="fa fa-key"></i> Permisos</a></li>
                     <?php endif; ?>
+                    
                     <li><a href="acerca.php" class="nav-button"><i class="fa fa-info-circle"></i> Acerca de</a></li>
                 </ul>
             </nav>

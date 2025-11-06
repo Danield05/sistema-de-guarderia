@@ -10,9 +10,8 @@ if (!isset($_SESSION['nombre'])) {
     $user_id = $_SESSION["idusuario"];
     require_once "../models/Consultas.php";
     $consulta = new Consultas();
-    $rsptav = $consulta->cantidadalumnos($user_id);
-    $regv = $rsptav->fetch(PDO::FETCH_OBJ);
-    $totalestudiantes = $regv->total_alumnos;
+    $regv = $consulta->cantidad_ninos($user_id);
+    $totalestudiantes = isset($regv['total_ninos']) ? $regv['total_ninos'] : 0;
     $cap_almacen = 3000;
 ?>
     <!-- 🔧 Quitamos padding lateral con clases personalizadas -->
@@ -28,20 +27,20 @@ if (!isset($_SESSION['nombre'])) {
       <!-- Estadísticas principales -->
       <div class="dashboard-grid">
         <div class="metric-card metric-card-light-bg">
-          <div class="metric-icon">👥</div>
+          <div class="metric-icon">🏫</div>
           <div class="metric-value">
             <?php
-            $rspta = $consulta->cantidadgrupos($user_id);
+            $rspta = $consulta->resumen_aulas();
             echo $rspta->rowCount();
             ?>
           </div>
-          <div class="metric-label">Grupos Activos</div>
+          <div class="metric-label">Aulas Registradas</div>
         </div>
 
         <div class="metric-card metric-card-light-bg">
           <div class="metric-icon">👨‍🎓</div>
           <div class="metric-value"><?php echo $totalestudiantes; ?></div>
-          <div class="metric-label">Estudiantes Totales</div>
+          <div class="metric-label">Niños Totales</div>
         </div>
 
         <div class="metric-card metric-card-light-bg">
@@ -51,37 +50,34 @@ if (!isset($_SESSION['nombre'])) {
         </div>
       </div>
 
-      <!-- Grupos disponibles -->
+      <!-- Aulas disponibles -->
       <div class="activity-feed">
-        <h3 class="activity-title">👥 Grupos Disponibles</h3>
+        <h3 class="activity-title">🏫 Aulas Disponibles</h3>
         <?php
-        $rspta = $consulta->cantidadgrupos($user_id);
+        $rspta = $consulta->resumen_aulas();
         $colores = array("bg-success", "bg-primary", "bg-warning", "bg-danger");
         $colorIndex = 0;
 
         if ($rspta->rowCount() > 0) {
           echo '<div class="row">';
-          $rspta = $consulta->cantidadgrupos($user_id);
           while ($reg = $rspta->fetch(PDO::FETCH_OBJ)) {
-            $idgrupo = $reg->idgrupo;
-            $nombre_grupo = $reg->nombre;
+            $id_aula = $reg->id_aula;
+            $nombre_aula = $reg->nombre_aula;
+            $total_ninos = $reg->total_ninos;
+            $total_secciones = $reg->total_secciones;
             $colorClass = $colores[$colorIndex % count($colores)];
             $colorIndex++;
         ?>
             <div class="col-lg-4 col-md-6 mb-4">
               <div class="metric-card <?php echo $colorClass; ?> text-white">
-                <div class="metric-icon">👥</div>
-                <h4 class="metric-value"><?php echo $nombre_grupo; ?></h4>
+                <div class="metric-icon">🏫</div>
+                <h4 class="metric-value"><?php echo $nombre_aula; ?></h4>
                 <div class="metric-label">
-                  <?php
-                  $rsptag = $consulta->cantidadg($user_id, $idgrupo);
-                  $regrupo = $rsptag->fetch(PDO::FETCH_OBJ);
-                  echo $regrupo->total_alumnos . ' estudiantes';
-                  ?>
+                  <?php echo $total_ninos . ' niños • ' . $total_secciones . ' secciones'; ?>
                 </div>
                 <div class="mt-3">
-                  <a href="escritorio.php?idgrupo=<?php echo $idgrupo; ?>" class="btn btn-light btn-sm">
-                    <i class="fa fa-eye"></i> Ver Grupo
+                  <a href="aulas.php" class="btn btn-light btn-sm">
+                    <i class="fa fa-eye"></i> Ver Aula
                   </a>
                 </div>
               </div>
@@ -92,9 +88,31 @@ if (!isset($_SESSION['nombre'])) {
         } else {
         ?>
           <div class="empty-state">
-            <div class="empty-icon">👥</div>
-            <p>No tienes grupos registrados aún.</p>
-            <a href="grupos.php" class="action-button">➕ Crear Primer Grupo</a>
+            <div class="empty-icon">🏫</div>
+            <p>No tienes aulas registradas aún.</p>
+            <a href="aulas.php" class="action-button">➕ Crear Primera Aula</a>
+          </div>
+        <?php } ?>
+      </div>
+
+      <!-- Alertas recientes -->
+      <div class="activity-feed">
+        <h3 class="activity-title">🔔 Alertas Recientes</h3>
+        <?php
+        $rsptalertas = $consulta->ninos_con_mas_alertas(date('Y-m-01'), date('Y-m-d'), 5);
+        if ($rsptalertas->rowCount() > 0) {
+          while ($regalerta = $rsptalertas->fetch(PDO::FETCH_OBJ)) {
+        ?>
+            <div class="alert alert-warning" role="alert">
+              <strong><?php echo $regalerta->nombre_completo; ?></strong> tiene <?php echo $regalerta->total_alertas; ?> alertas pendientes
+            </div>
+        <?php
+          }
+        } else {
+        ?>
+          <div class="empty-state">
+            <div class="empty-icon">✅</div>
+            <p>No hay alertas pendientes.</p>
           </div>
         <?php } ?>
       </div>
@@ -104,14 +122,26 @@ if (!isset($_SESSION['nombre'])) {
         <h3 class="activity-title">⚡ Acciones Rápidas</h3>
         <div class="row">
           <div class="col-md-3 mb-3">
-            <a href="grupos.php" class="action-button">👥 Gestionar Grupos</a>
+            <a href="aulas.php" class="action-button">🏫 Gestionar Aulas</a>
           </div>
-          <?php if ($_SESSION['acceso'] == 1): ?>
+          <div class="col-md-3 mb-3">
+            <a href="ninos.php" class="action-button">👶 Gestionar Niños</a>
+          </div>
+          <div class="col-md-3 mb-3">
+            <a href="asistencia.php" class="action-button">📅 Control de Asistencia</a>
+          </div>
+          <div class="col-md-3 mb-3">
+            <a href="alertas.php" class="action-button">🔔 Gestionar Alertas</a>
+          </div>
+          <?php if (isset($_SESSION['acceso']) && $_SESSION['acceso'] == 1): ?>
             <div class="col-md-3 mb-3">
-              <a href="usuario.php" class="action-button">👨‍🏫 Gestionar Profesores</a>
+              <a href="usuario.php" class="action-button">👨‍🏫 Gestionar Usuarios</a>
             </div>
             <div class="col-md-3 mb-3">
-              <a href="permiso.php" class="action-button">🔐 Gestionar Permisos</a>
+              <a href="enfermedades.php" class="action-button">🏥 Información Médica</a>
+            </div>
+            <div class="col-md-3 mb-3">
+              <a href="permisos_ausencia.php" class="action-button">📋 Permisos</a>
             </div>
           <?php endif; ?>
           <div class="col-md-3 mb-3">

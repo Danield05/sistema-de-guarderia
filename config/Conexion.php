@@ -13,43 +13,45 @@ try {
     die("Error de conexión: " . $e->getMessage());
 }
 
-// Clase PDO para consultas
-class Database {
-    private static $instance = null;
-    private $pdo;
+// Clase PDO para consultas con protección contra redeclaración
+if (!class_exists('Database')) {
+    class Database {
+        private static $instance = null;
+        private $pdo;
 
-    private function __construct() {
-        $host = 'localhost';
-        $dbname = 'sis_school';
-        $username = 'root';
-        $password = '1234';
+        private function __construct() {
+            $host = 'localhost';
+            $dbname = 'sis_school';
+            $username = 'root';
+            $password = '1234';
 
-        try {
-            $this->pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $username, $password);
-            $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            $this->pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
-        } catch (PDOException $e) {
-            die("Error de conexión: " . $e->getMessage());
+            try {
+                $this->pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $username, $password);
+                $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+                $this->pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+            } catch (PDOException $e) {
+                die("Error de conexión: " . $e->getMessage());
+            }
         }
-    }
 
-    public static function getInstance() {
-        if (self::$instance == null) {
-            self::$instance = new Database();
+        public static function getInstance() {
+            if (self::$instance == null) {
+                self::$instance = new Database();
+            }
+            return self::$instance;
         }
-        return self::$instance;
-    }
 
-    public function getPDO() {
-        return $this->pdo;
-    }
+        public function getPDO() {
+            return $this->pdo;
+        }
 
-    public function query($sql) {
-        return $this->pdo->query($sql);
-    }
+        public function query($sql) {
+            return $this->pdo->query($sql);
+        }
 
-    public function prepare($sql) {
-        return $this->pdo->prepare($sql);
+        public function prepare($sql) {
+            return $this->pdo->prepare($sql);
+        }
     }
 }
 
@@ -58,38 +60,47 @@ $db = Database::getInstance();
 $pdo = $db->getPDO();
 
 // Funciones de compatibilidad para mantener el código existente funcionando
-function ejecutarConsulta($sql) {
-    global $pdo;
-    try {
-        $stmt = $pdo->query($sql);
-        return $stmt;
-    } catch (PDOException $e) {
-        die("Error en consulta: " . $e->getMessage());
+// con guards para evitar redeclaraciones
+if (!function_exists('ejecutarConsulta')) {
+    function ejecutarConsulta($sql) {
+        global $pdo;
+        try {
+            $stmt = $pdo->query($sql);
+            return $stmt;
+        } catch (PDOException $e) {
+            die("Error en consulta: " . $e->getMessage());
+        }
     }
 }
 
-function ejecutarConsultaSimpleFila($sql) {
-    global $pdo;
-    try {
-        $stmt = $pdo->query($sql);
-        return $stmt->fetch();
-    } catch (PDOException $e) {
-        die("Error en consulta: " . $e->getMessage());
+if (!function_exists('ejecutarConsultaSimpleFila')) {
+    function ejecutarConsultaSimpleFila($sql) {
+        global $pdo;
+        try {
+            $stmt = $pdo->query($sql);
+            return $stmt->fetch();
+        } catch (PDOException $e) {
+            die("Error en consulta: " . $e->getMessage());
+        }
     }
 }
 
-function ejecutarConsulta_retornarID($sql) {
-    global $pdo;
-    try {
-        $pdo->exec($sql);
-        return $pdo->lastInsertId();
-    } catch (PDOException $e) {
-        die("Error en consulta: " . $e->getMessage());
+if (!function_exists('ejecutarConsulta_retornarID')) {
+    function ejecutarConsulta_retornarID($sql) {
+        global $pdo;
+        try {
+            $pdo->exec($sql);
+            return $pdo->lastInsertId();
+        } catch (PDOException $e) {
+            die("Error en consulta: " . $e->getMessage());
+        }
     }
 }
 
-function limpiarCadena($str) {
-    $str = trim($str);
-    return htmlspecialchars($str, ENT_QUOTES, 'UTF-8');
+if (!function_exists('limpiarCadena')) {
+    function limpiarCadena($str) {
+        $str = trim($str);
+        return htmlspecialchars($str, ENT_QUOTES, 'UTF-8');
+    }
 }
 ?>

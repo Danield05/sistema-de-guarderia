@@ -1,413 +1,310 @@
--- phpMyAdmin SQL Dump
--- version 4.9.0.1
--- https://www.phpmyadmin.net/
---
--- Servidor: 127.0.0.1
--- Tiempo de generaci�n: 12-01-2020 a las 17:46:14
--- Versi�n del servidor: 10.4.6-MariaDB
--- Versi�n de PHP: 7.3.8
-
-SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-SET AUTOCOMMIT = 0;
-START TRANSACTION;
-SET time_zone = "+00:00";
-
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
-
---
--- Base de datos: `sis_school`
---
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `alumn`
---
-
-CREATE TABLE `alumn` (
-  `id` int(11) NOT NULL,
-  `image` varchar(50) COLLATE utf8_bin NOT NULL,
-  `name` varchar(50) COLLATE utf8_bin NOT NULL,
-  `lastname` varchar(50) COLLATE utf8_bin NOT NULL,
-  `email` varchar(255) COLLATE utf8_bin NOT NULL,
-  `address` varchar(60) COLLATE utf8_bin NOT NULL,
-  `phone` varchar(60) COLLATE utf8_bin NOT NULL,
-  `c1_fullname` varchar(100) COLLATE utf8_bin DEFAULT NULL,
-  `c1_address` varchar(100) COLLATE utf8_bin DEFAULT NULL,
-  `c1_phone` varchar(100) COLLATE utf8_bin DEFAULT NULL,
-  `c1_note` varchar(100) COLLATE utf8_bin DEFAULT NULL,
-  `c2_fullname` varchar(100) COLLATE utf8_bin DEFAULT NULL,
-  `c2_address` varchar(100) COLLATE utf8_bin DEFAULT NULL,
-  `c2_phone` varchar(100) COLLATE utf8_bin DEFAULT NULL,
-  `c2_note` varchar(100) COLLATE utf8_bin DEFAULT NULL,
-  `is_active` tinyint(1) NOT NULL DEFAULT 1,
-  `created_at` datetime DEFAULT NULL,
-  `user_id` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `alumn_team`
---
-
-CREATE TABLE `alumn_team` (
-  `id` int(11) NOT NULL,
-  `alumn_id` int(11) NOT NULL,
-  `team_id` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `assistance`
---
-
-CREATE TABLE `assistance` (
-  `id` int(11) NOT NULL,
-  `kind_id` int(11) DEFAULT NULL,
-  `date_at` date NOT NULL,
-  `alumn_id` int(11) NOT NULL,
-  `team_id` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `behavior`
---
-
-CREATE TABLE `behavior` (
-  `id` int(11) NOT NULL,
-  `kind_id` int(11) DEFAULT NULL,
-  `date_at` date NOT NULL,
-  `alumn_id` int(11) NOT NULL,
-  `team_id` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `block`
---
-
-CREATE TABLE `block` (
-  `id` int(11) NOT NULL,
-  `name` varchar(100) COLLATE utf8_bin DEFAULT NULL,
-  `team_id` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `calification`
---
-
-CREATE TABLE `calification` (
-  `id` int(11) NOT NULL,
-  `val` double DEFAULT NULL,
-  `alumn_id` int(11) NOT NULL,
-  `block_id` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `permiso`
---
-
-CREATE TABLE `permiso` (
-  `idpermiso` int(11) NOT NULL,
-  `nombre` varchar(30) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
---
--- Volcado de datos para la tabla `permiso`
---
-
-INSERT INTO `permiso` (`idpermiso`, `nombre`) VALUES
-(1, 'Escritorio'),
-(2, 'Grupos'),
-(3, 'Acceso');
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `team`
---
-
-CREATE TABLE `team` (
-  `idgrupo` int(11) NOT NULL,
-  `nombre` varchar(50) COLLATE utf8_bin NOT NULL,
-  `favorito` tinyint(1) NOT NULL,
-  `idusuario` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
-
---
--- Volcado de datos para la tabla `team`
---
-
-INSERT INTO `team` (`idgrupo`, `nombre`, `favorito`, `idusuario`) VALUES
-(1, 'PRIMERO DE PRIMARIA', 1, 1),
-(2, 'SEGUNDO DE PRIMARIA', 1, 1),
-(3, 'TERCERO DE PRIMARIA', 1, 1),
-(4, 'CUARTO DE PRIMARIA', 1, 1),
-(5, 'QUINTO DE PRIMARIA', 1, 1),
-(6, 'SEXTO DE PRIMARIA', 1, 1);
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `usuario`
---
-
-CREATE TABLE `usuario` (
-  `idusuario` int(11) NOT NULL,
-  `nombre` varchar(100) NOT NULL,
-  `tipo_documento` varchar(20) NOT NULL,
-  `num_documento` varchar(20) NOT NULL,
-  `direccion` varchar(70) DEFAULT NULL,
-  `telefono` varchar(20) DEFAULT NULL,
-  `email` varchar(50) DEFAULT NULL,
-  `cargo` varchar(20) DEFAULT NULL,
-  `login` varchar(20) NOT NULL,
-  `clave` varchar(64) NOT NULL,
-  `imagen` varchar(50) NOT NULL,
-  `condicion` tinyint(4) NOT NULL DEFAULT 1
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
---
--- Volcado de datos para la tabla `usuario`
---
-
-INSERT INTO `usuario` (`idusuario`, `nombre`, `tipo_documento`, `num_documento`, `direccion`, `telefono`, `email`, `cargo`, `login`, `clave`, `imagen`, `condicion`) VALUES
-(1, 'demo', 'DNI', '72154871', 'Calle los alpes 210', '547821', 'admin@gmail.com', 'Administrador', 'admin', '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918', '1535417472.jpg', 1);
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `usuario_permiso`
---
-
-CREATE TABLE `usuario_permiso` (
-  `idusuario_permiso` int(11) NOT NULL,
-  `idusuario` int(11) NOT NULL,
-  `idpermiso` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
---
--- Volcado de datos para la tabla `usuario_permiso`
---
-
-INSERT INTO `usuario_permiso` (`idusuario_permiso`, `idusuario`, `idpermiso`) VALUES
-(1, 1, 1),
-(2, 1, 2),
-(3, 1, 3);
-
---
--- Índices para tablas volcadas
---
-
---
--- Indices de la tabla `alumn`
---
-ALTER TABLE `alumn`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `user_id` (`user_id`) USING BTREE;
-
---
--- Indices de la tabla `alumn_team`
---
-ALTER TABLE `alumn_team`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `alumn_id` (`alumn_id`),
-  ADD KEY `team_id` (`team_id`);
-
---
--- Indices de la tabla `assistance`
---
-ALTER TABLE `assistance`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `alumn_id` (`alumn_id`),
-  ADD KEY `team_id` (`team_id`);
-
---
--- Indices de la tabla `behavior`
---
-ALTER TABLE `behavior`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `alumn_id` (`alumn_id`),
-  ADD KEY `team_id` (`team_id`);
-
---
--- Indices de la tabla `block`
---
-ALTER TABLE `block`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `team_id` (`team_id`);
-
---
--- Indices de la tabla `calification`
---
-ALTER TABLE `calification`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `alumn_id` (`alumn_id`),
-  ADD KEY `block_id` (`block_id`);
-
---
--- Indices de la tabla `permiso`
---
-ALTER TABLE `permiso`
-  ADD PRIMARY KEY (`idpermiso`);
-
---
--- Indices de la tabla `team`
---
-ALTER TABLE `team`
-  ADD PRIMARY KEY (`idgrupo`),
-  ADD KEY `team_ibfk_1` (`idusuario`);
-
---
--- Indices de la tabla `usuario`
---
-ALTER TABLE `usuario`
-  ADD PRIMARY KEY (`idusuario`),
-  ADD UNIQUE KEY `login_UNIQUE` (`login`);
-
---
--- Indices de la tabla `usuario_permiso`
---
-ALTER TABLE `usuario_permiso`
-  ADD PRIMARY KEY (`idusuario_permiso`),
-  ADD KEY `fk_u_permiso_usuario_idx` (`idusuario`),
-  ADD KEY `fk_usuario_permiso_idx` (`idpermiso`);
-
---
--- AUTO_INCREMENT de las tablas volcadas
---
-
---
--- AUTO_INCREMENT de la tabla `alumn`
---
-ALTER TABLE `alumn`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
-
---
--- AUTO_INCREMENT de la tabla `alumn_team`
---
-ALTER TABLE `alumn_team`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
-
---
--- AUTO_INCREMENT de la tabla `assistance`
---
-ALTER TABLE `assistance`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
-
---
--- AUTO_INCREMENT de la tabla `behavior`
---
-ALTER TABLE `behavior`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
-
---
--- AUTO_INCREMENT de la tabla `block`
---
-ALTER TABLE `block`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
-
---
--- AUTO_INCREMENT de la tabla `calification`
---
-ALTER TABLE `calification`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
-
---
--- AUTO_INCREMENT de la tabla `permiso`
---
-ALTER TABLE `permiso`
-  MODIFY `idpermiso` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
-
---
--- AUTO_INCREMENT de la tabla `team`
---
-ALTER TABLE `team`
-  MODIFY `idgrupo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
-
---
--- AUTO_INCREMENT de la tabla `usuario`
---
-ALTER TABLE `usuario`
-  MODIFY `idusuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
-
---
--- AUTO_INCREMENT de la tabla `usuario_permiso`
---
-ALTER TABLE `usuario_permiso`
-  MODIFY `idusuario_permiso` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
-
---
--- Restricciones para tablas volcadas
---
-
---
--- Filtros para la tabla `alumn`
---
-ALTER TABLE `alumn`
-  ADD CONSTRAINT `alumn_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `usuario` (`idusuario`);
-
---
--- Filtros para la tabla `alumn_team`
---
-ALTER TABLE `alumn_team`
-  ADD CONSTRAINT `alumn_team_ibfk_1` FOREIGN KEY (`alumn_id`) REFERENCES `alumn` (`id`),
-  ADD CONSTRAINT `alumn_team_ibfk_2` FOREIGN KEY (`team_id`) REFERENCES `team` (`idgrupo`);
-
---
--- Filtros para la tabla `assistance`
---
-ALTER TABLE `assistance`
-  ADD CONSTRAINT `assistance_ibfk_1` FOREIGN KEY (`alumn_id`) REFERENCES `alumn` (`id`),
-  ADD CONSTRAINT `assistance_ibfk_2` FOREIGN KEY (`team_id`) REFERENCES `team` (`idgrupo`);
-
---
--- Filtros para la tabla `behavior`
---
-ALTER TABLE `behavior`
-  ADD CONSTRAINT `behavior_ibfk_1` FOREIGN KEY (`alumn_id`) REFERENCES `alumn` (`id`),
-  ADD CONSTRAINT `behavior_ibfk_2` FOREIGN KEY (`team_id`) REFERENCES `team` (`idgrupo`);
-
---
--- Filtros para la tabla `block`
---
-ALTER TABLE `block`
-  ADD CONSTRAINT `block_ibfk_1` FOREIGN KEY (`team_id`) REFERENCES `team` (`idgrupo`);
-
---
--- Filtros para la tabla `calification`
---
-ALTER TABLE `calification`
-  ADD CONSTRAINT `calification_ibfk_1` FOREIGN KEY (`alumn_id`) REFERENCES `alumn` (`id`),
-  ADD CONSTRAINT `calification_ibfk_2` FOREIGN KEY (`block_id`) REFERENCES `block` (`id`);
-
---
--- Filtros para la tabla `team`
---
-ALTER TABLE `team`
-  ADD CONSTRAINT `team_ibfk_1` FOREIGN KEY (`idusuario`) REFERENCES `usuario` (`idusuario`);
-
---
--- Filtros para la tabla `usuario_permiso`
---
-ALTER TABLE `usuario_permiso`
-  ADD CONSTRAINT `fk_u_permiso_usuario` FOREIGN KEY (`idusuario`) REFERENCES `usuario` (`idusuario`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  ADD CONSTRAINT `fk_usuario_permiso` FOREIGN KEY (`idpermiso`) REFERENCES `permiso` (`idpermiso`) ON DELETE NO ACTION ON UPDATE NO ACTION;
-COMMIT;
-
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+-- ============================================
+-- BASE DE DATOS: Sistema de Guardería - PequeControl 
+-- Descripción: Diseño completo para MySQL/phpMyAdmin
+-- ============================================
+
+-- Crear base de datos
+CREATE DATABASE IF NOT EXISTS sis_school CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+
+-- Usar la base creada
+USE sis_school;
+
+-- ============================================
+-- TABLA: roles
+-- ============================================
+CREATE TABLE roles (
+    id_rol INT AUTO_INCREMENT PRIMARY KEY,
+    nombre_rol VARCHAR(50) NOT NULL UNIQUE
+) ENGINE=InnoDB;
+
+-- ============================================
+-- TABLA: estados_usuario (NUEVA)
+-- ============================================
+CREATE TABLE estados_usuario (
+    id_estado_usuario INT AUTO_INCREMENT PRIMARY KEY,
+    nombre_estado VARCHAR(50) NOT NULL UNIQUE,
+    descripcion TEXT
+) ENGINE=InnoDB;
+
+-- ============================================
+-- TABLA: usuarios (ACTUALIZADA)
+-- ============================================
+CREATE TABLE usuarios (
+    id_usuario INT AUTO_INCREMENT PRIMARY KEY,
+    nombre_completo VARCHAR(100) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    rol_id INT NOT NULL,
+    telefono VARCHAR(15),
+    direccion TEXT,
+    estado_usuario_id INT NOT NULL,
+    FOREIGN KEY (rol_id) REFERENCES roles(id_rol)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
+    FOREIGN KEY (estado_usuario_id) REFERENCES estados_usuario(id_estado_usuario)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+) ENGINE=InnoDB;
+
+-- ============================================
+-- TABLA: aulas
+-- ============================================
+CREATE TABLE aulas (
+    id_aula INT AUTO_INCREMENT PRIMARY KEY,
+    nombre_aula VARCHAR(50) NOT NULL,
+    descripcion TEXT
+) ENGINE=InnoDB;
+
+-- ============================================
+-- TABLA: secciones
+-- ============================================
+CREATE TABLE secciones (
+    id_seccion INT AUTO_INCREMENT PRIMARY KEY,
+    nombre_seccion VARCHAR(50) NOT NULL,
+    aula_id INT,
+    FOREIGN KEY (aula_id) REFERENCES aulas(id_aula)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+) ENGINE=InnoDB;
+
+-- ============================================
+-- TABLA: niños
+-- ============================================
+CREATE TABLE ninos (
+    id_nino INT AUTO_INCREMENT PRIMARY KEY,
+    nombre_completo VARCHAR(100) NOT NULL,
+    fecha_nacimiento DATE NOT NULL,
+    edad INT,
+    peso DECIMAL(5,2),
+    aula_id INT,
+    seccion_id INT,
+    maestro_id INT,
+    tutor_id INT,
+    estado BOOLEAN DEFAULT 1,
+    FOREIGN KEY (aula_id) REFERENCES aulas(id_aula)
+        ON DELETE SET NULL
+        ON UPDATE CASCADE,
+    FOREIGN KEY (seccion_id) REFERENCES secciones(id_seccion)
+        ON DELETE SET NULL
+        ON UPDATE CASCADE,
+    FOREIGN KEY (maestro_id) REFERENCES usuarios(id_usuario)
+        ON DELETE SET NULL
+        ON UPDATE CASCADE,
+    FOREIGN KEY (tutor_id) REFERENCES usuarios(id_usuario)
+        ON DELETE SET NULL
+        ON UPDATE CASCADE
+) ENGINE=InnoDB;
+
+-- ============================================
+-- TABLA: enfermedades
+-- ============================================
+CREATE TABLE enfermedades (
+    id_enfermedad INT AUTO_INCREMENT PRIMARY KEY,
+    id_nino INT NOT NULL,
+    nombre_enfermedad VARCHAR(100),
+    descripcion TEXT,
+    fecha_diagnostico DATE,
+    FOREIGN KEY (id_nino) REFERENCES ninos(id_nino)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+) ENGINE=InnoDB;
+
+-- ============================================
+-- TABLA: medicamentos
+-- ============================================
+CREATE TABLE medicamentos (
+    id_medicamento INT AUTO_INCREMENT PRIMARY KEY,
+    id_nino INT NOT NULL,
+    nombre_medicamento VARCHAR(100),
+    dosis VARCHAR(100),
+    frecuencia VARCHAR(100),
+    observaciones TEXT,
+    FOREIGN KEY (id_nino) REFERENCES ninos(id_nino)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+) ENGINE=InnoDB;
+
+-- ============================================
+-- TABLA: alergias
+-- ============================================
+CREATE TABLE alergias (
+    id_alergia INT AUTO_INCREMENT PRIMARY KEY,
+    id_nino INT NOT NULL,
+    tipo_alergia VARCHAR(100),
+    descripcion TEXT,
+    FOREIGN KEY (id_nino) REFERENCES ninos(id_nino)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+) ENGINE=InnoDB;
+
+-- ============================================
+-- TABLA: responsables_retiro
+-- ============================================
+CREATE TABLE responsables_retiro (
+    id_responsable INT AUTO_INCREMENT PRIMARY KEY,
+    id_nino INT NOT NULL,
+    nombre_completo VARCHAR(100),
+    parentesco VARCHAR(50),
+    telefono VARCHAR(15),
+    autorizacion_firma VARCHAR(255),
+    periodo_inicio DATE,
+    periodo_fin DATE,
+    FOREIGN KEY (id_nino) REFERENCES ninos(id_nino)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+) ENGINE=InnoDB;
+
+-- ============================================
+-- TABLA: estados_asistencia
+-- ============================================
+CREATE TABLE estados_asistencia (
+    id_estado INT AUTO_INCREMENT PRIMARY KEY,
+    nombre_estado VARCHAR(50) NOT NULL UNIQUE,
+    descripcion TEXT
+) ENGINE=InnoDB;
+
+-- ============================================
+-- TABLA: asistencias
+-- ============================================
+CREATE TABLE asistencias (
+    id_asistencia INT AUTO_INCREMENT PRIMARY KEY,
+    id_nino INT NOT NULL,
+    fecha DATE NOT NULL,
+    estado_id INT NOT NULL,
+    observaciones TEXT,
+    FOREIGN KEY (id_nino) REFERENCES ninos(id_nino)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
+    FOREIGN KEY (estado_id) REFERENCES estados_asistencia(id_estado)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+) ENGINE=InnoDB;
+
+-- ============================================
+-- TABLA: permisos_ausencia
+-- ============================================
+CREATE TABLE permisos_ausencia (
+    id_permiso INT AUTO_INCREMENT PRIMARY KEY,
+    id_nino INT NOT NULL,
+    tipo_permiso ENUM('Médico', 'Personal', 'Otro') NOT NULL,
+    descripcion TEXT,
+    fecha_inicio DATE,
+    fecha_fin DATE,
+    hora_inicio TIME,
+    hora_fin TIME,
+    archivo_permiso VARCHAR(255),
+    FOREIGN KEY (id_nino) REFERENCES ninos(id_nino)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+) ENGINE=InnoDB;
+
+-- ============================================
+-- TABLA: alertas
+-- ============================================
+CREATE TABLE alertas (
+    id_alerta INT AUTO_INCREMENT PRIMARY KEY,
+    id_nino INT NOT NULL,
+    fecha_alerta DATETIME DEFAULT CURRENT_TIMESTAMP,
+    mensaje TEXT,
+    tipo ENUM('Inasistencia', 'Emergencia', 'Salud', 'Otro', 'Conducta', 'Evaluación', 'Desarrollo'),
+    estado ENUM('Pendiente', 'Respondida') DEFAULT 'Pendiente',
+    FOREIGN KEY (id_nino) REFERENCES ninos(id_nino)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+) ENGINE=InnoDB;
+
+-- ============================================
+-- DATOS DE EJEMPLO ACTUALIZADOS
+-- ============================================
+
+-- Estados de usuario (NUEVA SECCIÓN)
+INSERT INTO estados_usuario (nombre_estado, descripcion) VALUES 
+('Activo', 'Usuario con acceso completo al sistema'),
+('Inactivo', 'Usuario temporalmente bloqueado'),
+('Suspendido', 'Usuario suspendido por algún motivo'),
+('Vacaciones', 'Usuario en período de vacaciones'),
+('Licencia', 'Usuario con licencia temporal');
+
+-- Roles
+INSERT INTO roles (nombre_rol) VALUES 
+('Padre/Tutor'), 
+('Maestro'), 
+('Administrador'), 
+('Médico/Enfermería');
+
+-- Usuarios (ACTUALIZADA CON HASHES SHA256)
+INSERT INTO usuarios (nombre_completo, email, password, rol_id, telefono, direccion, estado_usuario_id) VALUES
+('Ana López', 'ana.lopez@example.com', '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92', 1, '7777-1111', 'Col. Miramonte, San Salvador', 1),
+('Luis Martínez', 'luis.martinez@example.com', '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92', 2, '7777-2222', 'San Salvador', 1),
+('José Aquino', 'jose.aquino@example.com', '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92', 3, '7777-3333', 'Santa Tecla', 1),
+('Lic. Elena Rivas', 'elena.rivas@example.com', '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92', 4, '7777-4444', 'Antiguo Cuscatlán', 1),
+('María González', 'maria.gonzalez@example.com', '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92', 2, '7777-5555', 'San Salvador', 2);
+
+-- Aulas
+INSERT INTO aulas (nombre_aula, descripcion) VALUES 
+('Prekínder', 'Aula destinada a niños de 3 a 4 años'),
+('Kínder', 'Aula destinada a niños de 4 a 5 años'),
+('Transition', 'Aula de transición de 5 a 6 años');
+
+-- Secciones
+INSERT INTO secciones (nombre_seccion, aula_id) VALUES 
+('Prekínder A', 1),
+('Prekínder B', 1),
+('Kínder A', 2),
+('Transition A', 3);
+
+-- Niños
+INSERT INTO ninos (nombre_completo, fecha_nacimiento, edad, peso, aula_id, seccion_id, maestro_id, tutor_id) VALUES 
+('Carlos López', '2021-06-12', 4, 16.5, 1, 1, 2, 1),
+('Ana García', '2020-09-15', 5, 18.2, 2, 3, 2, 1),
+('Miguel Rodríguez', '2021-02-20', 4, 17.1, 1, 2, 2, 1),
+('Sofia Hernández', '2019-11-10', 6, 20.3, 3, 4, 5, 1);
+
+-- Enfermedades
+INSERT INTO enfermedades (id_nino, nombre_enfermedad, descripcion, fecha_diagnostico) VALUES 
+(1, 'Asma', 'Leve, controlada con inhalador', '2023-09-10'),
+(2, 'Rinitis alérgica', 'Alérgica estacional', '2024-01-15');
+
+-- Medicamentos
+INSERT INTO medicamentos (id_nino, nombre_medicamento, dosis, frecuencia, observaciones) VALUES 
+(1, 'Salbutamol', '2 inhalaciones', 'Cada 8 horas', 'Solo en caso de crisis'),
+(2, 'Antihistamínico', '5ml', 'Una vez al día', 'Durante época de alergias');
+
+-- Alergias
+INSERT INTO alergias (id_nino, tipo_alergia, descripcion) VALUES 
+(1, 'Polvo', 'Reacción leve al polvo y al humo'),
+(2, 'Polen', 'Alergia estacional al polen'),
+(3, 'Maní', 'Alergia severa, evitar completamente');
+
+-- Responsables de retiro
+INSERT INTO responsables_retiro (id_nino, nombre_completo, parentesco, telefono, autorizacion_firma, periodo_inicio, periodo_fin) VALUES 
+(1, 'María Pérez', 'Tía', '7777-9999', 'firma_maria.png', '2025-01-01', '2025-12-31'),
+(1, 'Pedro López', 'Abuelo', '7777-8888', 'firma_pedro.png', '2025-01-01', '2025-12-31'),
+(2, 'Juan García', 'Papá', '7777-7777', 'firma_juan.png', '2025-01-01', '2025-12-31');
+
+-- Estados de asistencia
+INSERT INTO estados_asistencia (nombre_estado, descripcion) VALUES 
+('Asistió', 'El niño asistió normalmente'),
+('Inasistencia', 'El niño no asistió'),
+('Permiso', 'Ausencia con permiso autorizado'),
+('Tardanza', 'El niño llegó tarde'),
+('Salida temprana', 'El niño se retiró temprano');
+
+-- Asistencias
+INSERT INTO asistencias (id_nino, fecha, estado_id, observaciones) VALUES 
+(1, '2025-11-04', 1, 'Ninguna novedad'),
+(2, '2025-11-04', 1, 'Participó activamente'),
+(3, '2025-11-04', 4, 'Llegó 10 minutos tarde'),
+(1, '2025-11-05', 2, 'No asistió por enfermedad');
+
+-- Permisos de ausencia
+INSERT INTO permisos_ausencia (id_nino, tipo_permiso, descripcion, fecha_inicio, fecha_fin, hora_inicio, hora_fin, archivo_permiso) VALUES 
+(1, 'Médico', 'Consulta pediátrica programada', '2025-11-10', '2025-11-10', '08:00:00', '12:00:00', 'permiso_carlos.pdf'),
+(2, 'Personal', 'Cita familiar', '2025-11-12', '2025-11-12', '14:00:00', '16:00:00', 'permiso_ana.pdf');
+
+-- Alertas
+INSERT INTO alertas (id_nino, mensaje, tipo, estado) VALUES 
+(1, 'El niño no asistió el día 2025-11-03', 'Inasistencia', 'Pendiente'),
+(3, 'Tendencia a comportamiento agresivo con otros niños', 'Conducta', 'Respondida'),
+(4, 'Excelente progreso en habilidades sociales', 'Desarrollo', 'Pendiente'),
+(1, 'Recordatorio: Traer inhalador de rescate', 'Salud', 'Respondida');

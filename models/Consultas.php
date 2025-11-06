@@ -3,88 +3,89 @@
 require "../config/Conexion.php";
 class Consultas{
 
-
 	//implementamos nuestro constructor
-public function __construct(){
+	public function __construct(){
 
+	}
+
+	//metodo para listar asistencia de un niño
+	public function listar_asistencia($id_nino, $fecha_inicio, $fecha_fin){
+		$sql="SELECT a.fecha, a.observaciones, ea.nombre_estado 
+		FROM asistencias a 
+		INNER JOIN estados_asistencia ea ON a.estado_id=ea.id_estado 
+		WHERE a.id_nino='$id_nino' 
+		AND a.fecha BETWEEN '$fecha_inicio' AND '$fecha_fin'
+		ORDER BY a.fecha DESC";
+		return ejecutarConsulta($sql);
+	}
+
+	//metodo para listar comportamiento/alertas de un niño
+	public function listar_comportamiento($id_nino, $fecha_inicio, $fecha_fin){
+		$sql="SELECT al.fecha_alerta, al.mensaje, al.tipo, al.estado 
+		FROM alertas al 
+		WHERE al.id_nino='$id_nino' 
+		AND al.fecha_alerta BETWEEN '$fecha_inicio' AND '$fecha_fin'
+		ORDER BY al.fecha_alerta DESC";
+		return ejecutarConsulta($sql);
+	}
+
+	//metodo para contar total de niños
+	public function cantidad_ninos($user_id = null){
+		if ($user_id) {
+			$sql="SELECT COUNT(*) total_ninos FROM ninos n
+			INNER JOIN usuarios u ON n.maestro_id=u.id_usuario
+			WHERE u.id_usuario='$user_id'";
+		} else {
+			$sql="SELECT COUNT(*) total_ninos FROM ninos WHERE estado=1";
+		}
+		return ejecutarConsultaSimpleFila($sql);
+	}
+
+	//metodo para contar niños por aula
+	public function cantidad_ninos_por_aula($aula_id){
+		$sql="SELECT COUNT(*) total_ninos FROM ninos WHERE aula_id='$aula_id' AND estado=1";
+		return ejecutarConsultaSimpleFila($sql);
+	}
+
+	//metodo para obtener estadísticas de asistencia
+	public function estadisticas_asistencia($id_nino, $fecha_inicio, $fecha_fin){
+		$sql="SELECT 
+		ea.nombre_estado,
+		COUNT(*) as cantidad
+		FROM asistencias a 
+		INNER JOIN estados_asistencia ea ON a.estado_id=ea.id_estado 
+		WHERE a.id_nino='$id_nino' 
+		AND a.fecha BETWEEN '$fecha_inicio' AND '$fecha_fin'
+		GROUP BY a.estado_id, ea.nombre_estado";
+		return ejecutarConsulta($sql);
+	}
+
+	//metodo para obtener niños con más alertas
+	public function ninos_con_mas_alertas($fecha_inicio, $fecha_fin, $limite = 5){
+		$sql="SELECT n.id_nino, n.nombre_completo, COUNT(al.id_alerta) as total_alertas
+		FROM ninos n 
+		INNER JOIN alertas al ON n.id_nino=al.id_nino 
+		WHERE al.fecha_alerta BETWEEN '$fecha_inicio' AND '$fecha_fin'
+		AND al.estado='Pendiente'
+		GROUP BY n.id_nino, n.nombre_completo 
+		ORDER BY total_alertas DESC 
+		LIMIT $limite";
+		return ejecutarConsulta($sql);
+	}
+
+	//metodo para obtener resumen de aulas
+	public function resumen_aulas(){
+		$sql="SELECT
+		a.id_aula,
+		a.nombre_aula,
+		COUNT(DISTINCT n.id_nino) as total_ninos,
+		COUNT(DISTINCT s.id_seccion) as total_secciones
+		FROM aulas a
+		LEFT JOIN ninos n ON a.id_aula=n.aula_id AND n.estado=1
+		LEFT JOIN secciones s ON a.id_aula=s.aula_id
+		GROUP BY a.id_aula, a.nombre_aula
+		ORDER BY a.nombre_aula";
+		return ejecutarConsulta($sql);
+	}
 }
-
-//listar registros
-public function listar_asistencia($alumn_id,$team_id,$date_at){
-
-	$sql="SELECT * FROM assistance a INNER JOIN alumn p ON a.alumn_id=p.id INNER JOIN team t ON a.team_id=t.idgrupo  WHERE a.alumn_id='$alumn_id' AND a.team_id='$team_id' AND a.date_at='$date_at'";
-	return ejecutarConsulta($sql);
-}
-
-public function listar_comportamiento($alumn_id,$team_id,$date_at){
-
-	$sql="SELECT * FROM behavior a INNER JOIN alumn p ON a.alumn_id=p.id INNER JOIN team t ON a.team_id=t.idgrupo  WHERE a.alumn_id='$alumn_id' AND a.team_id='$team_id' AND a.date_at='$date_at'";
-	return ejecutarConsulta($sql);
-}
-
-public function ventasfechacliente($fecha_inicio,$fecha_fin,$idcliente){
-	$sql="SELECT DATE(v.fecha_hora) as fecha, u.nombre as usuario, p.nombre as cliente, v.tipo_comprobante,v.serie_comprobante, v.num_comprobante , v.total_venta, v.impuesto, v.estado FROM venta v INNER JOIN persona p ON v.idcliente=p.idpersona INNER JOIN usuario u ON v.idusuario=u.idusuario WHERE DATE(v.fecha_hora)>='$fecha_inicio' AND DATE(v.fecha_hora)<='$fecha_fin' AND v.idcliente='$idcliente'";
-	return ejecutarConsulta($sql);
-}
-
-public function totalcomprahoy(){
-	$sql="SELECT IFNULL(SUM(total_compra),0) as total_compra FROM ingreso WHERE DATE(fecha_hora)=curdate()";
-	return ejecutarConsulta($sql);
-}
-
-public function totalventahoy(){
-	$sql="SELECT IFNULL(SUM(total_venta),0) as total_venta FROM venta WHERE DATE(fecha_hora)=curdate()";
-	return ejecutarConsulta($sql);
-}
-
-public function comprasultimos_10dias(){
-	$sql=" SELECT CONCAT(DAY(fecha_hora),'-',MONTH(fecha_hora)) AS fecha, SUM(total_compra) AS total FROM ingreso GROUP BY fecha_hora ORDER BY fecha_hora DESC LIMIT 0,10";
-	return ejecutarConsulta($sql);
-}
-
-public function ventasultimos_12meses(){
-	$sql=" SELECT DATE_FORMAT(fecha_hora,'%M') AS fecha, SUM(total_venta) AS total FROM venta GROUP BY MONTH(fecha_hora) ORDER BY fecha_hora DESC LIMIT 0,12";
-	return ejecutarConsulta($sql);
-}
-
-public function cantidadalumnos($user_id){
-	$sql="SELECT COUNT(*) total_alumnos FROM alumn WHERE user_id='$user_id'";
-
-
-	return ejecutarConsulta($sql);
-}
-public function cantidadalumnos_porgrupo($user_id,$idgrupo){
-	$sql="SELECT a.id as idalumno, a.name,a.lastname,a.image  FROM alumn a INNER JOIN alumn_team alt ON a.id=alt.alumn_id WHERE a.user_id='$user_id' AND alt.team_id='$idgrupo'";
-
-
-	return ejecutarConsulta($sql);
-}
-public function cantidadg($user_id,$idgrupo){
-	$sql="SELECT COUNT(*) total_alumnos  FROM alumn a INNER JOIN alumn_team alt ON a.id=alt.alumn_id WHERE a.user_id='$user_id' AND alt.team_id='$idgrupo'";
-
-
-	return ejecutarConsulta($sql);
-}
-
-public function cantidadgrupos($idusuario){
-	$sql="SELECT idgrupo,nombre, idusuario, favorito FROM team WHERE idusuario='$idusuario'";
-	return ejecutarConsulta($sql);
-}
-
-public function cantidadarticulos(){
-	$sql="SELECT COUNT(*) totalar FROM articulo WHERE condicion=1";
-	return ejecutarConsulta($sql);
-}
-public function totalstock(){
-	$sql="SELECT SUM(stock) AS totalstock FROM articulo";
-	return ejecutarConsulta($sql);
-}
-
-public function cantidadcategorias(){
-	$sql="SELECT COUNT(*) totalca FROM categoria WHERE condicion=1";
-	return ejecutarConsulta($sql);
-}
-
-}
-
 ?>

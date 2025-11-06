@@ -12,22 +12,40 @@ class UsuarioController {
         $fetch = $rspta->fetch(PDO::FETCH_OBJ);
 
         if (isset($fetch)) {
-            $_SESSION['idusuario'] = $fetch->idusuario;
-            $_SESSION['nombre'] = $fetch->nombre;
-            $_SESSION['imagen'] = $fetch->imagen;
-            $_SESSION['login'] = $fetch->login;
-            $_SESSION['cargo'] = $fetch->cargo;
+            $_SESSION['idusuario'] = $fetch->id_usuario;
+            $_SESSION['nombre'] = $fetch->nombre_completo;
+            $_SESSION['email'] = $fetch->email;
+            $_SESSION['login'] = $fetch->email; // usar email como login
+            $_SESSION['cargo'] = $fetch->nombre_rol; // usar el nombre del rol como cargo
+            $_SESSION['rol_id'] = $fetch->rol_id;
 
-            $marcados = $usuario->listarmarcados($fetch->idusuario);
-            $valores = array();
-
-            while ($per = $marcados->fetch(PDO::FETCH_OBJ)) {
-                array_push($valores, $per->idpermiso);
+            // Configurar permisos específicos para el sistema de guardería
+            // Todos los administradores tienen acceso completo
+            if ($fetch->nombre_rol == 'Administrador') {
+                $_SESSION['escritorio'] = 1;
+                $_SESSION['aulas'] = 1;
+                $_SESSION['secciones'] = 1;
+                $_SESSION['ninos'] = 1;
+                $_SESSION['enfermedades'] = 1;
+                $_SESSION['medicamentos'] = 1;
+                $_SESSION['alergias'] = 1;
+                $_SESSION['usuarios'] = 1;
+                $_SESSION['asistencias'] = 1;
+                $_SESSION['reportes'] = 1;
             }
-
-            in_array(1, $valores) ? $_SESSION['escritorio'] = 1 : $_SESSION['escritorio'] = 0;
-            in_array(2, $valores) ? $_SESSION['grupos'] = 1 : $_SESSION['grupos'] = 0;
-            in_array(3, $valores) ? $_SESSION['acceso'] = 1 : $_SESSION['acceso'] = 0;
+            // Otros roles tienen permisos básicos
+            else {
+                $_SESSION['escritorio'] = 1;
+                $_SESSION['aulas'] = 0;
+                $_SESSION['secciones'] = 0;
+                $_SESSION['ninos'] = 0;
+                $_SESSION['enfermedades'] = 0;
+                $_SESSION['medicamentos'] = 0;
+                $_SESSION['alergias'] = 0;
+                $_SESSION['usuarios'] = 0;
+                $_SESSION['asistencias'] = 0;
+                $_SESSION['reportes'] = 0;
+            }
         }
 
         return json_encode($fetch);
