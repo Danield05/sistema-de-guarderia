@@ -1,5 +1,6 @@
 <?php
-session_start();
+if (strlen(session_id()) < 1)
+    session_start();
 require_once "../models/Usuario.php";
 
 class UsuarioController {
@@ -26,6 +27,8 @@ class UsuarioController {
                 $_SESSION['aulas'] = 1;
                 $_SESSION['secciones'] = 1;
                 $_SESSION['ninos'] = 1;
+                $_SESSION['grupos'] = 1;
+                $_SESSION['acceso'] = 1;
                 $_SESSION['enfermedades'] = 1;
                 $_SESSION['medicamentos'] = 1;
                 $_SESSION['alergias'] = 1;
@@ -39,6 +42,8 @@ class UsuarioController {
                 $_SESSION['aulas'] = 0;
                 $_SESSION['secciones'] = 0;
                 $_SESSION['ninos'] = 0;
+                $_SESSION['grupos'] = 0;
+                $_SESSION['acceso'] = 0;
                 $_SESSION['enfermedades'] = 0;
                 $_SESSION['medicamentos'] = 0;
                 $_SESSION['alergias'] = 0;

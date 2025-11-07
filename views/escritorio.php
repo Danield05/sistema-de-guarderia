@@ -6,14 +6,18 @@ if (!isset($_SESSION['nombre'])) {
 } else {
   require 'header.php';
 
-  if ($_SESSION['escritorio'] == 1) {
+  if (isset($_SESSION['escritorio']) && $_SESSION['escritorio'] == 1) {
     $user_id = $_SESSION["idusuario"];
     require_once "../models/Consultas.php";
     $consulta = new Consultas();
-    $regv = $consulta->cantidad_ninos($user_id);
+    $regv = $consulta->cantidad_ninos(); // Sin user_id para contar todos los niños activos
     $totalestudiantes = isset($regv['total_ninos']) ? $regv['total_ninos'] : 0;
-    $cap_almacen = 3000;
+    
+    // Obtener total de secciones
+    $regsecciones = $consulta->cantidad_secciones();
+    $totalsecciones = isset($regsecciones['total_secciones']) ? $regsecciones['total_secciones'] : 0;
 ?>
+
     <!-- 🔧 Quitamos padding lateral con clases personalizadas -->
     <main class="container-fluid py-5 px-3 main-dashboard" style="padding-top: 3rem; padding-bottom: 3rem;">
       <!-- Tarjeta de bienvenida -->
@@ -45,11 +49,10 @@ if (!isset($_SESSION['nombre'])) {
 
         <div class="metric-card metric-card-light-bg">
           <div class="metric-icon">📊</div>
-          <div class="metric-value"><?php echo $cap_almacen; ?></div>
-          <div class="metric-label">Capacidad Máxima</div>
+          <div class="metric-value"><?php echo $totalsecciones; ?></div>
+          <div class="metric-label">Secciones Totales</div>
         </div>
       </div>
-
       <!-- Aulas disponibles -->
       <div class="activity-feed">
         <h3 class="activity-title">🏫 Aulas Disponibles</h3>
@@ -99,12 +102,42 @@ if (!isset($_SESSION['nombre'])) {
       <div class="activity-feed">
         <h3 class="activity-title">🔔 Alertas Recientes</h3>
         <?php
-        $rsptalertas = $consulta->ninos_con_mas_alertas(date('Y-m-01'), date('Y-m-d'), 5);
+        $rsptalertas = $consulta->alertas_recientes(5);
         if ($rsptalertas->rowCount() > 0) {
           while ($regalerta = $rsptalertas->fetch(PDO::FETCH_OBJ)) {
+            $tipo_class = "";
+            $tipo_icon = "🔔";
+            switch($regalerta->tipo) {
+              case "Inasistencia":
+                $tipo_class = "alert-danger";
+                $tipo_icon = "❌";
+                break;
+              case "Conducta":
+                $tipo_class = "alert-warning";
+                $tipo_icon = "⚠️";
+                break;
+              case "Desarrollo":
+                $tipo_class = "alert-success";
+                $tipo_icon = "🌟";
+                break;
+              case "Salud":
+                $tipo_class = "alert-info";
+                $tipo_icon = "🏥";
+                break;
+              default:
+                $tipo_class = "alert-info";
+            }
+            $estado_class = ($regalerta->estado == "Pendiente") ? "font-weight-bold" : "text-muted";
         ?>
-            <div class="alert alert-warning" role="alert">
-              <strong><?php echo $regalerta->nombre_completo; ?></strong> tiene <?php echo $regalerta->total_alertas; ?> alertas pendientes
+            <div class="alert <?php echo $tipo_class; ?>" role="alert">
+              <div class="d-flex justify-content-between align-items-start">
+                <div>
+                  <strong><?php echo $tipo_icon; ?> <?php echo $regalerta->nombre_completo; ?></strong>
+                  <small class="text-muted ml-2"><?php echo date('d/m/Y H:i', strtotime($regalerta->fecha_alerta)); ?></small>
+                </div>
+                <small class="<?php echo $estado_class; ?>"><?php echo $regalerta->estado; ?></small>
+              </div>
+              <p class="mb-1 mt-2"><?php echo $regalerta->mensaje; ?></p>
             </div>
         <?php
           }
@@ -112,7 +145,7 @@ if (!isset($_SESSION['nombre'])) {
         ?>
           <div class="empty-state">
             <div class="empty-icon">✅</div>
-            <p>No hay alertas pendientes.</p>
+            <p>No hay alertas registradas.</p>
           </div>
         <?php } ?>
       </div>

@@ -51,12 +51,12 @@ class AlertasController {
 
         while ($reg = $rspta->fetch(PDO::FETCH_OBJ)) {
             $data[] = array(
-                "0" => '<button class="btn btn-warning btn-xs" onclick="mostrar(' . $reg->id_alerta . ')"><i class="fa fa-pencil"></i></button>' . ' ' . '<button class="btn btn-danger btn-xs" onclick="eliminar(' . $reg->id_alerta . ')"><i class="fa fa-trash"></i></button>' . ' ' . (($reg->estado == 'Pendiente') ? '<button class="btn btn-success btn-xs" onclick="marcarRespondida(' . $reg->id_alerta . ')"><i class="fa fa-check"></i></button>' : ''),
-                "1" => $reg->nino,
-                "2" => $reg->fecha_alerta,
-                "3" => $reg->mensaje,
-                "4" => $reg->tipo,
-                "5" => ($reg->estado == 'Pendiente') ? '<span class="label bg-red">Pendiente</span>' : '<span class="label bg-green">Respondida</span>'
+                "0" => $reg->id_alerta,        // ID
+                "1" => $reg->nino,             // Niño
+                "2" => $reg->mensaje,          // Mensaje
+                "3" => $reg->tipo,             // Tipo
+                "4" => $reg->estado,           // Estado
+                "5" => $reg->fecha_alerta      // Fecha
             );
         }
         $results = array(

@@ -34,10 +34,27 @@ class Consultas{
 		if ($user_id) {
 			$sql="SELECT COUNT(*) total_ninos FROM ninos n
 			INNER JOIN usuarios u ON n.maestro_id=u.id_usuario
-			WHERE u.id_usuario='$user_id'";
+			WHERE u.id_usuario='$user_id' AND n.estado=1";
 		} else {
 			$sql="SELECT COUNT(*) total_ninos FROM ninos WHERE estado=1";
 		}
+		return ejecutarConsultaSimpleFila($sql);
+	}
+
+	//metodo para contar total de secciones
+	public function cantidad_secciones(){
+		$sql="SELECT COUNT(*) total_secciones FROM secciones";
+		return ejecutarConsultaSimpleFila($sql);
+	}
+
+	//metodo para contar alertas por estado
+	public function contar_alertas_por_estado(){
+		$sql="SELECT
+			SUM(CASE WHEN estado = 'Pendiente' THEN 1 ELSE 0 END) as pendientes,
+			SUM(CASE WHEN estado = 'Respondida' THEN 1 ELSE 0 END) as respondidas,
+			SUM(CASE WHEN DATE(fecha_alerta) = CURDATE() THEN 1 ELSE 0 END) as hoy,
+			COUNT(*) as total
+			FROM alertas";
 		return ejecutarConsultaSimpleFila($sql);
 	}
 
@@ -63,12 +80,22 @@ class Consultas{
 	//metodo para obtener niños con más alertas
 	public function ninos_con_mas_alertas($fecha_inicio, $fecha_fin, $limite = 5){
 		$sql="SELECT n.id_nino, n.nombre_completo, COUNT(al.id_alerta) as total_alertas
-		FROM ninos n 
-		INNER JOIN alertas al ON n.id_nino=al.id_nino 
+		FROM ninos n
+		INNER JOIN alertas al ON n.id_nino=al.id_nino
 		WHERE al.fecha_alerta BETWEEN '$fecha_inicio' AND '$fecha_fin'
 		AND al.estado='Pendiente'
-		GROUP BY n.id_nino, n.nombre_completo 
-		ORDER BY total_alertas DESC 
+		GROUP BY n.id_nino, n.nombre_completo
+		ORDER BY total_alertas DESC
+		LIMIT $limite";
+		return ejecutarConsulta($sql);
+	}
+
+	//metodo para obtener todas las alertas recientes
+	public function alertas_recientes($limite = 5){
+		$sql="SELECT al.id_alerta, al.fecha_alerta, al.mensaje, al.tipo, al.estado, n.nombre_completo
+		FROM alertas al
+		INNER JOIN ninos n ON al.id_nino=n.id_nino
+		ORDER BY al.fecha_alerta DESC
 		LIMIT $limite";
 		return ejecutarConsulta($sql);
 	}

@@ -40,30 +40,34 @@ function cancelarform(){
 
 //funcion listar
 function listar(){
-	tabla=$('#tbllistado').dataTable({
-		"aProcessing": true,//activamos el procedimiento del datatable
-		"aServerSide": true,//paginacion y filrado realizados por el server
-		dom: 'Bfrtip',//definimos los elementos del control de la tabla
-		buttons: [
-                  'copyHtml5',
-                  'excelHtml5',
-                  'csvHtml5',
-                  'pdf'
-		],
-		"ajax":
-		{
-			url:'../ajax/grupos.php?op=listar',
-			type: "get",
-			dataType : "json",
-			error:function(e){
-				console.log(e.responseText);
-			}
-		},
-		"bDestroy":true,
-		"iDisplayLength":10,//paginacion
-		"order":[[0,"desc"]]//ordenar (columna, orden)
-	}).DataTable();
+    // Definir las columnas para la tabla de grupos
+    const columns = [
+        { 
+            title: 'Opciones',
+            render: function(data, row, index) {
+                return '<div class="action-buttons">' +
+                    '<button class="btn-action btn-edit" onclick="mostrar(' + row[0] + ')">✏️</button>' +
+                    '<button class="btn-action ' + (row[3] === 'Activo' ? 'btn-deactivate' : 'btn-activate') + 
+                    '" onclick="' + (row[3] === 'Activo' ? 'desactivar' : 'activar') + '(' + row[0] + ')">' + 
+                    (row[3] === 'Activo' ? 'Desactivar' : 'Activar') + '</button>' +
+                    '</div>';
+            }
+        },
+        { title: 'Nombre' },
+        { title: 'Usuario' },
+        { title: 'Estado' }
+    ];
+    
+    tabla = initCustomTable('tbllistado', {
+        url: '../ajax/grupos.php?op=listar',
+        columns: columns,
+        itemsPerPage: 10,
+        onEdit: mostrar,
+        onActivate: activar,
+        onDeactivate: desactivar
+    });
 }
+
 //funcion para guardaryeditar
 function guardaryeditar(e){
      e.preventDefault();//no se activara la accion predeterminada 
@@ -80,7 +84,7 @@ function guardaryeditar(e){
      	success: function(datos){
      		bootbox.alert(datos);
      		mostrarform(false);
-     		tabla.ajax.reload();
+     		if (tabla) tabla.refresh();
      	}
      });
 
@@ -111,7 +115,7 @@ function desactivar(idgrupo){
 		if (result) {
 			$.post("../ajax/grupos.php?op=desactivar", {idgrupo : idgrupo}, function(e){
 				bootbox.alert(e);
-				tabla.ajax.reload();
+				if (tabla) tabla.refresh();
 			});
 		}
 	})
@@ -122,7 +126,7 @@ function activar(idgrupo){
 		if (result) {
 			$.post("../ajax/grupos.php?op=activar" , {idgrupo : idgrupo}, function(e){
 				bootbox.alert(e);
-				tabla.ajax.reload();
+				if (tabla) tabla.refresh();
 			});
 		}
 	})

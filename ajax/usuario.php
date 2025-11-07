@@ -1,5 +1,6 @@
 <?php
-session_start();
+if (strlen(session_id()) < 1)
+	session_start();
 require_once "../models/Usuario.php";
 require_once "../controllers/UsuarioController.php";
 
@@ -87,15 +88,15 @@ switch ($_GET["op"]) {
 
 		while ($reg=$rspta->fetch(PDO::FETCH_OBJ)) {
 			$data[]=array(
-				"0"=>($reg->condicion)?'<button class="btn btn-warning btn-xs" onclick="mostrar('.$reg->idusuario.')"><i class="fa fa-pencil"></i></button>'.' '.'<button class="btn btn-info btn-xs" onclick="mostrar_clave('.$reg->idusuario.')"><i class="fa fa-key"></i></button>'.' '.'<button class="btn btn-danger btn-xs" onclick="desactivar('.$reg->idusuario.')"><i class="fa fa-close"></i></button>':'<button class="btn btn-warning btn-xs" onclick="mostrar('.$reg->idusuario.')"><i class="fa fa-pencil"></i></button>'.' '.'<button class="btn btn-info btn-xs" onclick="mostrar_clave('.$reg->idusuario.')"><i class="fa fa-key"></i></button>'.' '.'<button class="btn btn-primary btn-xs" onclick="activar('.$reg->idusuario.')"><i class="fa fa-check"></i></button>',
-				"1"=>$reg->nombre,
-				"2"=>$reg->tipo_documento,
-				"3"=>$reg->num_documento,
-				"4"=>$reg->telefono,
-				"5"=>$reg->email,
-				"6"=>$reg->login,
-				"7"=>"<img src='../files/usuarios/".$reg->imagen."' height='50px' width='50px'>",
-				"8"=>($reg->condicion)?'<span class="label bg-green">Activado</span>':'<span class="label bg-red">Desactivado</span>'
+				"0"=>($reg->estado_usuario == 'Activo')?'<button class="btn btn-warning btn-xs" onclick="mostrar('.$reg->id_usuario.')"><i class="fa fa-pencil"></i></button>'.' '.'<button class="btn btn-info btn-xs" onclick="mostrar_clave('.$reg->id_usuario.')"><i class="fa fa-key"></i></button>'.' '.'<button class="btn btn-danger btn-xs" onclick="desactivar('.$reg->id_usuario.')"><i class="fa fa-close"></i></button>':'<button class="btn btn-warning btn-xs" onclick="mostrar('.$reg->id_usuario.')"><i class="fa fa-pencil"></i></button>'.' '.'<button class="btn btn-info btn-xs" onclick="mostrar_clave('.$reg->id_usuario.')"><i class="fa fa-key"></i></button>'.' '.'<button class="btn btn-primary btn-xs" onclick="activar('.$reg->id_usuario.')"><i class="fa fa-check"></i></button>',
+				"1"=>$reg->nombre_completo,
+				"2"=>$reg->rol,
+				"3"=>$reg->telefono,
+				"4"=>$reg->email,
+				"5"=>$reg->estado_usuario,
+				"rol_id"=>$reg->rol_id,
+				"id_usuario"=>$reg->id_usuario,
+				"nombre_completo"=>$reg->nombre_completo
 				);
 		}
 

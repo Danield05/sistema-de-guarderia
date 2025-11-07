@@ -6,19 +6,20 @@ function init(){
    listar();
 
    $("#formulario").on("submit",function(e){
-      guardaryeditar(e);
+   	guardaryeditar(e);
    })
 }
 
-
 //funcion limpiar
 function limpiar(){
-   $("#idpermiso").val("");
-   $("#nombre").val("");
+	$("#idpermiso").val("");
+	$("#nombre").val("");
+	$("#slug").val("");
 }
-
+ 
 //funcion mostrar formulario
 function mostrarform(flag){
+	limpiar();
 	if(flag){
 		$("#listadoregistros").hide();
 		$("#formularioregistros").show();
@@ -33,95 +34,97 @@ function mostrarform(flag){
 
 //cancelar form
 function cancelarform(){
-   limpiar();
-   mostrarform(false);
-   // Redireccionar al escritorio
-   window.location.href = "escritorio.php";
+	limpiar();
+	mostrarform(false);
 }
 
 //funcion listar
 function listar(){
-	tabla=$('#tbllistado').dataTable({
-		"aProcessing": true,//activamos el procedimiento del datatable
-		"aServerSide": true,//paginacion y filrado realizados por el server
-		dom: 'Bfrtip',//definimos los elementos del control de la tabla
-		buttons: [
-                  'copyHtml5',
-                  'excelHtml5',
-                  'csvHtml5',
-                  'pdf'
-		],
-		"ajax":
-		{
-			url:'../ajax/permiso.php?op=listar',
-			type: "get",
-			dataType : "json",
-			error:function(e){
-				console.log(e.responseText);
-			}
-		},
-		"bDestroy":true,
-		"iDisplayLength":5,//paginacion
-		"order":[[0,"desc"]]//ordenar (columna, orden)
-	}).DataTable();
+    // Definir las columnas para la tabla de permisos
+    const columns = [
+        { 
+            title: 'Opciones',
+            render: function(data, row, index) {
+                return '<div class="action-buttons">' +
+                    '<button class="btn-action btn-edit" onclick="mostrar(' + row[0] + ')">✏️</button>' +
+                    '<button class="btn-action ' + (row[3] === 'Activo' ? 'btn-deactivate' : 'btn-activate') + 
+                    '" onclick="' + (row[3] === 'Activo' ? 'desactivar' : 'activar') + '(' + row[0] + ')">' + 
+                    (row[3] === 'Activo' ? 'Desactivar' : 'Activar') + '</button>' +
+                    '</div>';
+            }
+        },
+        { title: 'Nombre' },
+        { title: 'Slug' },
+        { title: 'Estado' }
+    ];
+    
+    tabla = initCustomTable('tbllistado', {
+        url: '../ajax/permiso.php?op=listar',
+        columns: columns,
+        itemsPerPage: 10,
+        onEdit: mostrar,
+        onActivate: activar,
+        onDeactivate: desactivar
+    });
 }
 
-//funcion para guardar o editar
+//funcion para guardaryeditar
 function guardaryeditar(e){
-   e.preventDefault(); //No se activará la acción predeterminada del evento
-   $("#btnGuardar").prop("disabled",true);
-   var formData = new FormData($("#formulario")[0]);
+     e.preventDefault();//no se activara la accion predeterminada 
+     $("#btnGuardar").prop("disabled",true);
+     var formData=new FormData($("#formulario")[0]);
 
-   $.ajax({
-      url: "../ajax/permiso.php?op=guardaryeditar",
-      type: "POST",
-      data: formData,
-      contentType: false,
-      processData: false,
+     $.ajax({
+     	url: "../ajax/permiso.php?op=guardaryeditar",
+     	type: "POST",
+     	data: formData,
+     	contentType: false,
+     	processData: false,
 
-      success: function(datos){
-         bootbox.alert(datos);
-         mostrarform(false);
-         tabla.ajax.reload();
-      }
-   });
-   limpiar();
+     	success: function(datos){
+     		bootbox.alert(datos);
+     		mostrarform(false);
+     		if (tabla) tabla.refresh();
+     	}
+     });
+
+     limpiar();
 }
 
-//funcion mostrar
 function mostrar(idpermiso){
-   $.post("../ajax/permiso.php?op=mostrar",{idpermiso : idpermiso}, function(data, status)
-   {
-      data = JSON.parse(data);
-      mostrarform(true);
+	$.post("../ajax/permiso.php?op=mostrar",{idpermiso : idpermiso},
+		function(data,status)
+		{
+			data=JSON.parse(data);
+			mostrarform(true);
 
-      $("#idpermiso").val(data.idpermiso);
-      $("#nombre").val(data.nombre);
-   })
+			$("#nombre").val(data.nombre);
+			$("#slug").val(data.slug);
+			$("#idpermiso").val(data.idpermiso);
+		})
 }
 
 //funcion para desactivar
 function desactivar(idpermiso){
-   bootbox.confirm("¿Está seguro de desactivar el permiso?", function(result){
-      if(result){
-         $.post("../ajax/permiso.php?op=desactivar", {idpermiso : idpermiso}, function(e){
-            bootbox.alert(e);
-            tabla.ajax.reload();
-         });
-      }
-   })
+	bootbox.confirm("¿Esta seguro de desactivar este permiso?", function(result){
+		if (result) {
+			$.post("../ajax/permiso.php?op=desactivar", {idpermiso : idpermiso}, function(e){
+				bootbox.alert(e);
+				if (tabla) tabla.refresh();
+			});
+		}
+	})
 }
 
-//funcion para activar
 function activar(idpermiso){
-   bootbox.confirm("¿Está seguro de activar el permiso?", function(result){
-      if(result){
-         $.post("../ajax/permiso.php?op=activar", {idpermiso : idpermiso}, function(e){
-            bootbox.alert(e);
-            tabla.ajax.reload();
-         });
-      }
-   })
+	bootbox.confirm("¿Esta seguro de activar este permiso?" , function(result){
+		if (result) {
+			$.post("../ajax/permiso.php?op=activar" , {idpermiso : idpermiso}, function(e){
+				bootbox.alert(e);
+				if (tabla) tabla.refresh();
+			});
+		}
+	})
 }
 
 init();

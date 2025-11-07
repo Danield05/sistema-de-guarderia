@@ -2,111 +2,82 @@ var tabla;
 
 //funcion que se ejecuta al inicio
 function init(){
-	var  team_id = $("#idgrupo").val();
+   mostrarform(false);
    listar();
 
-    //cargamos los items al select cliente
-   $.post("../ajax/cursos.php?op=selectCursos",{idgrupo:team_id}, function(r){
-   	$("#curso").html(r);
-   	$('#curso').selectpicker('refresh');
-   });
-
-
-
-      $("#formulario").on("submit",function(e){
+   $("#formulario").on("submit",function(e){
    	guardaryeditar(e);
    })
-
 }
-
-//campturamos el id del curso la hacer cambio en el select curso
-$("#curso").change(function(){
-	var idcurso=$("#curso").val();
-	$("#idcurso").val(idcurso);
-   listar();
-
-});
-
-//FUNCION PARA VERIFICAR SI YA SE INGRESO UNA CALIFICACION DE UN CURSO
-function verificar(id){
-	var idcurso = $("#idcurso").val();
-
-	$.post("../ajax/calificaciones.php?op=verificar",{alumn_id:id, idcurso:idcurso},
-		function(data,status)
-		{
-				data=JSON.parse(data);
-				if(data==null && $("#idcurso").val()!=0){
-
-					$("#getCodeModal").modal('show');
-				 	$.post("../ajax/alumnos.php?op=mostrar",{idalumno : id},
-						function(data,status)
-						{
-						data=JSON.parse(data);
-						$("#alumn_id").val(data.id);
-						});
-				}else if(data=!null && $("#idcurso").val()!=0){
-					 $("#getCodeModal").modal('show');
-				 	$.post("../ajax/calificaciones.php?op=verificar",{alumn_id:id, idcurso:idcurso},
-					function(data,status)
-					{
-						data=JSON.parse(data);
-						$("#idcalificacion").val(data.id);
-						$("#alumn_id").val(data.alumn_id);
-						$("#valor").val(data.val);
-						$("#idcurso").val(data.block_id);
-					});
-
-				}else if($("#idcurso").val()==0){
-					bootbox.alert('Seleciona un curso');
-					}
-		})
-	limpiar();
-		
-}
-
 
 //funcion limpiar
 function limpiar(){
 	$("#idcalificacion").val("");
-	$("#alumn_id").val("");
-	$("#valor").val("");
-	$("#curso").selectpicker('refresh');
-	$('#getCodeModal').modal('hide')
+	$("#idnino").val("");
+	$("#idcurso").val("");
+	$("#calificacion").val("");
+	$("#periodo").val("");
+	$("#año").val("");
+}
+ 
+//funcion mostrar formulario
+function mostrarform(flag){
+	limpiar();
+	if(flag){
+		$("#listadoregistros").hide();
+		$("#formularioregistros").show();
+		$("#btnGuardar").prop("disabled",false);
+		$("#btnagregar").hide();
+	}else{
+		$("#listadoregistros").show();
+		$("#formularioregistros").hide();
+		$("#btnagregar").show();
+	}
+}
+
+//cancelar form
+function cancelarform(){
+	limpiar();
+	mostrarform(false);
 }
 
 //funcion listar
 function listar(){
-		var  team_id = $("#idgrupo").val();
-	tabla=$('#tbllistado').dataTable({
-		"aProcessing": true,//activamos el procedimiento del datatable
-		"aServerSide": true,//paginacion y filrado realizados por el server
-		dom: 'Bfrtip',//definimos los elementos del control de la tabla
-		buttons: [
-                  'copyHtml5',
-                  'excelHtml5',
-                  'csvHtml5',
-                  'pdf'
-		],
-		"ajax":
-		{
-			url:'../ajax/calificaciones.php?op=listar',
-			data:{idgrupo:team_id},
-			type: "get",
-			dataType : "json",
-			error:function(e){  
-				console.log(e.responseText);
-			}
-		},
-		"bDestroy":true,
-		"iDisplayLength":10,//paginacion
-		"order":[[0,"desc"]]//ordenar (columna, orden)
-	}).DataTable();
+    // Definir las columnas para la tabla de calificaciones
+    const columns = [
+        { 
+            title: 'Opciones',
+            render: function(data, row, index) {
+                return '<div class="action-buttons">' +
+                    '<button class="btn-action btn-edit" onclick="mostrar(' + row[0] + ')">✏️</button>' +
+                    '<button class="btn-action ' + (row[6] === 'Activo' ? 'btn-deactivate' : 'btn-activate') + 
+                    '" onclick="' + (row[6] === 'Activo' ? 'desactivar' : 'activar') + '(' + row[0] + ')">' + 
+                    (row[6] === 'Activo' ? 'Desactivar' : 'Activar') + '</button>' +
+                    '</div>';
+            }
+        },
+        { title: 'ID' },
+        { title: 'Niño' },
+        { title: 'Curso' },
+        { title: 'Calificación' },
+        { title: 'Período' },
+        { title: 'Estado' }
+    ];
+    
+    tabla = initCustomTable('tbllistado', {
+        url: '../ajax/calificaciones.php?op=listar',
+        columns: columns,
+        itemsPerPage: 10,
+        onEdit: mostrar,
+        onActivate: activar,
+        onDeactivate: desactivar
+    });
 }
 
-//FUNCION GUARDAR O EDITAR
+//funcion para guardaryeditar
 function guardaryeditar(e){
      e.preventDefault();//no se activara la accion predeterminada 
-     $("#btnGuardar").prop("disabled",false);
+     $("#btnGuardar").prop("disabled",true);
      var formData=new FormData($("#formulario")[0]);
 
      $.ajax({
@@ -119,12 +90,50 @@ function guardaryeditar(e){
      	success: function(datos){
      		bootbox.alert(datos);
      		mostrarform(false);
-     		tabla.ajax.reload();
+     		if (tabla) tabla.refresh();
      	}
      });
 
      limpiar();
 }
 
+function mostrar(idcalificacion){
+	$.post("../ajax/calificaciones.php?op=mostrar",{idcalificacion : idcalificacion},
+		function(data,status)
+		{
+			data=JSON.parse(data);
+			mostrarform(true);
 
-init();  
+			$("#idnino").val(data.idnino);
+			$("#idcurso").val(data.idcurso);
+			$("#calificacion").val(data.calificacion);
+			$("#periodo").val(data.periodo);
+			$("#año").val(data.año);
+			$("#idcalificacion").val(data.idcalificacion);
+		})
+}
+
+//funcion para desactivar
+function desactivar(idcalificacion){
+	bootbox.confirm("¿Esta seguro de desactivar esta calificación?", function(result){
+		if (result) {
+			$.post("../ajax/calificaciones.php?op=desactivar", {idcalificacion : idcalificacion}, function(e){
+				bootbox.alert(e);
+				if (tabla) tabla.refresh();
+			});
+		}
+	})
+}
+
+function activar(idcalificacion){
+	bootbox.confirm("¿Esta seguro de activar esta calificación?" , function(result){
+		if (result) {
+			$.post("../ajax/calificaciones.php?op=activar" , {idcalificacion : idcalificacion}, function(e){
+				bootbox.alert(e);
+				if (tabla) tabla.refresh();
+			});
+		}
+	})
+}
+
+init();

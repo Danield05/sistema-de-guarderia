@@ -1,10 +1,12 @@
 <?php
 require_once "../models/Alertas.php";
+require_once "../models/Consultas.php";
 require_once "../controllers/AlertasController.php";
 if (strlen(session_id())<1)
 	session_start();
 
 $alertas = new Alertas();
+$consulta = new Consultas();
 $alertasController = new AlertasController();
 
 $id_alerta = isset($_POST["idalerta"])? limpiarCadena($_POST["idalerta"]):"";
@@ -44,6 +46,11 @@ switch ($_GET["op"]) {
 
     case 'contarPendientes':
 		$alertasController->contarPendientes();
+		break;
+
+    case 'estadisticasCompletas':
+		$result = $consulta->contar_alertas_por_estado();
+		echo json_encode($result);
 		break;
 }
 ?>

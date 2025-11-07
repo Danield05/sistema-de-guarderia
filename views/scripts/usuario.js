@@ -3,37 +3,28 @@ var tabla;
 //funcion que se ejecuta al inicio
 function init(){
    mostrarform(false);
-   mostrarform_clave(false);
    listar();
-$("#formularioc").on("submit",function(c){
-   	editar_clave(c);
-   })
+
    $("#formulario").on("submit",function(e){
    	guardaryeditar(e);
    })
-
-   $("#imagenmuestra").hide();
-//mostramos los permisos
-$.post("../ajax/usuario.php?op=permisos&id=", function(r){
-	$("#permisos").html(r);
-});
 }
 
 //funcion limpiar
 function limpiar(){
+	$("#idusuario").val("");
 	$("#nombre").val("");
-    $("#num_documento").val("");
+	$("#tipo_documento").val("");
+	$("#num_documento").val("");
 	$("#direccion").val("");
 	$("#telefono").val("");
 	$("#email").val("");
 	$("#cargo").val("");
 	$("#login").val("");
 	$("#clave").val("");
-	$("#imagenmuestra").attr("src","");
-	$("#imagenactual").val("");
-	$("#idusuario").val("");
+	$("#imagen").val(""); 
 }
-
+ 
 //funcion mostrar formulario
 function mostrarform(flag){
 	limpiar();
@@ -48,58 +39,46 @@ function mostrarform(flag){
 		$("#btnagregar").show();
 	}
 }
-function mostrarform_clave(flag){
-	limpiar();
-	if(flag){
-		$("#listadoregistros").hide();
-		$("#formulario_clave").show();
-		$("#btnGuardar_clave").prop("disabled",false);
-		$("#btnagregar").hide();
-	}else{
-		$("#listadoregistros").show();
-		$("#formulario_clave").hide();
-		$("#btnagregar").show();
-	}
-}
+
 //cancelar form
 function cancelarform(){
-	$("#claves").show();
 	limpiar();
 	mostrarform(false);
-	// Redireccionar al escritorio
-	window.location.href = "escritorio.php";
 }
-function cancelarform_clave(){
-	limpiar();
-	mostrarform_clave(false);
 
-}
 //funcion listar
 function listar(){
-	tabla=$('#tbllistado').dataTable({
-		"aProcessing": true,//activamos el procedimiento del datatable
-		"aServerSide": true,//paginacion y filrado realizados por el server
-		dom: 'Bfrtip',//definimos los elementos del control de la tabla
-		buttons: [
-                  'copyHtml5',
-                  'excelHtml5',
-                  'csvHtml5',
-                  'pdf'
-		],
-		"ajax":
-		{
-			url:'../ajax/usuario.php?op=listar',
-			type: "get",
-			dataType : "json",
-			error:function(e){
-				console.log(e.responseText);
-			}
-		},
-		"bDestroy":true,
-		"iDisplayLength":5,//paginacion
-		"order":[[0,"desc"]]//ordenar (columna, orden)
-	}).DataTable();
+    // Definir las columnas para la tabla de usuarios
+    const columns = [
+        { 
+            title: 'Opciones',
+            render: function(data, row, index) {
+                return '<div class="action-buttons">' +
+                    '<button class="btn-action btn-edit" onclick="mostrar(' + row[8] + ')">✏️</button>' +
+                    '<button class="btn-action btn-edit" onclick="mostrar_clave(' + row[8] + ')">🔑</button>' +
+                    '<button class="btn-action ' + (row[5] === 'Activo' ? 'btn-deactivate' : 'btn-activate') + 
+                    '" onclick="' + (row[5] === 'Activo' ? 'desactivar' : 'activar') + '(' + row[8] + ')">' + 
+                    (row[5] === 'Activo' ? 'Desactivar' : 'Activar') + '</button>' +
+                    '</div>';
+            }
+        },
+        { title: 'Nombre Completo' },
+        { title: 'Rol' },
+        { title: 'Teléfono' },
+        { title: 'Email' },
+        { title: 'Estado' }
+    ];
+    
+    tabla = initCustomTable('tbllistado', {
+        url: '../ajax/usuario.php?op=listar',
+        columns: columns,
+        itemsPerPage: 10,
+        onEdit: mostrar,
+        onActivate: activar,
+        onDeactivate: desactivar
+    });
 }
+
 //funcion para guardaryeditar
 function guardaryeditar(e){
      e.preventDefault();//no se activara la accion predeterminada 
@@ -116,66 +95,30 @@ function guardaryeditar(e){
      	success: function(datos){
      		bootbox.alert(datos);
      		mostrarform(false);
-     		tabla.ajax.reload();
-     	}
-     });
-$("#claves").show();
-     limpiar();
-}
-
-function editar_clave(c){
-     c.preventDefault();//no se activara la accion predeterminada 
-     $("#btnGuardar_clave").prop("disabled",true);
-     var formData=new FormData($("#formularioc")[0]);
-
-     $.ajax({
-     	url: "../ajax/usuario.php?op=editar_clave",
-     	type: "POST",
-     	data: formData,
-     	contentType: false,
-     	processData: false,
-
-     	success: function(datos){
-     		bootbox.alert(datos);
-     		mostrarform_clave(false);
-     		tabla.ajax.reload();
+     		if (tabla) tabla.refresh();
      	}
      });
 
      limpiar();
 }
+
 function mostrar(idusuario){
 	$.post("../ajax/usuario.php?op=mostrar",{idusuario : idusuario},
 		function(data,status)
 		{
 			data=JSON.parse(data);
 			mostrarform(true);
-			if ($("#idusuario").val(data.idusuario).length==0) {
-           	$("#claves").show();
-           	
-           }else{
-			$("#claves").hide();
-			}
-			$("#nombre").val(data.nombre);
-            $("#tipo_documento").val(data.tipo_documento);
-            $("#tipo_documento").selectpicker('refresh');
-            $("#num_documento").val(data.num_documento);
-            $("#direccion").val(data.direccion);
-            $("#telefono").val(data.telefono);
-            $("#email").val(data.email);
-            $("#cargo").val(data.cargo);
-            $("#login").val(data.login);
-        
-            $("#imagenmuestra").show();
-            $("#imagenmuestra").attr("src","../files/usuarios/"+data.imagen);
-            $("#imagenactual").val(data.imagen);
-            $("#idusuario").val(data.idusuario);
 
- 
-		});
-	$.post("../ajax/usuario.php?op=permisos&id="+idusuario, function(r){
-	$("#permisos").html(r);
-});
+			$("#nombre").val(data.nombre_completo);
+			$("#tipo_documento").val(data.tipo_documento);
+			$("#num_documento").val(data.num_documento);
+			$("#direccion").val(data.direccion);
+			$("#telefono").val(data.telefono);
+			$("#email").val(data.email);
+			$("#cargo").val(data.cargo);
+			$("#login").val(data.login);
+			$("#idusuario").val(data.id_usuario);
+		})
 }
 
 function mostrar_clave(idusuario){
@@ -183,34 +126,31 @@ function mostrar_clave(idusuario){
 		function(data,status)
 		{
 			data=JSON.parse(data);
-			mostrarform_clave(true);
-            $("#clavec").val(data.clave);
-            $("#idusuarioc").val(data.idusuario);
-		});
+			bootbox.alert("Password actual: "+data.password);
+		})
 }
 
 //funcion para desactivar
 function desactivar(idusuario){
-	bootbox.confirm("¿Esta seguro de desactivar este dato?", function(result){
+	bootbox.confirm("¿Esta seguro de desactivar este usuario?", function(result){
 		if (result) {
 			$.post("../ajax/usuario.php?op=desactivar", {idusuario : idusuario}, function(e){
 				bootbox.alert(e);
-				tabla.ajax.reload();
+				if (tabla) tabla.refresh();
 			});
 		}
 	})
 }
 
 function activar(idusuario){
-	bootbox.confirm("¿Esta seguro de activar este dato?" , function(result){
+	bootbox.confirm("¿Esta seguro de activar este usuario?" , function(result){
 		if (result) {
-			$.post("../ajax/usuario.php?op=activar", {idusuario : idusuario}, function(e){
+			$.post("../ajax/usuario.php?op=activar" , {idusuario : idusuario}, function(e){
 				bootbox.alert(e);
-				tabla.ajax.reload();
+				if (tabla) tabla.refresh();
 			});
 		}
 	})
 }
-
 
 init();

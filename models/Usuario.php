@@ -107,5 +107,26 @@ class Usuario{
 		$estados = new EstadosUsuario();
 		return $estados->listar();
 	}
+
+	public function editar_clave($id_usuario, $password){
+		$sql="UPDATE usuarios SET password='$password' WHERE id_usuario='$id_usuario'";
+		return ejecutarConsulta($sql);
+	}
+
+	public function editar_password($id_usuario, $password){
+		$sql="UPDATE usuarios SET password='$password' WHERE id_usuario='$id_usuario'";
+		return ejecutarConsulta($sql);
+	}
+
+	public function mostrar_clave($id_usuario){
+		$sql="SELECT password FROM usuarios WHERE id_usuario='$id_usuario'";
+		return ejecutarConsultaSimpleFila($sql);
+	}
+
+	// Método para listar permisos marcados (usado en gestión de permisos)
+	public function listarmarcados($id_usuario){
+		$sql="SELECT * FROM usuario_permiso WHERE id_usuario='$id_usuario'";
+		return ejecutarConsulta($sql);
+	}
 }
 ?>

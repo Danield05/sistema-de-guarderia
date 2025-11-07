@@ -103,5 +103,71 @@ class AsistenciaController {
         $rspta = $asistencia->verificarAsistencia($fecha, $id_nino, $estado_id);
         echo json_encode($rspta);
     }
+
+    public function listarConFiltros() {
+        $asistencia = new Asistencia();
+        $aula_id = isset($_POST["aula_id"]) ? limpiarCadena($_POST["aula_id"]) : "";
+        $seccion_id = isset($_POST["seccion_id"]) ? limpiarCadena($_POST["seccion_id"]) : "";
+        $fecha_inicio = isset($_POST["fecha_inicio"]) ? limpiarCadena($_POST["fecha_inicio"]) : "";
+        $fecha_fin = isset($_POST["fecha_fin"]) ? limpiarCadena($_POST["fecha_fin"]) : "";
+        $estado_id = isset($_POST["estado_id"]) ? limpiarCadena($_POST["estado_id"]) : "";
+        
+        $rspta = $asistencia->listarConFiltros($aula_id, $seccion_id, $fecha_inicio, $fecha_fin, $estado_id);
+        $data = Array();
+        
+        while ($reg = $rspta->fetch(PDO::FETCH_OBJ)) {
+            $data[] = array(
+                "0" => $reg->id_asistencia,
+                "1" => $reg->nombre_completo,
+                "2" => $reg->fecha,
+                "3" => $reg->nombre_estado,
+                "4" => $reg->observaciones
+            );
+        }
+        $results = array(
+            "sEcho" => 1,
+            "iTotalRecords" => count($data),
+            "iTotalDisplayRecords" => count($data),
+            "aaData" => $data
+        );
+        echo json_encode($results);
+    }
+
+    public function obtenerNinos() {
+        $asistencia = new Asistencia();
+        $aula_id = isset($_POST["aula_id"]) ? limpiarCadena($_POST["aula_id"]) : "";
+        $seccion_id = isset($_POST["seccion_id"]) ? limpiarCadena($_POST["seccion_id"]) : "";
+        
+        $rspta = $asistencia->obtenerNinos($aula_id, $seccion_id);
+        echo json_encode($rspta->fetchAll(PDO::FETCH_OBJ));
+    }
+
+    public function generarReporte() {
+        $asistencia = new Asistencia();
+        $formato = isset($_GET["formato"]) ? limpiarCadena($_GET["formato"]) : "csv";
+        $aula_id = isset($_GET["aula_id"]) ? limpiarCadena($_GET["aula_id"]) : "";
+        $seccion_id = isset($_GET["seccion_id"]) ? limpiarCadena($_GET["seccion_id"]) : "";
+        $fecha_inicio = isset($_GET["fecha_inicio"]) ? limpiarCadena($_GET["fecha_inicio"]) : "";
+        $fecha_fin = isset($_GET["fecha_fin"]) ? limpiarCadena($_GET["fecha_fin"]) : "";
+        $estado_id = isset($_GET["estado_id"]) ? limpiarCadena($_GET["estado_id"]) : "";
+        $vista_previa = isset($_POST["vista_previa"]) ? true : false;
+        
+        // Si es vista previa, devolver directamente el HTML
+        if ($vista_previa && $formato == 'pdf') {
+            $html = $asistencia->generarReporte($formato, $aula_id, $seccion_id, $fecha_inicio, $fecha_fin, $estado_id, $vista_previa);
+            echo $html;
+        } else {
+            // Para descargas reales
+            $asistencia->generarReporte($formato, $aula_id, $seccion_id, $fecha_inicio, $fecha_fin, $estado_id, $vista_previa);
+        }
+    }
+
+    public function obtenerEstadisticas() {
+        $asistencia = new Asistencia();
+        $fecha = isset($_POST["fecha"]) ? limpiarCadena($_POST["fecha"]) : date('Y-m-d');
+        
+        $estadisticas = $asistencia->obtenerEstadisticas($fecha);
+        echo json_encode($estadisticas);
+    }
 }
 ?>

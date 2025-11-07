@@ -49,10 +49,9 @@ class SeccionesController {
 
         while ($reg = $rspta->fetch(PDO::FETCH_OBJ)) {
             $data[] = array(
-                "0" => ($reg->estado) ? '<button class="btn btn-warning btn-xs" onclick="mostrar(' . $reg->id_seccion . ')"><i class="fa fa-pencil"></i></button>' . ' ' . '<button class="btn btn-danger btn-xs" onclick="desactivar(' . $reg->id_seccion . ')"><i class="fa fa-close"></i></button>' : '<button class="btn btn-warning btn-xs" onclick="mostrar(' . $reg->id_seccion . ')"><i class="fa fa-pencil"></i></button>' . ' ' . '<button class="btn btn-primary btn-xs" onclick="activar(' . $reg->id_seccion . ')"><i class="fa fa-check"></i></button>',
-                "1" => $reg->nombre_seccion,
-                "2" => $reg->nombre_aula,
-                "3" => $reg->aula_id
+                '<button class="btn btn-outline-warning btn-sm" style="margin-right: 0.5rem; border-radius: 20px;" onclick="mostrar(' . $reg->id_seccion . ')"><i class="fa fa-pencil"></i> Editar</button>' . ' ' . '<button class="btn btn-outline-danger btn-sm" style="border-radius: 20px;" onclick="desactivar(' . $reg->id_seccion . ')"><i class="fa fa-trash"></i> Eliminar</button>',
+                $reg->nombre_seccion,
+                $reg->nombre_aula
             );
         }
         $results = array(
@@ -72,8 +71,9 @@ class SeccionesController {
 
         while ($reg = $rspta->fetch(PDO::FETCH_OBJ)) {
             $data[] = array(
-                "0" => $reg->id_seccion,
-                "1" => $reg->nombre_seccion
+                'id_seccion' => $reg->id_seccion,
+                'nombre_seccion' => $reg->nombre_seccion,
+                'aula_id' => $reg->aula_id
             );
         }
         echo json_encode($data);

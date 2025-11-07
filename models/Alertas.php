@@ -46,10 +46,9 @@ class Alertas{
 
 	//listar registros
 	public function listar(){
-		$sql="SELECT a.id_alerta, a.fecha_alerta, a.mensaje, a.tipo, a.estado, 
-		n.nombre_completo as nino, n.id_nino 
-		FROM alertas a 
-		LEFT JOIN ninos n ON a.id_nino=n.id_nino 
+		$sql="SELECT a.id_alerta, n.nombre_completo as nino, a.mensaje, a.tipo, a.estado, a.fecha_alerta
+		FROM alertas a
+		LEFT JOIN ninos n ON a.id_nino=n.id_nino
 		ORDER BY a.fecha_alerta DESC, a.id_alerta DESC";
 		return ejecutarConsulta($sql);
 	}

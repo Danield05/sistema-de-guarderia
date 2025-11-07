@@ -9,7 +9,7 @@ if (!isset($_SESSION['nombre'])) {
 
 require 'header.php';
 
-if ($_SESSION['grupos']==1) {
+if ((isset($_SESSION['grupos']) && $_SESSION['grupos']==1) || (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Administrador')) {
 
  ?>
     <div class="content-wrapper">

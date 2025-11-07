@@ -10,7 +10,7 @@ if (!isset($_SESSION['nombre'])) {
 $_SESSION['modern_layout'] = true;
 
 require 'header.php';
-if ($_SESSION['acceso']==1) {
+if ((isset($_SESSION['acceso']) && $_SESSION['acceso']==1) || (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Administrador')) {
 ?>
 <main class="container-fluid py-5 px-3 main-dashboard" style="padding-top: 3rem; padding-bottom: 3rem;">
       <!-- Header de la página -->

@@ -14,7 +14,7 @@ function init(){
 function limpiar(){
 	$("#idcurso").val("");
 	$("#nombre").val("");
-	$("#descripcion").val(""); 
+	$("#descripcion").val("");
 }
  
 //funcion mostrar formulario
@@ -40,32 +40,34 @@ function cancelarform(){
 
 //funcion listar
 function listar(){
-	var  team_id = $("#idgrupo").val();
-	tabla=$('#tbllistado').dataTable({
-		"aProcessing": true,//activamos el procedimiento del datatable
-		"aServerSide": true,//paginacion y filrado realizados por el server
-		dom: 'Bfrtip',//definimos los elementos del control de la tabla
-		buttons: [
-                  'copyHtml5',
-                  'excelHtml5',
-                  'csvHtml5',
-                  'pdf'
-		],
-		"ajax":
-		{
-			url:'../ajax/cursos.php?op=listar',
-			data:{idgrupo:team_id},
-			type: "get",
-			dataType : "json",
-			error:function(e){  
-				console.log(e.responseText);
-			}
-		},
-		"bDestroy":true,
-		"iDisplayLength":10,//paginacion
-		"order":[[0,"desc"]]//ordenar (columna, orden)
-	}).DataTable();
+    // Definir las columnas para la tabla de cursos
+    const columns = [
+        { 
+            title: 'Opciones',
+            render: function(data, row, index) {
+                return '<div class="action-buttons">' +
+                    '<button class="btn-action btn-edit" onclick="mostrar(' + row[0] + ')">✏️</button>' +
+                    '<button class="btn-action ' + (row[3] === 'Activo' ? 'btn-deactivate' : 'btn-activate') + 
+                    '" onclick="' + (row[3] === 'Activo' ? 'desactivar' : 'activar') + '(' + row[0] + ')">' + 
+                    (row[3] === 'Activo' ? 'Desactivar' : 'Activar') + '</button>' +
+                    '</div>';
+            }
+        },
+        { title: 'Nombre' },
+        { title: 'Descripción' },
+        { title: 'Estado' }
+    ];
+    
+    tabla = initCustomTable('tbllistado', {
+        url: '../ajax/cursos.php?op=listar',
+        columns: columns,
+        itemsPerPage: 10,
+        onEdit: mostrar,
+        onActivate: activar,
+        onDeactivate: desactivar
+    });
 }
+
 //funcion para guardaryeditar
 function guardaryeditar(e){
      e.preventDefault();//no se activara la accion predeterminada 
@@ -78,48 +80,48 @@ function guardaryeditar(e){
      	data: formData,
      	contentType: false,
      	processData: false,
- 
+
      	success: function(datos){
      		bootbox.alert(datos);
      		mostrarform(false);
-     		tabla.ajax.reload();
+     		if (tabla) tabla.refresh();
      	}
      });
 
      limpiar();
 }
 
-function mostrar(id){
-	$.post("../ajax/cursos.php?op=mostrar",{idcurso : id},
+function mostrar(idcurso){
+	$.post("../ajax/cursos.php?op=mostrar",{idcurso : idcurso},
 		function(data,status)
 		{
 			data=JSON.parse(data);
 			mostrarform(true);
 
-			$("#nombre").val(data.name);
-			$("#idcurso").val(data.id);
+			$("#nombre").val(data.nombre);
+			$("#descripcion").val(data.descripcion);
+			$("#idcurso").val(data.idcurso);
 		})
 }
 
-
 //funcion para desactivar
-function desactivar(id){
-	bootbox.confirm("¿Esta seguro de desactivar este dato?", function(result){
+function desactivar(idcurso){
+	bootbox.confirm("¿Esta seguro de desactivar este curso?", function(result){
 		if (result) {
-			$.post("../ajax/cursos.php?op=desactivar", {id : id}, function(e){
+			$.post("../ajax/cursos.php?op=desactivar", {idcurso : idcurso}, function(e){
 				bootbox.alert(e);
-				tabla.ajax.reload();
+				if (tabla) tabla.refresh();
 			});
 		}
 	})
 }
 
-function activar(id){
-	bootbox.confirm("¿Esta seguro de activar este dato?" , function(result){
+function activar(idcurso){
+	bootbox.confirm("¿Esta seguro de activar este curso?" , function(result){
 		if (result) {
-			$.post("../ajax/cursos.php?op=activar" , {id : id}, function(e){
+			$.post("../ajax/cursos.php?op=activar" , {idcurso : idcurso}, function(e){
 				bootbox.alert(e);
-				tabla.ajax.reload();
+				if (tabla) tabla.refresh();
 			});
 		}
 	})
