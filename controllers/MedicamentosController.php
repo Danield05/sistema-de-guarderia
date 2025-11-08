@@ -50,7 +50,8 @@ class MedicamentosController {
                 "2" => $reg->nombre_medicamento,
                 "3" => $reg->dosis,
                 "4" => $reg->frecuencia,
-                "5" => $reg->observaciones
+                "5" => $reg->observaciones,
+                "6" => $reg->id_medicamento
             );
         }
         $results = array(

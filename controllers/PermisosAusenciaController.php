@@ -56,7 +56,8 @@ class PermisosAusenciaController {
                 "5" => $reg->fecha_fin,
                 "6" => $reg->hora_inicio,
                 "7" => $reg->hora_fin,
-                "8" => $reg->archivo_permiso
+                "8" => $reg->archivo_permiso,
+                "9" => $reg->id_permiso
             );
         }
         $results = array(

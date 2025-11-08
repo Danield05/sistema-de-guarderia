@@ -46,7 +46,8 @@ class AlergiasController {
                 "0" => '<button class="btn btn-warning btn-xs" onclick="mostrar(' . $reg->id_alergia . ')"><i class="fa fa-pencil"></i></button>' . ' ' . '<button class="btn btn-danger btn-xs" onclick="eliminar(' . $reg->id_alergia . ')"><i class="fa fa-trash"></i></button>',
                 "1" => $reg->nino,
                 "2" => $reg->tipo_alergia,
-                "3" => $reg->descripcion
+                "3" => $reg->descripcion,
+                "4" => $reg->id_alergia
             );
         }
         $results = array(

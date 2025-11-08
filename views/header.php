@@ -247,9 +247,10 @@ if (strlen(session_id()) < 1) {
                     <?php
                     $mostrar_gestion_academica = (isset($_SESSION['aulas']) && $_SESSION['aulas'] == 1) ||
                                                 (isset($_SESSION['secciones']) && $_SESSION['secciones'] == 1) ||
-                                                (isset($_SESSION['ninos']) && $_SESSION['ninos'] == 1);
+                                                (isset($_SESSION['ninos']) && $_SESSION['ninos'] == 1) ||
+                                                (isset($_SESSION['asistencia']) && $_SESSION['asistencia'] == 1);
                     ?>
-                    
+
                     <?php if ($mostrar_gestion_academica): ?>
                         <li class="dropdown custom-dropdown">
                             <a href="#" class="nav-button dropdown-toggle" role="button" aria-haspopup="true" aria-expanded="false">
@@ -259,42 +260,66 @@ if (strlen(session_id()) < 1) {
                                 <?php if (isset($_SESSION['aulas']) && $_SESSION['aulas'] == 1): ?>
                                     <li><a href="aulas.php" class="dropdown-item"><i class="fa fa-university"></i> Aulas</a></li>
                                 <?php endif; ?>
-                                
+
                                 <?php if (isset($_SESSION['secciones']) && $_SESSION['secciones'] == 1): ?>
                                     <li><a href="secciones.php" class="dropdown-item"><i class="fa fa-sitemap"></i> Secciones</a></li>
                                 <?php endif; ?>
-                                
+
                                 <?php if (isset($_SESSION['ninos']) && $_SESSION['ninos'] == 1): ?>
                                     <li><a href="ninos.php" class="dropdown-item"><i class="fa fa-child"></i> Niños</a></li>
+                                <?php endif; ?>
+
+                                <?php if (isset($_SESSION['asistencia']) && $_SESSION['asistencia'] == 1): ?>
+                                    <li><a href="asistencia.php" class="dropdown-item"><i class="fa fa-calendar-check"></i> Control de Asistencias</a></li>
+                                <?php endif; ?>
+
+                                <?php if (isset($_SESSION['escritorio']) && $_SESSION['escritorio'] == 1): ?>
+                                    <li><a href="responsables_retiro.php" class="dropdown-item"><i class="fa fa-users"></i> Responsables de Retiro</a></li>
                                 <?php endif; ?>
                             </ul>
                         </li>
                     <?php endif; ?>
                     
-                    <!-- Administración del Sistema -->
-                    <?php if (isset($_SESSION['acceso']) && $_SESSION['acceso'] == 1): ?>
-                        <li><a href="usuario.php" class="nav-button"><i class="fa fa-user"></i> Usuarios</a></li>
-                    <?php endif; ?>
-                    
                     <!-- Administración y Alertas (Dropdown) -->
                     <?php
-                    $mostrar_admin_alertas = (isset($_SESSION['acceso']) && $_SESSION['acceso'] == 1) ||
-                                           (isset($_SESSION['escritorio']) && $_SESSION['escritorio'] == 1);
+                    $mostrar_administracion = (isset($_SESSION['acceso']) && $_SESSION['acceso'] == 1) ||
+                                            (isset($_SESSION['escritorio']) && $_SESSION['escritorio'] == 1);
                     ?>
-                    
-                    <?php if ($mostrar_admin_alertas): ?>
+
+                    <?php if ($mostrar_administracion): ?>
                         <li class="dropdown custom-dropdown">
                             <a href="#" class="nav-button dropdown-toggle" role="button" aria-haspopup="true" aria-expanded="false">
                                 <i class="fa fa-cogs"></i> Administración <span class="custom-caret"></span>
                             </a>
                             <ul class="dropdown-menu">
                                 <?php if (isset($_SESSION['acceso']) && $_SESSION['acceso'] == 1): ?>
+                                    <li><a href="usuario.php" class="dropdown-item"><i class="fa fa-users"></i> Usuarios</a></li>
                                     <li><a href="permiso.php" class="dropdown-item"><i class="fa fa-key"></i> Permisos</a></li>
                                 <?php endif; ?>
-                                
+
                                 <?php if (isset($_SESSION['escritorio']) && $_SESSION['escritorio'] == 1): ?>
                                     <li><a href="alertas.php" class="dropdown-item"><i class="fa fa-bell"></i> Alertas</a></li>
+                                    <li><a href="permisos_ausencia.php" class="dropdown-item"><i class="fa fa-calendar-times"></i> Permisos de Ausencia</a></li>
                                 <?php endif; ?>
+                            </ul>
+                        </li>
+                    <?php endif; ?>
+
+                    <!-- Información Médica (Dropdown) -->
+                    <?php
+                    $mostrar_info_medica = (isset($_SESSION['escritorio']) && $_SESSION['escritorio'] == 1) ||
+                                         (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Médico/Enfermería');
+                    ?>
+
+                    <?php if ($mostrar_info_medica): ?>
+                        <li class="dropdown custom-dropdown">
+                            <a href="#" class="nav-button dropdown-toggle" role="button" aria-haspopup="true" aria-expanded="false">
+                                <i class="fa fa-medkit"></i> Información Médica <span class="custom-caret"></span>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a href="enfermedades.php" class="dropdown-item"><i class="fa fa-stethoscope"></i> Enfermedades</a></li>
+                                <li><a href="medicamentos.php" class="dropdown-item"><i class="fa fa-pills"></i> Medicamentos</a></li>
+                                <li><a href="alergias.php" class="dropdown-item"><i class="fa fa-allergies"></i> Alergias</a></li>
                             </ul>
                         </li>
                     <?php endif; ?>

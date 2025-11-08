@@ -1,4 +1,6 @@
 <?php
+require_once "../config/global.php";
+require_once "../config/Conexion.php";
 require_once "../models/Enfermedades.php";
 if (strlen(session_id()) < 1)
     session_start();
@@ -48,7 +50,8 @@ class EnfermedadesController {
                 "1" => $reg->nino,
                 "2" => $reg->nombre_enfermedad,
                 "3" => $reg->descripcion,
-                "4" => $reg->fecha_diagnostico
+                "4" => $reg->fecha_diagnostico,
+                "5" => $reg->id_enfermedad
             );
         }
         $results = array(

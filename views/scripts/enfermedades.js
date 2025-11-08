@@ -1,0 +1,149 @@
+var tabla;
+
+//funcion que se ejecuta al inicio
+function init(){
+   mostrarform(false);
+   listar();
+
+   $("#formulario").on("submit",function(e){
+   	guardaryeditar(e);
+   })
+
+   // Cargar lista de niños al iniciar
+   cargarNinos();
+}
+
+//funcion limpiar
+function limpiar(){
+	$("#id_enfermedad").val("");
+	$("#id_nino").val("");
+	$("#nombre_enfermedad").val("");
+	$("#descripcion").val("");
+	$("#fecha_diagnostico").val("");
+}
+
+//funcion mostrar formulario
+function mostrarform(flag){
+	limpiar();
+	if(flag){
+		$("#listadoregistros").hide();
+		$("#formularioregistros").show();
+		$("#btnGuardar").prop("disabled",false);
+		$("#btnagregar").hide();
+	}else{
+		$("#listadoregistros").show();
+		$("#formularioregistros").hide();
+		$("#btnagregar").show();
+	}
+}
+
+//cancelar form
+function cancelarform(){
+	limpiar();
+	mostrarform(false);
+}
+
+//funcion listar
+function listar(){
+    $.ajax({
+        url: "../ajax/enfermedades.php?op=listar",
+        type: "POST",
+        dataType: "json",
+        success: function(data) {
+            var tbody = $('#enfermedadesTableBody');
+            tbody.empty();
+
+            if (data.aaData && data.aaData.length > 0) {
+                $.each(data.aaData, function(index, enfermedad) {
+                    var acciones = '<button class="btn btn-outline-warning btn-sm" style="margin-right: 0.5rem; border-radius: 20px;" onclick="mostrar(' + enfermedad[5] + ')"><i class="fa fa-pencil"></i> Editar</button>' +
+                                   '<button class="btn btn-outline-danger btn-sm" style="border-radius: 20px;" onclick="eliminar(' + enfermedad[5] + ')"><i class="fa fa-trash"></i> Eliminar</button>';
+
+                    var row = '<tr style="border-bottom: 1px solid rgba(0,0,0,0.05); transition: all 0.3s ease;">' +
+                        '<td style="padding: 1rem;">' + acciones + '</td>' +
+                        '<td style="padding: 1rem; font-weight: 600; color: #3c8dbc;">' + enfermedad[1] + '</td>' +
+                        '<td style="padding: 1rem;">' + enfermedad[2] + '</td>' +
+                        '<td style="padding: 1rem;">' + (enfermedad[3] || '') + '</td>' +
+                        '<td style="padding: 1rem;">' + enfermedad[4] + '</td>' +
+                        '</tr>';
+
+                    tbody.append(row);
+                });
+            } else {
+                tbody.append('<tr><td colspan="5" style="text-align: center; padding: 2rem; color: #666;">No hay enfermedades registradas</td></tr>');
+            }
+        },
+        error: function(xhr, status, error) {
+            $('#enfermedadesTableBody').html('<tr><td colspan="5" style="text-align: center; padding: 2rem; color: #dc3545;">Error al cargar los datos</td></tr>');
+        }
+    });
+}
+
+//funcion para guardaryeditar
+function guardaryeditar(e){
+     e.preventDefault();
+     $("#btnGuardar").prop("disabled",true);
+     var formData=new FormData($("#formulario")[0]);
+
+     $.ajax({
+      	url: "../ajax/enfermedades.php?op=guardaryeditar",
+      	type: "POST",
+      	data: formData,
+      	contentType: false,
+      	processData: false,
+
+      	success: function(datos){
+      		bootbox.alert(datos);
+      		$('#modalEnfermedad').modal('hide');
+      		listar();
+      	},
+      	error: function(xhr, status, error) {
+      		bootbox.alert("Error al guardar");
+      	},
+      	complete: function() {
+      		$("#btnGuardar").prop("disabled", false);
+      		$("#btnGuardar").html('<i class="fa fa-save"></i> Guardar Enfermedad');
+      	}
+     });
+
+     limpiar();
+}
+
+function mostrar(id_enfermedad){
+	$.post("../ajax/enfermedades.php?op=mostrar",{id_enfermedad : id_enfermedad},
+		function(data,status)
+		{
+			data=JSON.parse(data);
+			$('#modalEnfermedadLabel').html('<i class="fa fa-edit"></i> Editar Enfermedad');
+			$('#modalEnfermedad').modal('show');
+
+			$("#id_enfermedad").val(data.id_enfermedad);
+			$("#id_nino").val(data.id_nino);
+			$("#nombre_enfermedad").val(data.nombre_enfermedad);
+			$("#descripcion").val(data.descripcion);
+			$("#fecha_diagnostico").val(data.fecha_diagnostico);
+		})
+		.fail(function(xhr, status, error) {
+			alert("Error al cargar los datos de la enfermedad");
+		});
+}
+
+//funcion para eliminar
+function eliminar(id_enfermedad){
+	bootbox.confirm("¿Esta seguro de eliminar esta enfermedad?", function(result){
+		if (result) {
+			$.post("../ajax/enfermedades.php?op=eliminar", {id_enfermedad : id_enfermedad}, function(e){
+				bootbox.alert(e);
+				listar();
+			});
+		}
+	})
+}
+
+// Función para cargar la lista de niños
+function cargarNinos(){
+    $.post("../ajax/ninos.php?op=select", function(r){
+        $("#id_nino").html(r);
+    });
+}
+
+init();

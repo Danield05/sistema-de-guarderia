@@ -4,6 +4,9 @@ if (strlen(session_id()) < 1)
 require_once "../models/Usuario.php";
 require_once "../controllers/UsuarioController.php";
 
+// Debug: Verificar que se está ejecutando
+// error_log("usuario.php ejecutándose - OP: " . ($_GET['op'] ?? 'none'));
+
 $usuario=new Usuario();
 $usuarioController = new UsuarioController();
 
@@ -11,13 +14,11 @@ $idusuarioc=isset($_POST["idusuarioc"])? limpiarCadena($_POST["idusuarioc"]):"";
 $clavec=isset($_POST["clavec"])? limpiarCadena($_POST["clavec"]):"";
 $idusuario=isset($_POST["idusuario"])? limpiarCadena($_POST["idusuario"]):"";
 $nombre=isset($_POST["nombre"])? limpiarCadena($_POST["nombre"]):"";
-$tipo_documento=isset($_POST["tipo_documento"])? limpiarCadena($_POST["tipo_documento"]):"";
-$num_documento=isset($_POST["num_documento"])? limpiarCadena($_POST["num_documento"]):"";
 $direccion=isset($_POST["direccion"])? limpiarCadena($_POST["direccion"]):"";
 $telefono=isset($_POST["telefono"])? limpiarCadena($_POST["telefono"]):"";
 $email=isset($_POST["email"])? limpiarCadena($_POST["email"]):"";
-$cargo=isset($_POST["cargo"])? limpiarCadena($_POST["cargo"]):"";
-$login=isset($_POST["login"])? limpiarCadena($_POST["login"]):"";
+$dui=isset($_POST["dui"])? limpiarCadena($_POST["dui"]):"";
+$rol=isset($_POST["rol"])? limpiarCadena($_POST["rol"]):"";
 $clave=isset($_POST["clave"])? limpiarCadena($_POST["clave"]):"";
 $imagen=isset($_POST["imagen"])? limpiarCadena($_POST["imagen"]):"";
 
@@ -26,28 +27,51 @@ switch ($_GET["op"]) {
 
 		if (!file_exists($_FILES['imagen']['tmp_name'])|| !is_uploaded_file($_FILES['imagen']['tmp_name']))
 		{
-			$imagen=$_POST["imagenactual"];
+			$fotografia = isset($_POST["imagenactual"]) && !empty($_POST["imagenactual"]) ? $_POST["imagenactual"] : "";
 		}else
 		{
-
 			$ext=explode(".", $_FILES["imagen"]["name"]);
 			if ($_FILES['imagen']['type'] == "image/jpg" || $_FILES['imagen']['type'] == "image/jpeg" || $_FILES['imagen']['type'] == "image/png")
 			 {
+			   $fotografia = round(microtime(true)).'.'. end($ext);
+			   $target_path = "../files/usuarios/" . $fotografia;
 
-			   $imagen = round(microtime(true)).'.'. end($ext);
-				move_uploaded_file($_FILES["imagen"]["tmp_name"], "../files/usuarios/" . $imagen);
+			   if(move_uploaded_file($_FILES["imagen"]["tmp_name"], $target_path)) {
+			   	// Archivo subido correctamente
+			   } else {
+			   	$fotografia = isset($_POST["imagenactual"]) && !empty($_POST["imagenactual"]) ? $_POST["imagenactual"] : "";
+			   }
+		 	} else {
+		 		$fotografia = isset($_POST["imagenactual"]) && !empty($_POST["imagenactual"]) ? $_POST["imagenactual"] : "";
 		 	}
 		}
 
 		//Hash SHA256 para la contraseña
 		$clavehash=hash("SHA256", $clave);
 
+		// Convertir el valor del rol a ID numérico
+		$rol_id = intval($rol);
+		if ($rol_id <= 0) {
+			$rol_id = 1; // Default a Padre/Tutor si no es válido
+		}
+
 		if (empty($idusuario)) {
-			$rspta=$usuario->insertar($nombre,$tipo_documento,$num_documento,$direccion,$telefono,$email,$cargo,$login,$clavehash,$imagen,$_POST['permiso']);
+			$rspta=$usuario->insertar($nombre,$dui,$email,$clavehash,$rol_id,$telefono,$direccion,$fotografia);
 			echo $rspta ? "Datos registrados correctamente" : "No se pudo registrar todos los datos del usuario";
 		}
 		else {
-			$rspta=$usuario->editar($idusuario,$nombre,$tipo_documento,$num_documento,$direccion,$telefono,$email,$cargo,$login,$imagen,$_POST['permiso']);
+			// Para edición, obtener el estado actual del usuario
+			$usuario_actual = $usuario->mostrar($idusuario);
+			$estado_actual = $usuario_actual ? $usuario_actual['estado_usuario_id'] : 1;
+
+			// Si se proporciona nueva contraseña, hashearla
+			if (!empty($clave)) {
+				$clavehash=hash("SHA256", $clave);
+				$rspta=$usuario->editar($idusuario,$nombre,$dui,$email,$clavehash,$rol_id,$telefono,$direccion,$estado_actual,$fotografia);
+			} else {
+				// Mantener contraseña actual
+				$rspta=$usuario->editar_sin_password($idusuario,$nombre,$dui,$email,$rol_id,$telefono,$direccion,$estado_actual,$fotografia);
+			}
 			echo $rspta ? "Datos actualizados correctamente" : "No se pudo actualizar los datos";
 		}
 	break;
@@ -85,26 +109,25 @@ switch ($_GET["op"]) {
 		//declaramos un array
 		$data=Array();
 
-
 		while ($reg=$rspta->fetch(PDO::FETCH_OBJ)) {
 			$data[]=array(
-				"0"=>($reg->estado_usuario == 'Activo')?'<button class="btn btn-warning btn-xs" onclick="mostrar('.$reg->id_usuario.')"><i class="fa fa-pencil"></i></button>'.' '.'<button class="btn btn-info btn-xs" onclick="mostrar_clave('.$reg->id_usuario.')"><i class="fa fa-key"></i></button>'.' '.'<button class="btn btn-danger btn-xs" onclick="desactivar('.$reg->id_usuario.')"><i class="fa fa-close"></i></button>':'<button class="btn btn-warning btn-xs" onclick="mostrar('.$reg->id_usuario.')"><i class="fa fa-pencil"></i></button>'.' '.'<button class="btn btn-info btn-xs" onclick="mostrar_clave('.$reg->id_usuario.')"><i class="fa fa-key"></i></button>'.' '.'<button class="btn btn-primary btn-xs" onclick="activar('.$reg->id_usuario.')"><i class="fa fa-check"></i></button>',
-				"1"=>$reg->nombre_completo,
-				"2"=>$reg->rol,
-				"3"=>$reg->telefono,
-				"4"=>$reg->email,
-				"5"=>$reg->estado_usuario,
-				"rol_id"=>$reg->rol_id,
-				"id_usuario"=>$reg->id_usuario,
-				"nombre_completo"=>$reg->nombre_completo
+				"0"=>($reg->estado_usuario == 'Activo')?'<button class="btn btn-warning btn-xs" onclick="mostrar('.$reg->id_usuario.')"><i class="fa fa-pencil"></i></button> <button class="btn btn-info btn-xs" onclick="mostrar_clave('.$reg->id_usuario.')"><i class="fa fa-key"></i></button> <button class="btn btn-danger btn-xs" onclick="desactivar('.$reg->id_usuario.')"><i class="fa fa-close"></i></button>':'<button class="btn btn-warning btn-xs" onclick="mostrar('.$reg->id_usuario.')"><i class="fa fa-pencil"></i></button> <button class="btn btn-info btn-xs" onclick="mostrar_clave('.$reg->id_usuario.')"><i class="fa fa-key"></i></button> <button class="btn btn-primary btn-xs" onclick="activar('.$reg->id_usuario.')"><i class="fa fa-check"></i></button>',
+				"1"=>$reg->nombre_completo,  // Nombre Completo
+				"2"=>$reg->dui,              // DUI
+				"3"=>$reg->telefono,         // Teléfono
+				"4"=>$reg->email,            // Email
+				"5"=>$reg->rol,              // Rol
+				"6"=>$reg->imagen,           // Foto
+				"7"=>$reg->estado_usuario,   // Estado
+				"8"=>$reg->id_usuario        // ID (para botones)
 				);
 		}
 
 		$results=array(
-             "sEcho"=>1,//info para datatables
-             "iTotalRecords"=>count($data),//enviamos el total de registros al datatable
-             "iTotalDisplayRecords"=>count($data),//enviamos el total de registros a visualizar
-             "aaData"=>$data);
+	            "sEcho"=>1,//info para datatables
+	            "iTotalRecords"=>count($data),//enviamos el total de registros al datatable
+	            "iTotalDisplayRecords"=>count($data),//enviamos el total de registros a visualizar
+	            "aaData"=>$data);
 		echo json_encode($results);
 
 	break;

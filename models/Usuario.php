@@ -10,38 +10,40 @@ class Usuario{
 	}
 
 	//metodo insertar registro
-	public function insertar($nombre_completo, $email, $password, $rol_id, $telefono, $direccion){
+	public function insertar($nombre_completo, $dui, $email, $password, $rol_id, $telefono, $direccion){
 		// Obtener ID del estado "Activo" por defecto
 		$estados = new EstadosUsuario();
 		$estadoActivo = $estados->obtenerActivo();
 		$estado_usuario_id = $estadoActivo ? $estadoActivo['id_estado_usuario'] : 1;
-		
-		$sql="INSERT INTO usuarios (nombre_completo, email, password, rol_id, telefono, direccion, estado_usuario_id) 
-		VALUES ('$nombre_completo', '$email', '$password', '$rol_id', '$telefono', '$direccion', '$estado_usuario_id')";
+
+		$sql="INSERT INTO usuarios (nombre_completo, dui, email, password, rol_id, telefono, direccion, estado_usuario_id)
+		VALUES ('$nombre_completo', '$dui', '$email', '$password', '$rol_id', '$telefono', '$direccion', '$estado_usuario_id')";
 		return ejecutarConsulta($sql);
 	}
 
-	public function editar($id_usuario, $nombre_completo, $email, $password, $rol_id, $telefono, $direccion, $estado_usuario_id){
-		$sql="UPDATE usuarios SET 
-		nombre_completo='$nombre_completo', 
-		email='$email', 
-		password='$password', 
-		rol_id='$rol_id', 
-		telefono='$telefono', 
-		direccion='$direccion', 
-		estado_usuario_id='$estado_usuario_id' 
+	public function editar($id_usuario, $nombre_completo, $dui, $email, $password, $rol_id, $telefono, $direccion, $estado_usuario_id){
+		$sql="UPDATE usuarios SET
+		nombre_completo='$nombre_completo',
+		dui='$dui',
+		email='$email',
+		password='$password',
+		rol_id='$rol_id',
+		telefono='$telefono',
+		direccion='$direccion',
+		estado_usuario_id='$estado_usuario_id'
 		WHERE id_usuario='$id_usuario'";
 		return ejecutarConsulta($sql);
 	}
 
-	public function editar_sin_password($id_usuario, $nombre_completo, $email, $rol_id, $telefono, $direccion, $estado_usuario_id){
-		$sql="UPDATE usuarios SET 
-		nombre_completo='$nombre_completo', 
-		email='$email', 
-		rol_id='$rol_id', 
-		telefono='$telefono', 
-		direccion='$direccion', 
-		estado_usuario_id='$estado_usuario_id' 
+	public function editar_sin_password($id_usuario, $nombre_completo, $dui, $email, $rol_id, $telefono, $direccion, $estado_usuario_id){
+		$sql="UPDATE usuarios SET
+		nombre_completo='$nombre_completo',
+		dui='$dui',
+		email='$email',
+		rol_id='$rol_id',
+		telefono='$telefono',
+		direccion='$direccion',
+		estado_usuario_id='$estado_usuario_id'
 		WHERE id_usuario='$id_usuario'";
 		return ejecutarConsulta($sql);
 	}
@@ -78,10 +80,11 @@ class Usuario{
 
 	//listar registros
 	public function listar(){
-		$sql="SELECT u.*, r.nombre_rol as rol, eu.nombre_estado as estado_usuario 
-		FROM usuarios u 
-		LEFT JOIN roles r ON u.rol_id=r.id_rol 
-		LEFT JOIN estados_usuario eu ON u.estado_usuario_id=eu.id_estado_usuario 
+		$sql="SELECT u.*, r.nombre_rol as rol, eu.nombre_estado as estado_usuario,
+		u.fotografia as imagen
+		FROM usuarios u
+		LEFT JOIN roles r ON u.rol_id=r.id_rol
+		LEFT JOIN estados_usuario eu ON u.estado_usuario_id=eu.id_estado_usuario
 		ORDER BY u.id_usuario DESC";
 		return ejecutarConsulta($sql);
 	}

@@ -52,9 +52,10 @@ class ResponsablesRetiroController {
                 "2" => $reg->nombre_completo,
                 "3" => $reg->parentesco,
                 "4" => $reg->telefono,
-                "5" => $reg->autorizacion_firma,
-                "6" => $reg->periodo_inicio,
-                "7" => $reg->periodo_fin
+                "5" => $reg->periodo_inicio,
+                "6" => $reg->periodo_fin,
+                "7" => $reg->autorizacion_firma,
+                "8" => $reg->id_responsable
             );
         }
         $results = array(
