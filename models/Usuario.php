@@ -141,5 +141,27 @@ class Usuario{
 		$sql="SELECT * FROM usuario_permiso WHERE id_usuario='$id_usuario'";
 		return ejecutarConsulta($sql);
 	}
+
+	// Método para listar maestros
+	public function listar_maestros(){
+		$sql="SELECT u.id_usuario, u.nombre_completo
+		FROM usuarios u
+		LEFT JOIN roles r ON u.rol_id=r.id_rol
+		LEFT JOIN estados_usuario eu ON u.estado_usuario_id=eu.id_estado_usuario
+		WHERE r.nombre_rol='Maestro' AND eu.nombre_estado='Activo'
+		ORDER BY u.nombre_completo ASC";
+		return ejecutarConsulta($sql);
+	}
+
+	// Método para listar tutores
+	public function listar_tutores(){
+		$sql="SELECT u.id_usuario, u.nombre_completo
+		FROM usuarios u
+		LEFT JOIN roles r ON u.rol_id=r.id_rol
+		LEFT JOIN estados_usuario eu ON u.estado_usuario_id=eu.id_estado_usuario
+		WHERE r.nombre_rol='Padre/Tutor' AND eu.nombre_estado='Activo'
+		ORDER BY u.nombre_completo ASC";
+		return ejecutarConsulta($sql);
+	}
 }
 ?>

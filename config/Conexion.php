@@ -1,16 +1,25 @@
 <?php
 // Configuración de la base de datos usando PDO
+
 $host = 'localhost';
 $dbname = 'sis_school'; // Nombre de la base de datos del sistema de guardería
 $username = 'root'; // Usuario por defecto en XAMPP
-$password = '1234'; // Contraseña por defecto en XAMPP
+$password = ''; // Contraseña vacía por defecto en XAMPP (compatible con puerto 80 y 8080)
 
 try {
     $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $username, $password);
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
-    die("Error de conexión: " . $e->getMessage());
+    // Si falla, intentar con contraseña '1234' (configuración alternativa)
+    $password = '1234';
+    try {
+        $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $username, $password);
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+    } catch (PDOException $e) {
+        die("Error de conexión: " . $e->getMessage() . ". Verifica que XAMPP esté ejecutándose y la base de datos exista.");
+    }
 }
 
 // Clase PDO para consultas con protección contra redeclaración
@@ -23,14 +32,23 @@ if (!class_exists('Database')) {
             $host = 'localhost';
             $dbname = 'sis_school';
             $username = 'root';
-            $password = '1234';
+            $password = '';
 
+            // Intentar conectar con contraseña vacía primero
             try {
                 $this->pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $username, $password);
                 $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
                 $this->pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
             } catch (PDOException $e) {
-                die("Error de conexión: " . $e->getMessage());
+                // Si falla, intentar con contraseña '1234'
+                $password = '1234';
+                try {
+                    $this->pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $username, $password);
+                    $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+                    $this->pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+                } catch (PDOException $e) {
+                    die("Error de conexión: " . $e->getMessage() . ". Verifica que XAMPP esté ejecutándose.");
+                }
             }
         }
 
@@ -59,8 +77,6 @@ if (!class_exists('Database')) {
 $db = Database::getInstance();
 $pdo = $db->getPDO();
 
-// Funciones de compatibilidad para mantener el código existente funcionando
-// con guards para evitar redeclaraciones
 if (!function_exists('ejecutarConsulta')) {
     function ejecutarConsulta($sql) {
         global $pdo;

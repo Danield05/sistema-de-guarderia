@@ -31,7 +31,7 @@ if (!isset($_SESSION['nombre'])) {
         <h3 class="activity-title">👶 Lista de Niños</h3>
         <div class="table-responsive">
           <table class="table table-hover">
-            <thead style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+            <thead style="background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%); color: white;">
               <tr>
                 <th style="border: none; padding: 1rem;"><i class="fa fa-cogs"></i> Acciones</th>
                 <th style="border: none; padding: 1rem;"><i class="fa fa-user"></i> Nombre Completo</th>
@@ -42,6 +42,7 @@ if (!isset($_SESSION['nombre'])) {
                 <th style="border: none; padding: 1rem;"><i class="fa fa-sitemap"></i> Sección</th>
                 <th style="border: none; padding: 1rem;"><i class="fa fa-graduation-cap"></i> Maestro</th>
                 <th style="border: none; padding: 1rem;"><i class="fa fa-user-friends"></i> Tutor</th>
+                <th style="border: none; padding: 1rem;"><i class="fa fa-info-circle"></i> Estado</th>
               </tr>
             </thead>
             <tbody style="background: rgba(255, 255, 255, 0.9);">
@@ -52,8 +53,12 @@ if (!isset($_SESSION['nombre'])) {
               while ($reg = $rspta->fetch(PDO::FETCH_OBJ)) {
                 echo '<tr style="border-bottom: 1px solid rgba(0,0,0,0.05); transition: all 0.3s ease;">';
                 echo '<td style="padding: 1rem;">';
-                echo '<button class="btn btn-outline-warning btn-sm" style="margin-right: 0.5rem; border-radius: 20px;" onclick="mostrar(' . $reg->id_nino . ')"><i class="fa fa-pencil"></i> Editar</button>';
-                echo '<button class="btn btn-outline-danger btn-sm" style="border-radius: 20px;" onclick="desactivar(' . $reg->id_nino . ')"><i class="fa fa-trash"></i> Eliminar</button>';
+                echo '<button class="btn btn-warning btn-sm" style="margin-right: 0.5rem; border-radius: 20px;" onclick="mostrar(' . $reg->id_nino . ')"><i class="fa fa-pencil"></i> Editar</button>';
+                if ($reg->estado == 1) {
+                  echo '<button class="btn btn-danger btn-sm" style="border-radius: 20px;" onclick="desactivar(' . $reg->id_nino . ')"><i class="fa fa-ban"></i> Desactivar</button>';
+                } else {
+                  echo '<button class="btn btn-success btn-sm" style="border-radius: 20px;" onclick="activar(' . $reg->id_nino . ')"><i class="fa fa-check"></i> Activar</button>';
+                }
                 echo '</td>';
                 echo '<td style="padding: 1rem; font-weight: 600; color: #3c8dbc;">' . $reg->nombre_completo . '</td>';
                 echo '<td style="padding: 1rem;">' . $reg->edad . ' años</td>';
@@ -63,6 +68,13 @@ if (!isset($_SESSION['nombre'])) {
                 echo '<td style="padding: 1rem; color: #666;">' . $reg->nombre_seccion . '</td>';
                 echo '<td style="padding: 1rem; color: #666;">' . $reg->maestro . '</td>';
                 echo '<td style="padding: 1rem; color: #666;">' . $reg->tutor . '</td>';
+                echo '<td style="padding: 1rem;">';
+                if ($reg->estado == 1) {
+                  echo '<span class="badge badge-success" style="background: linear-gradient(45deg, #27ae60 0%, #2ecc71 100%); border: none; padding: 0.5rem 1rem; border-radius: 20px;"><i class="fa fa-check-circle"></i> Activo</span>';
+                } else {
+                  echo '<span class="badge badge-danger" style="background: linear-gradient(45deg, #e74c3c 0%, #c0392b 100%); border: none; padding: 0.5rem 1rem; border-radius: 20px;"><i class="fa fa-times-circle"></i> Inactivo</span>';
+                }
+                echo '</td>';
                 echo '</tr>';
               }
               ?>
@@ -75,7 +87,7 @@ if (!isset($_SESSION['nombre'])) {
       <div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
         <div class="modal-dialog modal-xl" role="document">
           <div class="modal-content" style="border-radius: 20px; border: none; box-shadow: 0 20px 60px rgba(0,0,0,0.2);">
-            <div class="modal-header" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 20px 20px 0 0; border-bottom: none; padding: 2rem;">
+            <div class="modal-header" style="background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%); color: white; border-radius: 20px 20px 0 0; border-bottom: none; padding: 2rem;">
               <h4 class="modal-title" id="modalLabel" style="font-weight: 600; font-size: 1.5rem;">
                 <i class="fa fa-child"></i> Agregar Nuevo Niño
               </h4>
@@ -115,9 +127,9 @@ if (!isset($_SESSION['nombre'])) {
                   <div class="col-md-4">
                     <div class="form-group">
                       <label for="edad" style="font-weight: 600; color: #3c8dbc; margin-bottom: 0.5rem;">
-                        <i class="fa fa-birthday-cake"></i> Edad *
+                        <i class="fa fa-birthday-cake"></i> Edad (calculada automáticamente)
                       </label>
-                      <input type="number" class="form-control" id="edad" name="edad" required min="0" max="18" style="border-radius: 10px; border: 2px solid #e9ecef; padding: 0.75rem; font-size: 0.95rem;" placeholder="Ej: 5">
+                      <input type="number" class="form-control" id="edad" name="edad" required min="0" max="18" readonly style="border-radius: 10px; border: 2px solid #e9ecef; padding: 0.75rem; font-size: 0.95rem; background: #f8f9fa;" placeholder="Se calcula automáticamente">
                     </div>
                   </div>
                   <div class="col-md-4">
@@ -178,7 +190,7 @@ if (!isset($_SESSION['nombre'])) {
                 <button type="button" class="btn btn-secondary" data-dismiss="modal" style="border-radius: 25px; padding: 0.5rem 2rem; font-weight: 600; border: none; background: #6c757d;">
                   <i class="fa fa-times"></i> Cancelar
                 </button>
-                <button type="submit" class="btn btn-primary" style="border-radius: 25px; padding: 0.5rem 2rem; font-weight: 600; border: none; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);">
+                <button type="submit" class="btn btn-primary" style="border-radius: 25px; padding: 0.5rem 2rem; font-weight: 600; border: none; background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%); box-shadow: 0 4px 15px rgba(44, 62, 80, 0.4);">
                   <i class="fa fa-save"></i> Guardar Niño
                 </button>
               </div>
@@ -195,3 +207,9 @@ if (!isset($_SESSION['nombre'])) {
   require 'footer.php';
 }
 ?>
+
+<!-- jQuery debe cargarse antes de ninos.js -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../public/js/bootbox.min.js"></script>
+<script src="scripts/ninos.js"></script>

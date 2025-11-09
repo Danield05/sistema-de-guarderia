@@ -49,9 +49,8 @@ class SeccionesController {
 
         while ($reg = $rspta->fetch(PDO::FETCH_OBJ)) {
             $data[] = array(
-                '<button class="btn btn-outline-warning btn-sm" style="margin-right: 0.5rem; border-radius: 20px;" onclick="mostrar(' . $reg->id_seccion . ')"><i class="fa fa-pencil"></i> Editar</button>' . ' ' . '<button class="btn btn-outline-danger btn-sm" style="border-radius: 20px;" onclick="desactivar(' . $reg->id_seccion . ')"><i class="fa fa-trash"></i> Eliminar</button>',
-                $reg->nombre_seccion,
-                $reg->nombre_aula
+                $reg->id_seccion,
+                $reg->nombre_seccion
             );
         }
         $results = array(

@@ -1,10 +1,11 @@
 /* Estilos para tablas personalizadas */
 .custom-table-container {
-    background: #ffffff;
-    border-radius: 12px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+    border-radius: 15px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
     overflow: hidden;
     margin: 20px 0;
+    border: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 .custom-table {
@@ -16,6 +17,7 @@
 .custom-table thead {
     background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
     color: white;
+    border-radius: 10px 10px 0 0;
 }
 
 .custom-table th {
@@ -64,17 +66,18 @@
 }
 
 .custom-table tbody tr:hover {
-    background-color: #f8f9fa;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
     transform: scale(1.01);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
 }
 
 .custom-table tbody tr:nth-child(even) {
-    background-color: #fcfcfc;
+    background: linear-gradient(135deg, #fcfcfc 0%, #f8f9fa 100%);
 }
 
 .custom-table tbody tr:nth-child(even):hover {
-    background-color: #f0f0f0;
+    background: linear-gradient(135deg, #f0f0f0 0%, #e9ecef 100%);
 }
 
 /* Controles de tabla */

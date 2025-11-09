@@ -3,7 +3,6 @@
 require "../config/Conexion.php";
 class Ninos{
 
-	//implementamos nuestro constructor
 	public function __construct(){
 
 	}

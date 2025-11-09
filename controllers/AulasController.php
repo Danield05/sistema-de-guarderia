@@ -50,9 +50,7 @@ class AulasController {
         while ($reg = $rspta->fetch(PDO::FETCH_OBJ)) {
             $data[] = array(
                 $reg->id_aula,
-                '<button class="btn btn-warning btn-xs" onclick="mostrar(' . $reg->id_aula . ')"><i class="fa fa-pencil"></i></button>' . ' ' . '<button class="btn btn-danger btn-xs" onclick="desactivar(' . $reg->id_aula . ')"><i class="fa fa-close"></i></button>',
-                $reg->nombre_aula,
-                $reg->descripcion
+                $reg->nombre_aula
             );
         }
         $results = array(

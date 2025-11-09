@@ -24,18 +24,18 @@ if (strlen(session_id()) < 1) {
     <link rel="stylesheet" href="../public/datatables/responsive.dataTables.min.css">
 
     <!-- Estilos Personalizados -->
-    <link rel="stylesheet" href="../public/css/master-styles.css">
-    <link rel="stylesheet" href="../public/css/dashboard.css">
-    <link rel="stylesheet" href="../public/css/frontend-modern.css">
-    <link rel="stylesheet" href="../public/css/custom-tables.css">
-    <link rel="stylesheet" href="../public/css/navbar-custom.css">
+    <link rel="stylesheet" href="../public/css/master-styles.css?v=<?php echo time(); ?>">
+    <link rel="stylesheet" href="../public/css/dashboard.css?v=<?php echo time(); ?>">
+    <link rel="stylesheet" href="../public/css/frontend-modern.css?v=<?php echo time(); ?>">
+    <link rel="stylesheet" href="../public/css/custom-tables.css?v=<?php echo time(); ?>">
+    <link rel="stylesheet" href="../public/css/navbar-custom.css?v=<?php echo time(); ?>">
     
     <!-- JavaScript personalizado para dropdown del navbar -->
-    <script src="../views/scripts/navbar.js"></script>
+    <script src="../views/scripts/navbar.js?v=<?php echo time(); ?>"></script>
 </head>
 
 <body class="hold-transition">
-    <header class="main-header modern-navbar">
+    <header class="main-header navbar">
         <div class="navbar-left">
             <div class="dropdown custom-dropdown">
                 <a href="#" class="user-profile-widget dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
@@ -77,23 +77,23 @@ if (strlen(session_id()) < 1) {
                             </a>
                             <ul class="dropdown-menu">
                                 <?php if (isset($_SESSION['aulas']) && $_SESSION['aulas'] == 1): ?>
-                                    <li><a href="aulas.php" class="dropdown-item"><i class="fa fa-university"></i> Aulas</a></li>
+                                    <li><a href="aulas.php" class="dropdown-item"><i class="fas fa-school"></i> <span>Aulas</span></a></li>
                                 <?php endif; ?>
 
                                 <?php if (isset($_SESSION['secciones']) && $_SESSION['secciones'] == 1): ?>
-                                    <li><a href="secciones.php" class="dropdown-item"><i class="fa fa-sitemap"></i> Secciones</a></li>
+                                    <li><a href="secciones.php" class="dropdown-item"><i class="fas fa-layer-group"></i> <span>Secciones</span></a></li>
                                 <?php endif; ?>
 
                                 <?php if (isset($_SESSION['ninos']) && $_SESSION['ninos'] == 1): ?>
-                                    <li><a href="ninos.php" class="dropdown-item"><i class="fa fa-child"></i> Niños</a></li>
+                                    <li><a href="ninos.php" class="dropdown-item"><i class="fas fa-baby"></i> <span>Niños</span></a></li>
                                 <?php endif; ?>
 
                                 <?php if (isset($_SESSION['asistencia']) && $_SESSION['asistencia'] == 1): ?>
-                                    <li><a href="asistencia.php" class="dropdown-item"><i class="fa fa-calendar-check"></i> Control de Asistencias</a></li>
+                                    <li><a href="asistencia.php" class="dropdown-item"><i class="fas fa-calendar-check"></i> <span>Control de Asistencias</span></a></li>
                                 <?php endif; ?>
 
                                 <?php if (isset($_SESSION['escritorio']) && $_SESSION['escritorio'] == 1): ?>
-                                    <li><a href="responsables_retiro.php" class="dropdown-item"><i class="fa fa-users"></i> Responsables de Retiro</a></li>
+                                    <li><a href="responsables_retiro.php" class="dropdown-item"><i class="fas fa-user-friends"></i> <span>Responsables de Retiro</span></a></li>
                                 <?php endif; ?>
                             </ul>
                         </li>
@@ -112,12 +112,12 @@ if (strlen(session_id()) < 1) {
                             </a>
                             <ul class="dropdown-menu">
                                 <?php if (isset($_SESSION['acceso']) && $_SESSION['acceso'] == 1): ?>
-                                    <li><a href="usuario.php" class="dropdown-item"><i class="fa fa-users"></i> Usuarios</a></li>
+                                    <li><a href="usuario.php" class="dropdown-item"><i class="fas fa-user-shield"></i> <span>Usuarios</span></a></li>
                                 <?php endif; ?>
 
                                 <?php if (isset($_SESSION['escritorio']) && $_SESSION['escritorio'] == 1): ?>
-                                    <li><a href="alertas.php" class="dropdown-item"><i class="fas fa-bell"></i> Alertas</a></li>
-                                    <li><a href="permisos_ausencia.php" class="dropdown-item"><i class="fas fa-calendar-times"></i> Permisos de Ausencia</a></li>
+                                    <li><a href="alertas.php" class="dropdown-item"><i class="fas fa-bell"></i> <span>Alertas</span></a></li>
+                                    <li><a href="permisos_ausencia.php" class="dropdown-item"><i class="fas fa-calendar-times"></i> <span>Permisos de Ausencia</span></a></li>
                                 <?php endif; ?>
                             </ul>
                         </li>
@@ -135,9 +135,9 @@ if (strlen(session_id()) < 1) {
                                 <i class="fa fa-medkit"></i> Información Médica <span class="custom-caret"></span>
                             </a>
                             <ul class="dropdown-menu">
-                                <li><a href="enfermedades.php" class="dropdown-item"><i class="fas fa-stethoscope"></i> Enfermedades</a></li>
-                                <li><a href="medicamentos.php" class="dropdown-item"><i class="fas fa-pills"></i> Medicamentos</a></li>
-                                <li><a href="alergias.php" class="dropdown-item"><i class="fas fa-allergies"></i> Alergias</a></li>
+                                <li><a href="enfermedades.php" class="dropdown-item"><i class="fas fa-stethoscope"></i> <span>Enfermedades</span></a></li>
+                                <li><a href="medicamentos.php" class="dropdown-item"><i class="fas fa-pills"></i> <span>Medicamentos</span></a></li>
+                                <li><a href="alergias.php" class="dropdown-item"><i class="fas fa-allergies"></i> <span>Alergias</span></a></li>
                             </ul>
                         </li>
                     <?php endif; ?>
@@ -152,6 +152,7 @@ if (strlen(session_id()) < 1) {
                 <i class="fas fa-clock"></i> <span id="current-time"></span>
             </div>
         </div>
+    </header>
     </header>
 
 

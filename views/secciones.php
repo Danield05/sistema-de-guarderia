@@ -31,7 +31,7 @@ if (!isset($_SESSION['nombre'])) {
         <h3 class="activity-title">🏫 Lista de Secciones</h3>
         <div class="table-responsive">
           <table class="table table-hover">
-            <thead style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+            <thead style="background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%); color: white;">
               <tr>
                 <th style="border: none; padding: 1rem;"><i class="fa fa-cogs"></i> Acciones</th>
                 <th style="border: none; padding: 1rem;"><i class="fa fa-graduation-cap"></i> Sección</th>
@@ -63,7 +63,7 @@ if (!isset($_SESSION['nombre'])) {
       <div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
           <div class="modal-content" style="border-radius: 20px; border: none; box-shadow: 0 20px 60px rgba(0,0,0,0.2);">
-            <div class="modal-header" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 20px 20px 0 0; border-bottom: none; padding: 2rem;">
+            <div class="modal-header" style="background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%); color: white; border-radius: 20px 20px 0 0; border-bottom: none; padding: 2rem;">
               <h4 class="modal-title" id="modalLabel" style="font-weight: 600; font-size: 1.5rem;">
                 <i class="fa fa-graduation-cap"></i> Agregar Nueva Sección
               </h4>
@@ -93,7 +93,7 @@ if (!isset($_SESSION['nombre'])) {
                 <button type="button" class="btn btn-secondary" data-dismiss="modal" style="border-radius: 25px; padding: 0.5rem 2rem; font-weight: 600; border: none; background: #6c757d;">
                   <i class="fa fa-times"></i> Cancelar
                 </button>
-                <button type="submit" class="btn btn-primary" style="border-radius: 25px; padding: 0.5rem 2rem; font-weight: 600; border: none; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);">
+                <button type="submit" class="btn btn-primary" style="border-radius: 25px; padding: 0.5rem 2rem; font-weight: 600; border: none; background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%); box-shadow: 0 4px 15px rgba(44, 62, 80, 0.4);">
                   <i class="fa fa-save"></i> Guardar Sección
                 </button>
               </div>

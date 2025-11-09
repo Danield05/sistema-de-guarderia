@@ -227,6 +227,48 @@ switch ($_GET["op"]) {
 		echo $rspta ? "Perfil actualizado correctamente" : "No se pudo actualizar el perfil";
 	break;
 
+	case 'listar_maestros':
+		$rspta=$usuario->listar_maestros();
+		//declaramos un array
+		$data=Array();
+
+		while ($reg=$rspta->fetch(PDO::FETCH_OBJ)) {
+			$data[]=array(
+				"0"=>$reg->id_usuario,
+				"1"=>$reg->nombre_completo
+				);
+		}
+
+		$results=array(
+	            "sEcho"=>1,//info para datatables
+	            "iTotalRecords"=>count($data),//enviamos el total de registros al datatable
+	            "iTotalDisplayRecords"=>count($data),//enviamos el total de registros a visualizar
+	            "aaData"=>$data);
+		echo json_encode($results);
+
+	break;
+
+	case 'listar_tutores':
+		$rspta=$usuario->listar_tutores();
+		//declaramos un array
+		$data=Array();
+
+		while ($reg=$rspta->fetch(PDO::FETCH_OBJ)) {
+			$data[]=array(
+				"0"=>$reg->id_usuario,
+				"1"=>$reg->nombre_completo
+				);
+		}
+
+		$results=array(
+	            "sEcho"=>1,//info para datatables
+	            "iTotalRecords"=>count($data),//enviamos el total de registros al datatable
+	            "iTotalDisplayRecords"=>count($data),//enviamos el total de registros a visualizar
+	            "aaData"=>$data);
+		echo json_encode($results);
+
+	break;
+
 	case 'salir':
 		//Limpiamos las variables de sesión
 	       session_unset();
