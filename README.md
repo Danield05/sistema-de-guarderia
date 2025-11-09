@@ -101,10 +101,10 @@ Un sistema integral de gestión para guarderías infantiles que facilita la admi
 ```
 sistema-de-guarderia/
 ├── ajax/              # Scripts AJAX para operaciones del servidor
-│   ├── horarios.php   # AJAX para gestión de horarios (Nuevo)
+│   ├── horarios.php   # AJAX para gestión de horarios 
 ├── config/            # Configuración de base de datos
 ├── controllers/       # Controladores de la aplicación
-│   ├── HorariosController.php  # Controlador de horarios (Nuevo)
+│   ├── HorariosController.php  # Controlador de horarios 
 ├── models/            # Modelos de datos
 │   ├── Horarios.php   # Modelo de horarios (Nuevo)
 ├── public/            # Archivos públicos (CSS, JS, imágenes)
