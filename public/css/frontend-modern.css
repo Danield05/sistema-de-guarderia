@@ -37,39 +37,39 @@ header.main-header {
 }
 
 .alert-modern-success {
-  background: rgba(40, 167, 69, 0.1);
-  color: #28a745;
-  border-left: 4px solid #28a745;
+  background: rgba(39, 174, 96, 0.1);
+  color: #27ae60;
+  border-left: 4px solid #27ae60;
 }
 
 .alert-modern-danger {
-  background: rgba(220, 53, 69, 0.1);
-  color: #dc3545;
-  border-left: 4px solid #dc3545;
+  background: rgba(231, 76, 60, 0.1);
+  color: #e74c3c;
+  border-left: 4px solid #e74c3c;
 }
 
 .alert-modern-warning {
-  background: rgba(255, 193, 7, 0.1);
-  color: #ffc107;
-  border-left: 4px solid #ffc107;
+  background: rgba(243, 156, 18, 0.1);
+  color: #f39c12;
+  border-left: 4px solid #f39c12;
 }
 
 .alert-modern-primary {
-  background: rgba(0, 123, 255, 0.1);
-  color: #007bff;
-  border-left: 4px solid #007bff;
+  background: rgba(44, 62, 80, 0.1);
+  color: #2c3e50;
+  border-left: 4px solid #2c3e50;
 }
 
 .alert-modern-secondary {
-  background: rgba(108, 117, 125, 0.1);
-  color: #6c757d;
-  border-left: 4px solid #6c757d;
+  background: rgba(127, 140, 141, 0.1);
+  color: #7f8c8d;
+  border-left: 4px solid #7f8c8d;
 }
 
 .alert-modern-dark {
-  background: rgba(52, 58, 64, 0.1);
-  color: #343a40;
-  border-left: 4px solid #343a40;
+  background: rgba(44, 62, 80, 0.1);
+  color: #2c3e50;
+  border-left: 4px solid #2c3e50;
 }
 
 .alert-modern-light {
@@ -79,7 +79,7 @@ header.main-header {
 }
 
 .alert-modern-info {
-  background: rgba(90, 200, 250, 0.1);
-  color: #5ac8fa;
-  border-left: 4px solid #5ac8fa;
+  background: rgba(52, 152, 219, 0.1);
+  color: #3498db;
+  border-left: 4px solid #3498db;
 }

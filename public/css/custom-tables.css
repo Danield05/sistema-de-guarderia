@@ -14,7 +14,7 @@
 }
 
 .custom-table thead {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
     color: white;
 }
 
@@ -103,8 +103,8 @@
 
 .search-box input:focus {
     outline: none;
-    border-color: #667eea;
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    border-color: #2c3e50;
+    box-shadow: 0 0 0 3px rgba(44, 62, 80, 0.1);
 }
 
 .search-box:before {
@@ -152,12 +152,12 @@
 }
 
 .pagination button:hover {
-    background: #667eea;
+    background: #2c3e50;
     color: white;
 }
 
 .pagination button.active {
-    background: #667eea;
+    background: #2c3e50;
     color: white;
     font-weight: 600;
 }
@@ -188,42 +188,42 @@
 }
 
 .btn-edit {
-    background: #ffc107;
+    background: #f39c12;
     color: #212529;
 }
 
 .btn-edit:hover {
-    background: #e0a800;
+    background: #e67e22;
     transform: translateY(-1px);
 }
 
 .btn-delete {
-    background: #dc3545;
+    background: #e74c3c;
     color: white;
 }
 
 .btn-delete:hover {
-    background: #c82333;
+    background: #c0392b;
     transform: translateY(-1px);
 }
 
 .btn-activate {
-    background: #28a745;
+    background: #27ae60;
     color: white;
 }
 
 .btn-activate:hover {
-    background: #218838;
+    background: #2ecc71;
     transform: translateY(-1px);
 }
 
 .btn-deactivate {
-    background: #fd7e14;
+    background: #f39c12;
     color: white;
 }
 
 .btn-deactivate:hover {
-    background: #e8590c;
+    background: #e67e22;
     transform: translateY(-1px);
 }
 
@@ -278,7 +278,7 @@
 }
 
 .stat-card {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
     color: white;
     padding: 20px;
     border-radius: 12px;
@@ -306,15 +306,15 @@
 }
 
 .stat-card.pending {
-    background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+    background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
 }
 
 .stat-card.responded {
-    background: linear-gradient(135deg, #51cf66 0%, #40c057 100%);
+    background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
 }
 
 .stat-card.today {
-    background: linear-gradient(135deg, #74c0fc 0%, #339af0 100%);
+    background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
 }
 
 /* Filtros */
@@ -337,7 +337,7 @@
 }
 
 .modal-header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
     color: white;
     border-radius: 15px 15px 0 0;
     border: none;
