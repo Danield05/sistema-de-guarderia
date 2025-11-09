@@ -2,7 +2,7 @@
 
 Un sistema integral de gestión para guarderías infantiles que facilita la administración educativa y operativa. Desarrollado con tecnologías modernas para proporcionar una experiencia de usuario intuitiva y eficiente.
 
-## ✨ Características Principales
+## ✨ Key Features
 
 ### 👥 Gestión de Usuarios
 - Registro y administración de maestros/administradores
@@ -44,7 +44,7 @@ Un sistema integral de gestión para guarderías infantiles que facilita la admi
 - Layout responsivo para todos los dispositivos
 - Efectos glassmorphism y animaciones
 
-## 🛠️ Tecnologías Utilizadas
+## 🛠️ Technologies Used
 
 - **Backend**: PHP 7+
 - **Base de datos**: MySQL
@@ -55,7 +55,7 @@ Un sistema integral de gestión para guarderías infantiles que facilita la admi
 - **Servidor**: XAMPP (Apache, MySQL, PHP)
 - **Arquitectura**: Patrón MVC
 
-## 📋 Requisitos del Sistema
+## 📋 System Requirements
 
 - XAMPP (Apache, MySQL, PHP)
 - PHP 7.0 o superior
@@ -63,32 +63,32 @@ Un sistema integral de gestión para guarderías infantiles que facilita la admi
 - Navegador web moderno (Chrome, Firefox, Safari, Edge)
 - Mínimo 2GB RAM recomendado
 
-## 🚀 Instalación y Configuración
+## 🚀 Installation and Setup
 
-1. **Instalar XAMPP**
-   - Descarga e instala XAMPP desde el sitio oficial
-   - Inicia los servicios Apache y MySQL
+1. **Install XAMPP**
+   - Download and install XAMPP from the official website
+   - Start Apache and MySQL services
 
-2. **Clonar el proyecto**
+2. **Clone the project**
    ```bash
    cd c:/xampp/htdocs/
-   git clone [url-del-repositorio] sistema-de-guarderia
+   git clone [repository-url] sistema-de-guarderia
    ```
 
-3. **Configurar la base de datos**
-   - Abre phpMyAdmin en `http://localhost/phpmyadmin`
-   - Crea una nueva base de datos llamada `sistema_guarderia`
-   - Importa el archivo `sis_school.sql` incluido en el proyecto
+3. **Configure the database**
+   - Open phpMyAdmin at `http://localhost/phpmyadmin`
+   - Create a new database named `sistema_guarderia`
+   - Import the `sis_school.sql` file included in the project
 
 4. **Configurar permisos**
    - Asegúrate de que la carpeta `files/` tenga permisos de escritura
    - Las carpetas `files/usuarios/` deben ser escribibles
 
-5. **Acceder al sistema**
-   - Abre tu navegador y ve a: `http://localhost/sistema-de-guarderia`
-   - Usuario por defecto: admin/admin (verifica en la base de datos)
+5. **Access the system**
+   - Open your browser and go to: `http://localhost/sistema-de-guarderia`
+   - Default user: admin/admin (verify in database)
 
-## 📁 Estructura del Proyecto
+## 📁 Project Structure
 
 ```
 sistema-de-guarderia/
@@ -108,7 +108,7 @@ sistema-de-guarderia/
 └── README.md          # Este archivo
 ```
 
-## 🎯 Funcionalidades del Sistema
+## 🎯 System Features
 
 ### Panel Administrativo
 - **Escritorio**: Dashboard con estadísticas generales
@@ -130,13 +130,13 @@ sistema-de-guarderia/
 
 ¡Las contribuciones son bienvenidas! Para contribuir:
 
-1. Haz fork del proyecto
-2. Crea una rama para tu feature (`git checkout -b feature/nueva-funcionalidad`)
-3. Commit tus cambios (`git commit -am 'Agrega nueva funcionalidad'`)
-4. Push a la rama (`git push origin feature/nueva-funcionalidad`)
-5. Abre un Pull Request
+1. Fork the project
+2. Create a feature branch (`git checkout -b feature/new-feature`)
+3. Commit your changes (`git commit -am 'Add new feature'`)
+4. Push to the branch (`git push origin feature/new-feature`)
+5. Open a Pull Request
 
-## 📝 Notas de Desarrollo
+## 📝 Development Notes
 
 - El sistema utiliza el patrón MVC (Modelo-Vista-Controlador)
 - Las consultas AJAX se manejan en la carpeta `ajax/`
@@ -145,16 +145,16 @@ sistema-de-guarderia/
 - Gestión de perfil de usuario en `views/perfil.php`
 - Sistema de login con UI moderna en `views/login.php`
 
-## 📞 Soporte
+## 📞 Support
 
-Para soporte técnico o preguntas:
-- Crea un issue en el repositorio
-- Contacta al administrador del sistema
+For technical support or questions:
+- Create an issue in the repository
+- Contact the system administrator
 
-## 📄 Licencia
+## 📄 License
 
-Este proyecto está bajo la Licencia MIT. Ver el archivo `LICENSE` para más detalles.
+This project is under the MIT License. See the `LICENSE` file for more details.
 
 ---
 
-**Desarrollado con ❤️ para facilitar la gestión educativa en guarderías**
+**Developed with ❤️ to facilitate educational management in childcare centers**
