@@ -16,7 +16,7 @@
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏠</text></svg>">
 
     <!-- Estilos personalizados para login moderno -->
-    <link rel="stylesheet" href="views/styles/login.css">
+    <link rel="stylesheet" href="styles/login.css?v=<?php echo time(); ?>">
   </head>
   <body>
     <div class="login-container">
@@ -58,8 +58,8 @@
      <!-- Bootbox -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/6.0.0/bootbox.min.js"></script>
 
-    <script type="text/javascript" src="scripts/login_simple.js"></script>
-    <script type="text/javascript" src="views/scripts/login.js"></script>
+    <script type="text/javascript" src="scripts/login_simple.js?v=<?php echo time(); ?>"></script>
+    <script type="text/javascript" src="scripts/login.js?v=<?php echo time(); ?>"></script>
 
   </body>
 </html>
