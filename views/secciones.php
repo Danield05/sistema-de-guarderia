@@ -46,8 +46,8 @@ if (!isset($_SESSION['nombre'])) {
               while ($reg = $rspta->fetch(PDO::FETCH_OBJ)) {
                 echo '<tr style="border-bottom: 1px solid rgba(0,0,0,0.05); transition: all 0.3s ease;">';
                 echo '<td style="padding: 1rem;">';
-                echo '<button class="btn btn-outline-warning btn-sm" style="margin-right: 0.5rem; border-radius: 20px;" onclick="mostrar(' . $reg->id_seccion . ')"><i class="fa fa-pencil"></i> Editar</button>';
-                echo '<button class="btn btn-outline-danger btn-sm" style="border-radius: 20px;" onclick="desactivar(' . $reg->id_seccion . ')"><i class="fa fa-trash"></i> Eliminar</button>';
+                echo '<button class="btn btn-outline-warning btn-sm" style="margin-right: 0.5rem; border-radius: 20px;" onclick="mostrarFormulario(' . $reg->id_seccion . ')"><i class="fa fa-pencil"></i> Editar</button>';
+                echo '<button class="btn btn-outline-danger btn-sm" style="border-radius: 20px;" onclick="eliminar_seccion(' . $reg->id_seccion . ')"><i class="fa fa-trash"></i> Eliminar</button>';
                 echo '</td>';
                 echo '<td style="padding: 1rem; font-weight: 600; color: #3c8dbc;">' . $reg->nombre_seccion . '</td>';
                 echo '<td style="padding: 1rem; color: #666;">' . $reg->nombre_aula . '</td>';
@@ -164,7 +164,7 @@ if (!isset($_SESSION['nombre'])) {
         success: function (data) {
           $('#aula_id').empty().append('<option value="">Seleccionar aula...</option>');
           $.each(data.aaData, function (i, aula) {
-            $('#aula_id').append('<option value="' + aula[1] + '">' + aula[1] + '</option>');
+            $('#aula_id').append('<option value="' + aula[0] + '">' + aula[1] + '</option>');
           });
         },
         error: function(xhr, status, error) {
@@ -175,12 +175,15 @@ if (!isset($_SESSION['nombre'])) {
     }
 
 
-    // Función para desactivar sección
-    function desactivar(id) {
-      bootbox.confirm("¿Está seguro de desactivar la sección?", function (result) {
+    // Función para eliminar sección
+    function eliminar_seccion(id) {
+      bootbox.confirm("¿Está seguro de eliminar la sección?", function (result) {
         if (result) {
           $.post("../ajax/secciones.php?op=desactivar", {idseccion: id}, function (e) {
+            bootbox.alert(e);
             location.reload();
+          }).fail(function(xhr, status, error) {
+            bootbox.alert("Error al eliminar: " + xhr.responseText);
           });
         }
       });
@@ -212,6 +215,9 @@ if (!isset($_SESSION['nombre'])) {
             bootbox.alert(datos);
             $('#modal').modal('hide');
             location.reload();
+          },
+          error: function(xhr, status, error) {
+            bootbox.alert("Error al guardar: " + xhr.responseText);
           }
         });
       });

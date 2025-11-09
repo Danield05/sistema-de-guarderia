@@ -19,6 +19,7 @@ class UsuarioController {
             $_SESSION['login'] = $fetch->email; // usar email como login
             $_SESSION['cargo'] = $fetch->nombre_rol; // usar el nombre del rol como cargo
             $_SESSION['rol_id'] = $fetch->rol_id;
+            $_SESSION['fotografia'] = $fetch->fotografia; // agregar imagen de perfil a la sesión
 
             // Configurar permisos específicos para el sistema de guardería
             // Todos los administradores tienen acceso completo

@@ -25,7 +25,7 @@ class AulasController {
         $aulas = new Aulas();
         $id = isset($_POST["idaula"]) ? limpiarCadena($_POST["idaula"]) : "";
         $rspta = $aulas->desactivar($id);
-        echo $rspta ? "Aula desactivada correctamente" : "No se pudo desactivar el aula";
+        echo $rspta ? "Aula eliminada correctamente" : "No se pudo eliminar el aula";
     }
 
     public function activar() {

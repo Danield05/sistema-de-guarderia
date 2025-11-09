@@ -107,5 +107,19 @@ class NinosController {
         }
         echo json_encode($data);
     }
+
+    public function select() {
+        $ninos = new Ninos();
+        $rspta = $ninos->listar();
+        $data = Array();
+
+        while ($reg = $rspta->fetch(PDO::FETCH_OBJ)) {
+            $data[] = array(
+                "0" => $reg->id_nino,
+                "1" => $reg->nombre_completo
+            );
+        }
+        echo json_encode($data);
+    }
 }
 ?>

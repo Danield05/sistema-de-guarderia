@@ -20,7 +20,7 @@ class Secciones{
 	}
 
 	public function desactivar($id_seccion){
-		$sql="UPDATE secciones SET estado='0' WHERE id_seccion='$id_seccion'";
+		$sql="DELETE FROM secciones WHERE id_seccion='$id_seccion'";
 		return ejecutarConsulta($sql);
 	}
 

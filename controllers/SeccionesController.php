@@ -25,7 +25,7 @@ class SeccionesController {
         $secciones = new Secciones();
         $id = isset($_POST["idseccion"]) ? limpiarCadena($_POST["idseccion"]) : "";
         $rspta = $secciones->desactivar($id);
-        echo $rspta ? "Sección desactivada correctamente" : "No se pudo desactivar la sección";
+        echo $rspta ? "Sección eliminada correctamente" : "No se pudo eliminar la sección";
     }
 
     public function activar() {

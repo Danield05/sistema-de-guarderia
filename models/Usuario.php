@@ -102,7 +102,7 @@ class Usuario{
 	//Función para verificar el acceso al sistema
 	public function verificar($login,$clave)
 	{
-		$sql="SELECT u.id_usuario,u.nombre_completo,u.rol_id,u.telefono,u.email,u.password, r.nombre_rol
+		$sql="SELECT u.id_usuario,u.nombre_completo,u.rol_id,u.telefono,u.email,u.password,u.fotografia, r.nombre_rol
 		FROM usuarios u
 		LEFT JOIN roles r ON u.rol_id=r.id_rol
 		LEFT JOIN estados_usuario eu ON u.estado_usuario_id=eu.id_estado_usuario

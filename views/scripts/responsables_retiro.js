@@ -2,15 +2,22 @@ var tabla;
 
 //funcion que se ejecuta al inicio
 function init(){
-   mostrarform(false);
-   listar();
+    mostrarform(false);
+    listar();
 
-   $("#formulario").on("submit",function(e){
-   	guardaryeditar(e);
-   })
+    $("#formulario").on("submit",function(e){
+    	guardaryeditar(e);
+    })
 
-   // Cargar lista de niños al iniciar
-   cargarNinos();
+    // Cargar lista de niños al iniciar
+    cargarNinos();
+
+    // Funcionalidad de búsqueda en tiempo real
+    $("#busqueda").on("keyup", function(){
+        listar();
+    });
+
+
 }
 
 //funcion limpiar
@@ -22,47 +29,53 @@ function limpiar(){
 	$("#telefono").val("");
 	$("#periodo_inicio").val("");
 	$("#periodo_fin").val("");
-	$("#autorizacion_firma").val("");
-	$("#firma_actual").val("");
+	// Sin firma por ahora
+
+	// Sin firma por ahora
 }
 
 //funcion mostrar formulario
 function mostrarform(flag){
 	limpiar();
 	if(flag){
-		$("#listadoregistros").hide();
-		$("#formularioregistros").show();
-		$("#btnGuardar").prop("disabled",false);
-		$("#btnagregar").hide();
+		$('#modalResponsableLabel').html('<i class="fa fa-plus-circle"></i> Nuevo Responsable de Retiro');
+		$('#modalResponsable').modal('show');
+		// Cambiar texto del botón cuando se crea nuevo
+		$("#btnGuardar").html('<i class="fa fa-save"></i> Guardar Responsable');
 	}else{
-		$("#listadoregistros").show();
-		$("#formularioregistros").hide();
-		$("#btnagregar").show();
+		$('#modalResponsable').modal('hide');
 	}
 }
 
 //cancelar form
 function cancelarform(){
 	limpiar();
-	mostrarform(false);
+	$('#modalResponsable').modal('hide');
 }
 
 //funcion listar
 function listar(){
+    var busqueda = $("#busqueda").val();
+
     $.ajax({
         url: "../ajax/responsables_retiro.php?op=listar",
         type: "POST",
+        data: {busqueda: busqueda},
         dataType: "json",
         success: function(data) {
+            // Verificar si hay error en la respuesta
+            if (data.error) {
+                $('#responsablesTableBody').html('<tr><td colspan="7" style="text-align: center; padding: 2rem; color: #dc3545;">' + data.message + '</td></tr>');
+                return;
+            }
+
             var tbody = $('#responsablesTableBody');
             tbody.empty();
 
             if (data.aaData && data.aaData.length > 0) {
                 $.each(data.aaData, function(index, responsable) {
                     var acciones = '<button class="btn btn-outline-warning btn-sm" style="margin-right: 0.5rem; border-radius: 20px;" onclick="mostrar(' + responsable[8] + ')"><i class="fa fa-pencil"></i> Editar</button>' +
-                                   '<button class="btn btn-outline-danger btn-sm" style="border-radius: 20px;" onclick="eliminar(' + responsable[8] + ')"><i class="fa fa-trash"></i> Eliminar</button>';
-
-                    var firmaLink = responsable[7] ? '<a href="../files/firmas/' + responsable[7] + '" target="_blank" class="btn btn-outline-info btn-sm" style="border-radius: 20px;"><i class="fa fa-file-signature"></i> Ver Firma</a>' : 'Sin firma';
+                                    '<button class="btn btn-outline-danger btn-sm" style="border-radius: 20px;" onclick="eliminar_responsable(' + responsable[8] + ')"><i class="fa fa-trash"></i> Eliminar</button>';
 
                     var row = '<tr style="border-bottom: 1px solid rgba(0,0,0,0.05); transition: all 0.3s ease;">' +
                         '<td style="padding: 1rem;">' + acciones + '</td>' +
@@ -72,49 +85,59 @@ function listar(){
                         '<td style="padding: 1rem;">' + (responsable[4] || '') + '</td>' +
                         '<td style="padding: 1rem;">' + responsable[5] + '</td>' +
                         '<td style="padding: 1rem;">' + responsable[6] + '</td>' +
-                        '<td style="padding: 1rem; text-align: center;">' + firmaLink + '</td>' +
                         '</tr>';
 
                     tbody.append(row);
                 });
+
+                // Actualizar contador de registros
+                $("#totalRegistros").text(data.aaData.length);
             } else {
-                tbody.append('<tr><td colspan="8" style="text-align: center; padding: 2rem; color: #666;">No hay responsables registrados</td></tr>');
+                tbody.append('<tr><td colspan="7" style="text-align: center; padding: 2rem; color: #666;">No hay responsables registrados</td></tr>');
+                $("#totalRegistros").text("0");
             }
         },
         error: function(xhr, status, error) {
-            $('#responsablesTableBody').html('<tr><td colspan="8" style="text-align: center; padding: 2rem; color: #dc3545;">Error al cargar los datos</td></tr>');
+            console.log("Error:", xhr.responseText);
+            console.log("Status:", status);
+            console.log("Error:", error);
+            $('#responsablesTableBody').html('<tr><td colspan="7" style="text-align: center; padding: 2rem; color: #dc3545;">Error al cargar los datos: ' + xhr.responseText + '</td></tr>');
         }
     });
 }
 
 //funcion para guardaryeditar
 function guardaryeditar(e){
-     e.preventDefault();
-     $("#btnGuardar").prop("disabled",true);
-     var formData=new FormData($("#formulario")[0]);
+      e.preventDefault();
 
-     $.ajax({
-      	url: "../ajax/responsables_retiro.php?op=guardaryeditar",
-      	type: "POST",
-      	data: formData,
-      	contentType: false,
-      	processData: false,
 
-      	success: function(datos){
-      		bootbox.alert(datos);
-      		$('#modalResponsable').modal('hide');
-      		listar();
-      	},
-      	error: function(xhr, status, error) {
-      		bootbox.alert("Error al guardar");
-      	},
-      	complete: function() {
-      		$("#btnGuardar").prop("disabled", false);
-      		$("#btnGuardar").html('<i class="fa fa-save"></i> Guardar Responsable');
-      	}
-     });
+      $("#btnGuardar").prop("disabled",true);
+      $("#btnGuardar").html('<i class="fa fa-spinner fa-spin"></i> Guardando...');
 
-     limpiar();
+      var formData=new FormData($("#formulario")[0]);
+
+      $.ajax({
+       	url: "../ajax/responsables_retiro.php?op=guardaryeditar",
+       	type: "POST",
+       	data: formData,
+       	contentType: false,
+       	processData: false,
+
+       	success: function(datos){
+       			bootbox.alert(datos);
+       			$('#modalResponsable').modal('hide');
+       			listar();
+       			limpiar();
+       		},
+       	error: function(xhr, status, error) {
+       		bootbox.alert("Error al guardar: " + xhr.responseText);
+       	},
+       	complete: function() {
+       		$("#btnGuardar").prop("disabled", false);
+       		var isEditing = $("#id_responsable").val() !== "";
+       		$("#btnGuardar").html('<i class="fa fa-' + (isEditing ? 'edit' : 'save') + '"></i> ' + (isEditing ? 'Actualizar' : 'Guardar') + ' Responsable');
+       	}
+      });
 }
 
 function mostrar(id_responsable){
@@ -133,14 +156,19 @@ function mostrar(id_responsable){
 			$("#periodo_inicio").val(data.periodo_inicio);
 			$("#periodo_fin").val(data.periodo_fin);
 			$("#firma_actual").val(data.autorizacion_firma);
+
+			// Sin firma por ahora
+
+			// Cambiar texto del botón cuando se edita
+			$("#btnGuardar").html('<i class="fa fa-edit"></i> Actualizar Responsable');
 		})
 		.fail(function(xhr, status, error) {
-			alert("Error al cargar los datos del responsable");
+			alert("Error al cargar los datos del responsable: " + xhr.responseText);
 		});
 }
 
 //funcion para eliminar
-function eliminar(id_responsable){
+function eliminar_responsable(id_responsable){
 	bootbox.confirm("¿Esta seguro de eliminar este responsable?", function(result){
 		if (result) {
 			$.post("../ajax/responsables_retiro.php?op=eliminar", {id_responsable : id_responsable}, function(e){
@@ -151,11 +179,29 @@ function eliminar(id_responsable){
 	})
 }
 
+//funcion para activar
+function activar(id_responsable){
+	bootbox.confirm("¿Esta seguro de activar este responsable?", function(result){
+		if (result) {
+			$.post("../ajax/responsables_retiro.php?op=activar", {id_responsable : id_responsable}, function(e){
+				bootbox.alert(e);
+				listar();
+			});
+		}
+	})
+}
+
 // Función para cargar la lista de niños
 function cargarNinos(){
     $.post("../ajax/ninos.php?op=select", function(r){
-        $("#id_nino").html(r);
+        $("#id_nino").html('<option value="">Seleccionar niño</option>');
+        var data = JSON.parse(r);
+        $.each(data, function(index, item){
+            $("#id_nino").append('<option value="' + item[0] + '">' + item[1] + '</option>');
+        });
     });
 }
+
+// Funciones de firma eliminadas - simplificar
 
 init();

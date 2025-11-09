@@ -7,7 +7,7 @@ if (strlen(session_id())<1)
 $responsables_retiro = new ResponsablesRetiro();
 $responsables_retiroController = new ResponsablesRetiroController();
 
-$id_responsable = isset($_POST["idresponsable"])? limpiarCadena($_POST["idresponsable"]):"";
+$id_responsable = isset($_POST["id_responsable"])? limpiarCadena($_POST["id_responsable"]):"";
 $id_nino = isset($_POST["id_nino"])? limpiarCadena($_POST["id_nino"]):"";
 $nombre_completo = isset($_POST["nombre_completo"])? limpiarCadena($_POST["nombre_completo"]):"";
 $parentesco = isset($_POST["parentesco"])? limpiarCadena($_POST["parentesco"]):"";

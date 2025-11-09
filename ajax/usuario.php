@@ -224,6 +224,11 @@ switch ($_GET["op"]) {
 			$rspta = $usuario->editar_sin_password($id_usuario_logueado, $nombre, $dui, $email, $rol_id, $telefono, $direccion, $estado_usuario_id, $fotografia);
 		}
 
+		// Actualizar la sesión con la nueva imagen si se cambió
+		if ($rspta && !empty($fotografia)) {
+			$_SESSION['fotografia'] = $fotografia;
+		}
+
 		echo $rspta ? "Perfil actualizado correctamente" : "No se pudo actualizar el perfil";
 	break;
 

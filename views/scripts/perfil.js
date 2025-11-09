@@ -38,9 +38,11 @@ function mostrarPerfil() {
         if (data.fotografia) {
             $("#imagenmuestra").html('<img src="../files/usuarios/' + data.fotografia + '" style="width: 100%; height: 100%; object-fit: cover;">');
             $("#imagenPerfil").html('<img src="../files/usuarios/' + data.fotografia + '" style="width: 100%; height: 100%; object-fit: cover;">');
+            $("#navbarUserImage").html('<img src="../files/usuarios/' + data.fotografia + '" style="width: 100%; height: 100%; object-fit: cover;">');
         } else {
             $("#imagenmuestra").html('<i class="fas fa-user" style="font-size: 3rem; color: #ccc;"></i>');
             $("#imagenPerfil").html('<i class="fas fa-user" style="font-size: 2rem; color: #28a745;"></i>');
+            $("#navbarUserImage").html('<i class="fas fa-user" style="font-size: 1.2rem; color: #666;"></i>');
         }
     });
 }
@@ -69,6 +71,9 @@ function guardaryeditarPerfil(e) {
         success: function(datos) {
             bootbox.alert(datos);
             mostrarPerfil(); // Recargar los datos del perfil
+            // Limpiar campos de contraseña
+            $("#clave_actual").val("");
+            $("#clave_nueva").val("");
         },
         error: function() {
             bootbox.alert("Error al actualizar el perfil");

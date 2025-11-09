@@ -46,8 +46,8 @@ if (!isset($_SESSION['nombre'])) {
                 while ($reg = $rspta->fetch(PDO::FETCH_OBJ)) {
                   echo '<tr style="border-bottom: 1px solid rgba(0,0,0,0.05); transition: all 0.3s ease;">';
                   echo '<td style="padding: 1rem;">';
-                  echo '<button class="btn btn-outline-warning btn-sm" style="margin-right: 0.5rem; border-radius: 20px;" onclick="mostrar(' . $reg->id_aula . ')"><i class="fa fa-pencil"></i> Editar</button>';
-                  echo '<button class="btn btn-outline-danger btn-sm" style="border-radius: 20px;" onclick="desactivar(' . $reg->id_aula . ')"><i class="fa fa-trash"></i> Eliminar</button>';
+                  echo '<button class="btn btn-outline-warning btn-sm" style="margin-right: 0.5rem; border-radius: 20px;" onclick="mostrarFormulario(' . $reg->id_aula . ')"><i class="fa fa-pencil"></i> Editar</button>';
+                  echo '<button class="btn btn-outline-danger btn-sm" style="border-radius: 20px;" onclick="eliminar_aula(' . $reg->id_aula . ')"><i class="fa fa-trash"></i> Eliminar</button>';
                   echo '</td>';
                   echo '<td style="padding: 1rem; font-weight: 600; color: #3c8dbc;">' . $reg->nombre_aula . '</td>';
                   echo '<td style="padding: 1rem; color: #666;">' . $reg->descripcion . '</td>';
@@ -116,7 +116,7 @@ if (!isset($_SESSION['nombre'])) {
     // Función para mostrar/ocultar formulario
     function mostrarFormulario(id) {
       $('#formulario')[0].reset();
-      $('#modalLabel').html(id > 0 ? 'Editar Aula' : 'Agregar Nueva Aula');
+      $('#modalLabel').html(id > 0 ? '<i class="fa fa-edit"></i> Editar Aula' : '<i class="fa fa-university"></i> Agregar Nueva Aula');
       $('#modal').modal('show');
 
       if (id > 0) {
@@ -131,15 +131,20 @@ if (!isset($_SESSION['nombre'])) {
         $('#idaula').val(data.id_aula);
         $('#nombre_aula').val(data.nombre_aula);
         $('#descripcion').val(data.descripcion);
+      }).fail(function(xhr, status, error) {
+        bootbox.alert("Error al cargar los datos del aula: " + xhr.responseText);
       });
     }
 
-    // Función para desactivar aula
-    function desactivar(id) {
-      bootbox.confirm("¿Está seguro de desactivar el aula?", function (result) {
+    // Función para eliminar aula
+    function eliminar_aula(id) {
+      bootbox.confirm("¿Está seguro de eliminar el aula?", function (result) {
         if (result) {
           $.post("../ajax/aulas.php?op=desactivar", {idaula: id}, function (e) {
+            bootbox.alert(e);
             location.reload();
+          }).fail(function(xhr, status, error) {
+            bootbox.alert("Error al eliminar: " + xhr.responseText);
           });
         }
       });
@@ -171,6 +176,9 @@ if (!isset($_SESSION['nombre'])) {
             bootbox.alert(datos);
             $('#modal').modal('hide');
             location.reload();
+          },
+          error: function(xhr, status, error) {
+            bootbox.alert("Error al guardar: " + xhr.responseText);
           }
         });
       });

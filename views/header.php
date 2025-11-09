@@ -39,13 +39,15 @@ if (strlen(session_id()) < 1) {
         <div class="navbar-left">
             <div class="dropdown custom-dropdown">
                 <a href="#" class="user-profile-widget dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                    <img src="../files/usuarios/1535417472.jpg" class="user-image" alt="User Image">
-                    <div class="user-info">
-                        <span class="user-name"><?php echo $_SESSION['nombre']; ?></span>
-                        <small class="user-role"><?php echo $_SESSION['cargo']; ?></small>
-                    </div>
-                    <span class="custom-caret"></span>
-                </a>
+                <div id="navbarUserImage" style="width: 40px; height: 40px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.3); margin-right: 10px; background: #f8f9fa; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+                    <i class="fas fa-user" style="font-size: 1.2rem; color: #666;"></i>
+                </div>
+                <div class="user-info">
+                    <span class="user-name"><?php echo $_SESSION['nombre']; ?></span>
+                    <small class="user-role"><?php echo $_SESSION['cargo']; ?></small>
+                </div>
+                <span class="custom-caret"></span>
+            </a>
                 <ul class="dropdown-menu user-dropdown-menu">
                     <li><a href="perfil.php" class="dropdown-item"><i class="fa fa-user-edit"></i> Editar Perfil</a></li>
                     <li class="divider"></li>

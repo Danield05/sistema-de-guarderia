@@ -43,7 +43,11 @@ switch ($_GET["op"]) {
 		break;
 
     case 'listarPorSeccion':
-		$ninosController->listarPorSeccion();
-		break;
+  $ninosController->listarPorSeccion();
+  break;
+
+    case 'select':
+  $ninosController->select();
+  break;
 }
 ?>

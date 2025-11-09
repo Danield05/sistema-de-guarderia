@@ -119,4 +119,32 @@ if (!function_exists('limpiarCadena')) {
         return htmlspecialchars($str, ENT_QUOTES, 'UTF-8');
     }
 }
+
+if (!function_exists('ejecutarConsulta_preparada')) {
+    function ejecutarConsulta_preparada($sql, $params) {
+        global $pdo;
+        try {
+            $stmt = $pdo->prepare($sql);
+            return $stmt->execute($params); // Devuelve true o false
+        } catch (PDOException $e) {
+            // Para depuración, puedes loggear el error en lugar de terminar el script
+            error_log("Error en consulta preparada: " . $e->getMessage());
+            return false; // Indicar que la consulta falló
+        }
+    }
+}
+
+if (!function_exists('ejecutarConsultaSimpleFila_preparada')) {
+    function ejecutarConsultaSimpleFila_preparada($sql, $params) {
+        global $pdo;
+        try {
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute($params);
+            return $stmt->fetch();
+        } catch (PDOException $e) {
+            error_log("Error en consulta preparada (fila simple): " . $e->getMessage());
+            return null; // Indicar que no se encontró nada o hubo un error
+        }
+    }
+}
 ?>

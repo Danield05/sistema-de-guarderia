@@ -20,7 +20,7 @@ class Aulas{
 	}
 
 	public function desactivar($id_aula){
-		$sql="UPDATE aulas SET estado='0' WHERE id_aula='$id_aula'";
+		$sql="DELETE FROM aulas WHERE id_aula='$id_aula'";
 		return ejecutarConsulta($sql);
 	}
 
