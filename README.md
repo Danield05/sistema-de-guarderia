@@ -15,6 +15,11 @@ Un sistema integral de gestión para guarderías infantiles que facilita la admi
 - Registro y seguimiento de estudiantes
 - Sistema de control de asistencia
 - Asignación de adultos responsables
+- **🕒 Gestión de Horarios de Clase** (Nuevo)
+  - Asignación de horarios por niño y día de la semana
+  - Filtros avanzados por nombre, aula y sección
+  - Vista diferenciada por roles (Admin/Profesor vs Tutor)
+  - Control de permisos granular
 
 ### 🏥 Información Médica
 - Seguimiento y gestión de enfermedades
@@ -93,15 +98,20 @@ Un sistema integral de gestión para guarderías infantiles que facilita la admi
 ```
 sistema-de-guarderia/
 ├── ajax/              # Scripts AJAX para operaciones del servidor
+│   ├── horarios.php   # AJAX para gestión de horarios (Nuevo)
 ├── config/            # Configuración de base de datos
 ├── controllers/       # Controladores de la aplicación
+│   ├── HorariosController.php  # Controlador de horarios (Nuevo)
 ├── models/            # Modelos de datos
+│   ├── Horarios.php   # Modelo de horarios (Nuevo)
 ├── public/            # Archivos públicos (CSS, JS, imágenes)
 │   ├── css/           # Hojas de estilo
 │   ├── js/            # Librerías JavaScript
 │   └── plugins/       # Plugins de terceros
 ├── views/             # Vistas PHP
+│   ├── horarios.php   # Vista de gestión de horarios (Nuevo)
 │   ├── scripts/       # Scripts JavaScript específicos
+│       ├── horarios.js  # JavaScript para horarios (Nuevo)
 ├── files/             # Archivos subidos (imágenes, etc.)
 ├── index.php          # Punto de entrada principal
 ├── sis_school.sql     # Esquema de base de datos
@@ -113,6 +123,7 @@ sistema-de-guarderia/
 ### Panel Administrativo
 - **Escritorio**: Dashboard con estadísticas generales
 - **Gestión Académica**: Administración de aulas, secciones y estudiantes
+- **🕒 Horarios de Estudio**: Gestión completa de horarios de clase (Nuevo)
 - **Control de Asistencia**: Sistema de seguimiento de asistencia estudiantil
 - **Información Médica**: Gestión de enfermedades, medicamentos y alergias
 - **Gestión de Usuarios**: Administración de usuarios del sistema
@@ -144,6 +155,7 @@ sistema-de-guarderia/
 - La navegación principal se encuentra en `views/header.php`
 - Gestión de perfil de usuario en `views/perfil.php`
 - Sistema de login con UI moderna en `views/login.php`
+- **Nueva funcionalidad de horarios**: Implementada con filtros avanzados y control de permisos por rol
 
 ## 📞 Soporte
 

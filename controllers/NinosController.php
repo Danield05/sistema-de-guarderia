@@ -118,5 +118,19 @@ class NinosController {
         }
         echo $html;
     }
+
+    public function verificarExistencia() {
+        $ninos = new Ninos();
+        $id = isset($_POST["id_nino"]) ? limpiarCadena($_POST["id_nino"]) : "";
+
+        if (empty($id)) {
+            echo json_encode(array("existe" => false));
+            return;
+        }
+
+        $rspta = $ninos->mostrar($id);
+        $existe = ($rspta != false && isset($rspta['id_nino']));
+        echo json_encode(array("existe" => $existe));
+    }
 }
 ?>

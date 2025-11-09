@@ -26,21 +26,17 @@ function limpiar(){
 function mostrarform(flag){
 	limpiar();
 	if(flag){
-		$("#listadoregistros").hide();
-		$("#formularioregistros").show();
-		$("#btnGuardar").prop("disabled",false);
-		$("#btnagregar").hide();
+		$('#modalEnfermedadLabel').html('<i class="fa fa-plus-circle"></i> Nuevo Diagnóstico');
+		$('#modalEnfermedad').modal('show');
 	}else{
-		$("#listadoregistros").show();
-		$("#formularioregistros").hide();
-		$("#btnagregar").show();
+		$('#modalEnfermedad').modal('hide');
 	}
 }
 
 //cancelar form
 function cancelarform(){
 	limpiar();
-	mostrarform(false);
+	$('#modalEnfermedad').modal('hide');
 }
 
 //funcion listar
@@ -95,13 +91,14 @@ function guardaryeditar(e){
       		bootbox.alert(datos);
       		$('#modalEnfermedad').modal('hide');
       		listar();
+      		limpiar();
       	},
       	error: function(xhr, status, error) {
       		bootbox.alert("Error al guardar");
       	},
       	complete: function() {
       		$("#btnGuardar").prop("disabled", false);
-      		$("#btnGuardar").html('<i class="fa fa-save"></i> Guardar Enfermedad');
+      		$("#btnGuardar").html('<i class="fa fa-save"></i> Guardar Diagnóstico');
       	}
      });
 
@@ -113,7 +110,7 @@ function mostrar(id_enfermedad){
 		function(data,status)
 		{
 			data=JSON.parse(data);
-			$('#modalEnfermedadLabel').html('<i class="fa fa-edit"></i> Editar Enfermedad');
+			$('#modalEnfermedadLabel').html('<i class="fa fa-edit"></i> Editar Diagnóstico');
 			$('#modalEnfermedad').modal('show');
 
 			$("#id_enfermedad").val(data.id_enfermedad);
@@ -129,7 +126,7 @@ function mostrar(id_enfermedad){
 
 //funcion para eliminar
 function eliminar(id_enfermedad){
-	bootbox.confirm("¿Esta seguro de eliminar esta enfermedad?", function(result){
+	bootbox.confirm("¿Esta seguro de eliminar este diagnóstico?", function(result){
 		if (result) {
 			$.post("../ajax/enfermedades.php?op=eliminar", {id_enfermedad : id_enfermedad}, function(e){
 				bootbox.alert(e);

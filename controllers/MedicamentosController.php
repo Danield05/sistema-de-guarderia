@@ -8,7 +8,7 @@ class MedicamentosController {
     public function guardarYEditar() {
         $medicamentos = new Medicamentos();
 
-        $id = isset($_POST["idmedicamento"]) ? limpiarCadena($_POST["idmedicamento"]) : "";
+        $id = isset($_POST["id_medicamento"]) ? limpiarCadena($_POST["id_medicamento"]) : "";
         $id_nino = isset($_POST["id_nino"]) ? limpiarCadena($_POST["id_nino"]) : "";
         $nombre_medicamento = isset($_POST["nombre_medicamento"]) ? limpiarCadena($_POST["nombre_medicamento"]) : "";
         $dosis = isset($_POST["dosis"]) ? limpiarCadena($_POST["dosis"]) : "";
@@ -26,14 +26,14 @@ class MedicamentosController {
 
     public function eliminar() {
         $medicamentos = new Medicamentos();
-        $id = isset($_POST["idmedicamento"]) ? limpiarCadena($_POST["idmedicamento"]) : "";
+        $id = isset($_POST["id_medicamento"]) ? limpiarCadena($_POST["id_medicamento"]) : "";
         $rspta = $medicamentos->eliminar($id);
         echo $rspta ? "Medicamento eliminado correctamente" : "No se pudo eliminar el medicamento";
     }
 
     public function mostrar() {
         $medicamentos = new Medicamentos();
-        $id = isset($_POST["idmedicamento"]) ? limpiarCadena($_POST["idmedicamento"]) : "";
+        $id = isset($_POST["id_medicamento"]) ? limpiarCadena($_POST["id_medicamento"]) : "";
         $rspta = $medicamentos->mostrar($id);
         echo json_encode($rspta);
     }

@@ -44,7 +44,7 @@ class AsistenciaController {
 
         while ($reg = $rspta->fetch(PDO::FETCH_OBJ)) {
             $data[] = array(
-                "0" => '<button class="btn btn-warning btn-xs" onclick="mostrar(' . $reg->id_asistencia . ')"><i class="fa fa-pencil"></i></button>' . ' ' . '<button class="btn btn-danger btn-xs" onclick="eliminar(' . $reg->id_asistencia . ')"><i class="fa fa-trash"></i></button>',
+                "0" => '<button class="btn btn-warning btn-xs" onclick="mostrarAsistencia(' . $reg->id_asistencia . ')"><i class="fa fa-pencil"></i></button>' . ' ' . '<button class="btn btn-danger btn-xs" onclick="eliminarAsistencia(' . $reg->id_asistencia . ')"><i class="fa fa-trash"></i></button>',
                 "1" => $reg->nino,
                 "2" => $reg->fecha,
                 "3" => $reg->nombre_estado,
@@ -164,8 +164,8 @@ class AsistenciaController {
 
     public function obtenerEstadisticas() {
         $asistencia = new Asistencia();
-        $fecha = isset($_POST["fecha"]) ? limpiarCadena($_POST["fecha"]) : date('Y-m-d');
-        
+        $fecha = isset($_POST["fecha"]) ? limpiarCadena($_POST["fecha"]) : null; // null para estadísticas generales
+
         $estadisticas = $asistencia->obtenerEstadisticas($fecha);
         echo json_encode($estadisticas);
     }

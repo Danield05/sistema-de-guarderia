@@ -10,7 +10,7 @@ class EnfermedadesController {
     public function guardarYEditar() {
         $enfermedades = new Enfermedades();
 
-        $id = isset($_POST["idenfermedad"]) ? limpiarCadena($_POST["idenfermedad"]) : "";
+        $id = isset($_POST["id_enfermedad"]) ? limpiarCadena($_POST["id_enfermedad"]) : "";
         $id_nino = isset($_POST["id_nino"]) ? limpiarCadena($_POST["id_nino"]) : "";
         $nombre_enfermedad = isset($_POST["nombre_enfermedad"]) ? limpiarCadena($_POST["nombre_enfermedad"]) : "";
         $descripcion = isset($_POST["descripcion"]) ? limpiarCadena($_POST["descripcion"]) : "";
@@ -27,14 +27,14 @@ class EnfermedadesController {
 
     public function eliminar() {
         $enfermedades = new Enfermedades();
-        $id = isset($_POST["idenfermedad"]) ? limpiarCadena($_POST["idenfermedad"]) : "";
+        $id = isset($_POST["id_enfermedad"]) ? limpiarCadena($_POST["id_enfermedad"]) : "";
         $rspta = $enfermedades->eliminar($id);
         echo $rspta ? "Enfermedad eliminada correctamente" : "No se pudo eliminar la enfermedad";
     }
 
     public function mostrar() {
         $enfermedades = new Enfermedades();
-        $id = isset($_POST["idenfermedad"]) ? limpiarCadena($_POST["idenfermedad"]) : "";
+        $id = isset($_POST["id_enfermedad"]) ? limpiarCadena($_POST["id_enfermedad"]) : "";
         $rspta = $enfermedades->mostrar($id);
         echo json_encode($rspta);
     }

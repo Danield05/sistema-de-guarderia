@@ -8,7 +8,7 @@ class AlergiasController {
     public function guardarYEditar() {
         $alergias = new Alergias();
 
-        $id = isset($_POST["idalergia"]) ? limpiarCadena($_POST["idalergia"]) : "";
+        $id = isset($_POST["id_alergia"]) ? limpiarCadena($_POST["id_alergia"]) : "";
         $id_nino = isset($_POST["id_nino"]) ? limpiarCadena($_POST["id_nino"]) : "";
         $tipo_alergia = isset($_POST["tipo_alergia"]) ? limpiarCadena($_POST["tipo_alergia"]) : "";
         $descripcion = isset($_POST["descripcion"]) ? limpiarCadena($_POST["descripcion"]) : "";
@@ -24,14 +24,14 @@ class AlergiasController {
 
     public function eliminar() {
         $alergias = new Alergias();
-        $id = isset($_POST["idalergia"]) ? limpiarCadena($_POST["idalergia"]) : "";
+        $id = isset($_POST["id_alergia"]) ? limpiarCadena($_POST["id_alergia"]) : "";
         $rspta = $alergias->eliminar($id);
         echo $rspta ? "Alergia eliminada correctamente" : "No se pudo eliminar la alergia";
     }
 
     public function mostrar() {
         $alergias = new Alergias();
-        $id = isset($_POST["idalergia"]) ? limpiarCadena($_POST["idalergia"]) : "";
+        $id = isset($_POST["id_alergia"]) ? limpiarCadena($_POST["id_alergia"]) : "";
         $rspta = $alergias->mostrar($id);
         echo json_encode($rspta);
     }

@@ -2,8 +2,6 @@
 //incluir la conexion de base de datos
 require "../config/Conexion.php";
 class Asistencia{
-
-	//implementamos nuestro constructor
 	public function __construct(){
 
 	}
@@ -114,12 +112,9 @@ class Asistencia{
 		
 		$where_clause = !empty($where_conditions) ? 'WHERE ' . implode(' AND ', $where_conditions) : '';
 		
-		$sql="SELECT a.id_asistencia, a.fecha, a.observaciones,
-		n.id_nino, n.nombre_completo, aul.nombre_aula, sec.nombre_seccion, ea.nombre_estado
+		$sql="SELECT a.id_asistencia, n.nombre_completo, a.fecha, ea.nombre_estado, a.observaciones
 		FROM asistencias a
 		LEFT JOIN ninos n ON a.id_nino=n.id_nino
-		LEFT JOIN aulas aul ON n.aula_id=aul.id_aula
-		LEFT JOIN secciones sec ON n.seccion_id=sec.id_seccion
 		LEFT JOIN estados_asistencia ea ON a.estado_id=ea.id_estado
 		$where_clause
 		ORDER BY a.fecha DESC, n.nombre_completo";
@@ -291,43 +286,78 @@ class Asistencia{
 		return $str;
 	}
 
-	//obtener estadísticas de asistencia - TODAS LAS ASISTENCIAS HISTÓRICAS
+	//obtener estadísticas de asistencia - TOTALES GENERALES
 	public function obtenerEstadisticas($fecha = null){
-		// Total de todos los registros de asistencia (sin filtro de fecha)
-		$sqlTotal = "SELECT COUNT(*) as total FROM asistencias a
-					INNER JOIN ninos n ON a.id_nino = n.id_nino
-					WHERE n.estado = 1";
-		$rsptaTotal = ejecutarConsultaSimpleFila($sqlTotal);
-		$total_estudiantes = $rsptaTotal['total'];
-		
-		// TODAS las asistencias (estado_id = 1) - Histórico
-		$sqlAsistieron = "SELECT COUNT(*) as total FROM asistencias a
-						 INNER JOIN ninos n ON a.id_nino = n.id_nino
-						 WHERE a.estado_id = 1 AND n.estado = 1";
-		$rsptaAsistieron = ejecutarConsultaSimpleFila($sqlAsistieron);
-		$asistieron = $rsptaAsistieron['total'];
-		
-		// TODAS las faltas (estado_id = 2) - Histórico
-		$sqlFaltaron = "SELECT COUNT(*) as total FROM asistencias a
-					   INNER JOIN ninos n ON a.id_nino = n.id_nino
-					   WHERE a.estado_id = 2 AND n.estado = 1";
-		$rsptaFaltaron = ejecutarConsultaSimpleFila($sqlFaltaron);
-		$faltaron = $rsptaFaltaron['total'];
-		
-		// TODAS las tardanzas (estado_id = 4) - Histórico
-		$sqlTardanzas = "SELECT COUNT(*) as total FROM asistencias a
-						INNER JOIN ninos n ON a.id_nino = n.id_nino
-						WHERE a.estado_id = 4 AND n.estado = 1";
-		$rsptaTardanzas = ejecutarConsultaSimpleFila($sqlTardanzas);
-		$tardanzas = $rsptaTardanzas['total'];
-		
-		// TODOS los permisos (estado_id = 3) - Histórico
-		$sqlPermisos = "SELECT COUNT(*) as total FROM asistencias a
-					   INNER JOIN ninos n ON a.id_nino = n.id_nino
-					   WHERE a.estado_id = 3 AND n.estado = 1";
-		$rsptaPermisos = ejecutarConsultaSimpleFila($sqlPermisos);
-		$permisos = $rsptaPermisos['total'];
-		
+		// Si no se especifica fecha, mostrar estadísticas generales de todos los tiempos
+		if (!$fecha) {
+			// Total de niños activos (estadística general)
+			$sqlTotal = "SELECT COUNT(*) as total FROM ninos WHERE estado = 1";
+			$rsptaTotal = ejecutarConsultaSimpleFila($sqlTotal);
+			$total_estudiantes = $rsptaTotal['total'];
+
+			// Asistencias totales (estado_id = 1)
+			$sqlAsistieron = "SELECT COUNT(*) as total FROM asistencias a
+							 INNER JOIN ninos n ON a.id_nino = n.id_nino
+							 WHERE a.estado_id = 1 AND n.estado = 1";
+			$rsptaAsistieron = ejecutarConsultaSimpleFila($sqlAsistieron);
+			$asistieron = $rsptaAsistieron['total'];
+
+			// Faltas totales (estado_id = 2)
+			$sqlFaltaron = "SELECT COUNT(*) as total FROM asistencias a
+						   INNER JOIN ninos n ON a.id_nino = n.id_nino
+						   WHERE a.estado_id = 2 AND n.estado = 1";
+			$rsptaFaltaron = ejecutarConsultaSimpleFila($sqlFaltaron);
+			$faltaron = $rsptaFaltaron['total'];
+
+			// Tardanzas totales (estado_id = 4)
+			$sqlTardanzas = "SELECT COUNT(*) as total FROM asistencias a
+							INNER JOIN ninos n ON a.id_nino = n.id_nino
+							WHERE a.estado_id = 4 AND n.estado = 1";
+			$rsptaTardanzas = ejecutarConsultaSimpleFila($sqlTardanzas);
+			$tardanzas = $rsptaTardanzas['total'];
+
+			// Permisos totales (estado_id = 3)
+			$sqlPermisos = "SELECT COUNT(*) as total FROM asistencias a
+						   INNER JOIN ninos n ON a.id_nino = n.id_nino
+						   WHERE a.estado_id = 3 AND n.estado = 1";
+			$rsptaPermisos = ejecutarConsultaSimpleFila($sqlPermisos);
+			$permisos = $rsptaPermisos['total'];
+		} else {
+			// Estadísticas específicas de una fecha
+			// Total de niños activos (estadística general)
+			$sqlTotal = "SELECT COUNT(*) as total FROM ninos WHERE estado = 1";
+			$rsptaTotal = ejecutarConsultaSimpleFila($sqlTotal);
+			$total_estudiantes = $rsptaTotal['total'];
+
+			// Asistencias del día específico (estado_id = 1)
+			$sqlAsistieron = "SELECT COUNT(*) as total FROM asistencias a
+							 INNER JOIN ninos n ON a.id_nino = n.id_nino
+							 WHERE a.estado_id = 1 AND a.fecha = '$fecha' AND n.estado = 1";
+			$rsptaAsistieron = ejecutarConsultaSimpleFila($sqlAsistieron);
+			$asistieron = $rsptaAsistieron['total'];
+
+			// Faltas del día específico (estado_id = 2)
+			$sqlFaltaron = "SELECT COUNT(*) as total FROM asistencias a
+						   INNER JOIN ninos n ON a.id_nino = n.id_nino
+						   WHERE a.estado_id = 2 AND a.fecha = '$fecha' AND n.estado = 1";
+			$rsptaFaltaron = ejecutarConsultaSimpleFila($sqlFaltaron);
+			$faltaron = $rsptaFaltaron['total'];
+
+			// Tardanzas del día específico (estado_id = 4)
+			$sqlTardanzas = "SELECT COUNT(*) as total FROM asistencias a
+							INNER JOIN ninos n ON a.id_nino = n.id_nino
+							WHERE a.estado_id = 4 AND a.fecha = '$fecha' AND n.estado = 1";
+			$rsptaTardanzas = ejecutarConsultaSimpleFila($sqlTardanzas);
+			$tardanzas = $rsptaTardanzas['total'];
+
+			// Permisos del día específico (estado_id = 3)
+			$sqlPermisos = "SELECT COUNT(*) as total FROM asistencias a
+						   INNER JOIN ninos n ON a.id_nino = n.id_nino
+						   WHERE a.estado_id = 3 AND a.fecha = '$fecha' AND n.estado = 1";
+			$rsptaPermisos = ejecutarConsultaSimpleFila($sqlPermisos);
+			$permisos = $rsptaPermisos['total'];
+		}
+
 		return array(
 			'total_estudiantes' => $total_estudiantes,
 			'asistieron' => $asistieron,

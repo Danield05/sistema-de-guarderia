@@ -25,21 +25,17 @@ function limpiar(){
 function mostrarform(flag){
 	limpiar();
 	if(flag){
-		$("#listadoregistros").hide();
-		$("#formularioregistros").show();
-		$("#btnGuardar").prop("disabled",false);
-		$("#btnagregar").hide();
+		$('#modalAlergiaLabel').html('<i class="fa fa-plus-circle"></i> Nueva Alergia');
+		$('#modalAlergia').modal('show');
 	}else{
-		$("#listadoregistros").show();
-		$("#formularioregistros").hide();
-		$("#btnagregar").show();
+		$('#modalAlergia').modal('hide');
 	}
 }
 
 //cancelar form
 function cancelarform(){
 	limpiar();
-	mostrarform(false);
+	$('#modalAlergia').modal('hide');
 }
 
 //funcion listar

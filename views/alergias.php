@@ -24,7 +24,7 @@ if ((isset($_SESSION['escritorio']) && $_SESSION['escritorio']==1) || (isset($_S
       <div class="activity-feed">
         <div class="d-flex justify-content-between align-items-center mb-4">
           <h3 class="activity-title">🤧 Lista de Alergias</h3>
-          <button type="button" class="btn btn-primary" style="border-radius: 25px; padding: 0.75rem 2rem; font-weight: 600; box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);" onclick="mostrarform(true)">
+          <button type="button" class="btn btn-primary" style="border-radius: 25px; padding: 0.75rem 2rem; font-weight: 600; box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);" onclick="mostrarform(true)">
             <i class="fa fa-plus-circle"></i> Nueva Alergia
           </button>
         </div>
@@ -32,7 +32,7 @@ if ((isset($_SESSION['escritorio']) && $_SESSION['escritorio']==1) || (isset($_S
         <!-- Tabla de registros -->
         <div class="table-responsive">
           <table class="table table-hover">
-            <thead style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+            <thead style="background: linear-gradient(135deg, #2e049aff 0%, #161c83ff 100%); color: white;">
               <tr>
                 <th style="border: none; padding: 1rem;"><i class="fa fa-cogs"></i> Acciones</th>
                 <th style="border: none; padding: 1rem;"><i class="fa fa-child"></i> Niño</th>
@@ -55,7 +55,7 @@ if ((isset($_SESSION['escritorio']) && $_SESSION['escritorio']==1) || (isset($_S
     <div class="modal fade" id="modalAlergia" tabindex="-1" role="dialog" aria-labelledby="modalAlergiaLabel" aria-hidden="true">
       <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content" style="border-radius: 20px; border: none; box-shadow: 0 20px 60px rgba(0,0,0,0.2);">
-          <div class="modal-header" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 20px 20px 0 0; border-bottom: none; padding: 2rem;">
+          <div class="modal-header" style="background: linear-gradient(135deg, #0d12a0ff 0%, #5c26ffff 100%); color: white; border-radius: 20px 20px 0 0; border-bottom: none; padding: 2rem;">
             <h4 class="modal-title" id="modalAlergiaLabel" style="font-weight: 600; font-size: 1.5rem;">
               <i class="fa fa-plus-circle"></i> Nueva Alergia
             </h4>
@@ -112,7 +112,7 @@ if ((isset($_SESSION['escritorio']) && $_SESSION['escritorio']==1) || (isset($_S
               <button type="button" class="btn btn-secondary" data-dismiss="modal" style="border-radius: 25px; padding: 0.5rem 2rem; font-weight: 600; border: none; background: #6c757d;">
                 <i class="fa fa-times"></i> Cancelar
               </button>
-              <button type="submit" class="btn btn-primary" style="border-radius: 25px; padding: 0.5rem 2rem; font-weight: 600; border: none; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);">
+              <button type="submit" id="btnGuardar" class="btn btn-primary" style="border-radius: 25px; padding: 0.5rem 2rem; font-weight: 600; border: none; background: linear-gradient(135deg, #04088eff 0%, #1c189eff 100%); box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);">
                 <i class="fa fa-save"></i> Guardar Alergia
               </button>
             </div>

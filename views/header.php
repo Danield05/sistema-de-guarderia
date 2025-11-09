@@ -92,8 +92,7 @@ if (strlen(session_id()) < 1) {
                     <?php
                     $mostrar_gestion_academica = (isset($_SESSION['aulas']) && $_SESSION['aulas'] == 1) ||
                                                 (isset($_SESSION['secciones']) && $_SESSION['secciones'] == 1) ||
-                                                (isset($_SESSION['ninos']) && $_SESSION['ninos'] == 1) ||
-                                                (isset($_SESSION['asistencia']) && $_SESSION['asistencia'] == 1);
+                                                (isset($_SESSION['ninos']) && $_SESSION['ninos'] == 1);
                     ?>
 
                     <?php if ($mostrar_gestion_academica): ?>
@@ -114,8 +113,8 @@ if (strlen(session_id()) < 1) {
                                     <li><a href="ninos.php" class="dropdown-item"><i class="fas fa-baby"></i> <span>Niños</span></a></li>
                                 <?php endif; ?>
 
-                                <?php if (isset($_SESSION['asistencia']) && $_SESSION['asistencia'] == 1): ?>
-                                    <li><a href="asistencia.php" class="dropdown-item"><i class="fas fa-calendar-check"></i> <span>Control de Asistencias</span></a></li>
+                                <?php if ((isset($_SESSION['horarios']) && $_SESSION['horarios'] == 1) || (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Administrador')): ?>
+                                    <li><a href="horarios.php" class="dropdown-item"><i class="fas fa-clock"></i> <span>Horarios de Estudio</span></a></li>
                                 <?php endif; ?>
 
                                 <?php if (isset($_SESSION['escritorio']) && $_SESSION['escritorio'] == 1): ?>
@@ -128,7 +127,9 @@ if (strlen(session_id()) < 1) {
                     <!-- Administración y Alertas (Dropdown) -->
                     <?php
                     $mostrar_administracion = (isset($_SESSION['acceso']) && $_SESSION['acceso'] == 1) ||
-                                            (isset($_SESSION['escritorio']) && $_SESSION['escritorio'] == 1);
+                                            (isset($_SESSION['escritorio']) && $_SESSION['escritorio'] == 1) ||
+                                            (isset($_SESSION['grupos']) && $_SESSION['grupos'] == 1) ||
+                                            (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Administrador');
                     ?>
 
                     <?php if ($mostrar_administracion): ?>
@@ -144,6 +145,10 @@ if (strlen(session_id()) < 1) {
                                 <?php if (isset($_SESSION['escritorio']) && $_SESSION['escritorio'] == 1): ?>
                                     <li><a href="alertas.php" class="dropdown-item"><i class="fas fa-bell"></i> <span>Alertas</span></a></li>
                                     <li><a href="permisos_ausencia.php" class="dropdown-item"><i class="fas fa-calendar-times"></i> <span>Permisos de Ausencia</span></a></li>
+                                <?php endif; ?>
+
+                                <?php if ((isset($_SESSION['asistencia']) && $_SESSION['asistencia'] == 1) || (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Administrador')): ?>
+                                    <li><a href="asistencia.php" class="dropdown-item"><i class="fas fa-calendar-check"></i> <span>Control de Asistencias</span></a></li>
                                 <?php endif; ?>
                             </ul>
                         </li>

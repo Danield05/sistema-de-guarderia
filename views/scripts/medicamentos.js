@@ -27,21 +27,17 @@ function limpiar(){
 function mostrarform(flag){
 	limpiar();
 	if(flag){
-		$("#listadoregistros").hide();
-		$("#formularioregistros").show();
-		$("#btnGuardar").prop("disabled",false);
-		$("#btnagregar").hide();
+		$('#modalMedicamentoLabel').html('<i class="fa fa-plus-circle"></i> Nuevo Medicamento');
+		$('#modalMedicamento').modal('show');
 	}else{
-		$("#listadoregistros").show();
-		$("#formularioregistros").hide();
-		$("#btnagregar").show();
+		$('#modalMedicamento').modal('hide');
 	}
 }
 
 //cancelar form
 function cancelarform(){
 	limpiar();
-	mostrarform(false);
+	$('#modalMedicamento').modal('hide');
 }
 
 //funcion listar
@@ -97,6 +93,7 @@ function guardaryeditar(e){
       		bootbox.alert(datos);
       		$('#modalMedicamento').modal('hide');
       		listar();
+      		limpiar();
       	},
       	error: function(xhr, status, error) {
       		bootbox.alert("Error al guardar");

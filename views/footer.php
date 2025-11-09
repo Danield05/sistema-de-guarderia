@@ -5,7 +5,7 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-md-6 text-center text-md-left">
-                    <strong><i class="fa fa-copyright"></i> Copyright &copy; <?php echo date('Y'); ?> <a href="#">Sistema de Guardería</a>.</strong> Todos los derechos reservados.
+                    <strong> &copy; <?php echo date('Y'); ?> <a href="#">Sistema de Guardería</a>.</strong> Todos los derechos reservados.
                 </div>
                 <div class="col-md-6 text-center text-md-right">
                     <b><i class="fa fa-code"></i> Versión</b> 1.0

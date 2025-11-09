@@ -49,5 +49,9 @@ switch ($_GET["op"]) {
     case 'select':
   $ninosController->select();
   break;
+
+    case 'verificarExistencia':
+  $ninosController->verificarExistencia();
+  break;
 }
 ?>

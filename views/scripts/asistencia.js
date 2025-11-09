@@ -16,40 +16,36 @@ function init(){
        filtrarSecciones();
    });
 
-   // Cargar estadísticas periódicamente
+   // Cargar estadísticas inmediatamente y periódicamente
+   cargarEstadisticas();
    setInterval(function() {
        cargarEstadisticas();
    }, 30000);
-   
-   // También cargar estadísticas cuando se actualiza la página
-   $(document).ready(function() {
-       setTimeout(function() {
-           cargarEstadisticas();
-       }, 1000);
-   });
 }
 
 //función para cargar estadísticas en tiempo real
 function cargarEstadisticas(){
-    $.ajax({
-        url: "../ajax/asistencia.php?op=obtenerEstadisticas",
-        type: "POST",
-        data: {
-            fecha: $("#filtro_fecha_fin").val()
-        },
-        success: function(response){
-            try {
-                const stats = JSON.parse(response);
-                actualizarEstadisticas(stats);
-            } catch(e) {
-                console.error("Error al cargar estadísticas:", e);
-            }
-        },
-        error: function() {
-            console.error("Error al obtener estadísticas");
-        }
-    });
-}
+     $.ajax({
+         url: "../ajax/asistencia.php?op=obtenerEstadisticas",
+         type: "POST",
+         data: {}, // Sin fecha para obtener estadísticas generales
+         success: function(response){
+             try {
+                 console.log("Respuesta de estadísticas:", response); // Debug
+                 const stats = JSON.parse(response);
+                 console.log("Estadísticas parseadas:", stats); // Debug
+                 actualizarEstadisticas(stats);
+             } catch(e) {
+                 console.error("Error al cargar estadísticas:", e);
+                 console.error("Respuesta que falló:", response);
+             }
+         },
+         error: function(xhr, status, error) {
+             console.error("Error AJAX al obtener estadísticas:", status, error);
+             console.error("Respuesta del servidor:", xhr.responseText);
+         }
+     });
+ }
 
 //función para actualizar las estadísticas en la interfaz
 function actualizarEstadisticas(stats){
@@ -182,7 +178,7 @@ function crearFila(item, index){
                 ${nombre}
             </td>
             <td style="padding: 1rem;">
-                <span style="background: linear-gradient(135deg, #17a2b8 0%, #138496 100%); color: white; padding: 0.4rem 0.8rem; border-radius: 15px; font-size: 0.85rem; font-weight: 500; display: inline-flex; align-items: center; box-shadow: 0 2px 8px rgba(23, 162, 184, 0.3);">
+                <span style="background: linear-gradient(135deg, #17a2b8 0%, #20c997 100%); color: white; padding: 0.4rem 0.8rem; border-radius: 15px; font-size: 0.85rem; font-weight: 500; display: inline-flex; align-items: center; box-shadow: 0 2px 8px rgba(23, 162, 184, 0.3);">
                     <i class="fa fa-calendar" style="margin-right: 0.5rem;"></i>
                     ${fecha}
                 </span>
@@ -209,12 +205,38 @@ function crearFila(item, index){
     `;
 }
 
-//función para registrar asistencia del día
+// Función para mostrar/ocultar formulario
+function mostrarFormulario(id) {
+    if (id === 0 || id === undefined) {
+        // AGREGAR NUEVA ASISTENCIA
+        $('#formulario_asis')[0].reset();
+        $('#modalTitulo').html('<i class="fa fa-calendar-check"></i> Registrar Asistencia del Día');
+
+        // Mover modal al body para evitar problemas de stacking context
+        $('#modalAsistencia').appendTo('body');
+
+        $('#modalAsistencia').modal({
+            backdrop: 'static',
+            keyboard: true
+        });
+
+        // Limpiar formulario para nuevo registro
+            $("#idasistencia").val("");
+            $("#id_nino").val("");
+            $("#estado_id").val("");
+            $("#observaciones").val("");
+            $("#aula_info").val("");
+            $("#seccion_info").val("");
+            cargarNinosParaAsistencia();
+    } else {
+        // EDITAR ASISTENCIA EXISTENTE
+        mostrarAsistencia(id);
+    }
+}
+
+// Alias para mantener compatibilidad
 function registrarAsistenciaHoy(){
-    // Modal simple sin bootbox para evitar conflictos
-    $('#modalAsistencia').modal('show');
-    $("#modalTitulo").text("Registrar Asistencia del Día");
-    $("#nino_seleccionado").val("Seleccione estudiantes para registro masivo");
+    mostrarFormulario(0);
 }
 
 //función para aplicar filtros
@@ -291,9 +313,17 @@ function filtrarSecciones(){
 
 //función para mostrar modal de asistencia
 function mostrarAsistencia(id_asistencia){
-    $("#modalTitulo").text("Editar Asistencia");
-    $('#modalAsistencia').modal('show');
-    
+    $('#formulario_asis')[0].reset();
+    $('#modalTitulo').html('<i class="fa fa-edit"></i> Editar Asistencia');
+
+    // Mover modal al body para evitar problemas de stacking context
+    $('#modalAsistencia').appendTo('body');
+
+    $('#modalAsistencia').modal({
+        backdrop: 'static',
+        keyboard: true
+    });
+
     // Cargar datos de la asistencia
     $.ajax({
         url: "../ajax/asistencia.php?op=mostrar",
@@ -304,9 +334,15 @@ function mostrarAsistencia(id_asistencia){
                 const data = JSON.parse(response);
                 $("#idasistencia").val(data.id_asistencia);
                 $("#id_nino").val(data.id_nino);
-                $("#nino_seleccionado").val(data.nino);
                 $("#estado_id").val(data.estado_id);
                 $("#observaciones").val(data.observaciones);
+
+                // Cargar niños y seleccionar el actual
+                cargarNinosParaAsistencia(data.id_nino);
+
+                // Cargar información del niño
+                $("#aula_info").val(data.nombre_aula || "");
+                $("#seccion_info").val(data.nombre_seccion || "");
             } catch(e) {
                 console.error("Error al cargar datos de asistencia:", e);
                 alert("Error al cargar los datos de asistencia");
@@ -320,48 +356,129 @@ function mostrarAsistencia(id_asistencia){
 
 //función para eliminar asistencia
 function eliminarAsistencia(id_asistencia){
-    if (confirm('¿Está seguro de eliminar este registro de asistencia?')) {
-        $.ajax({
-            url: "../ajax/asistencia.php?op=eliminar",
-            type: "POST",
-            data: {idasistencia: id_asistencia},
-            success: function(response){
-                alert('Registro eliminado correctamente');
-                cargarDatosAsistencia();
-                cargarEstadisticas();
+    bootbox.confirm({
+        message: "¿Está seguro de eliminar este registro de asistencia?",
+        buttons: {
+            confirm: {
+                label: 'Sí, eliminar',
+                className: 'btn-danger'
             },
-            error: function() {
-                alert("Error al eliminar el registro");
+            cancel: {
+                label: 'Cancelar',
+                className: 'btn-secondary'
             }
-        });
-    }
+        },
+        callback: function (result) {
+            if (result) {
+                $.ajax({
+                    url: "../ajax/asistencia.php?op=eliminar",
+                    type: "POST",
+                    data: {idasistencia: id_asistencia},
+                    success: function(response){
+                        bootbox.alert("Registro eliminado correctamente");
+                        cargarDatosAsistencia();
+                        cargarEstadisticas();
+                    },
+                    error: function() {
+                        bootbox.alert("Error al eliminar el registro");
+                    }
+                });
+            }
+        }
+    });
 }
 
 //función para guardar/editar asistencia
 function guardaryeditarasis(e){
-     e.preventDefault();
-     $("#btnGuardar_asis").prop("disabled",true);
-     var formData=new FormData($("#formulario_asis")[0]);
+      e.preventDefault();
+      $("#btnGuardar_asis").prop("disabled",true);
+      var formData=new FormData($("#formulario_asis")[0]);
 
-     $.ajax({
-     	url: "../ajax/asistencia.php?op=guardaryeditar",
-     	type: "POST",
-     	data: formData,
-     	contentType: false,
-     	processData: false,
+      // Obtener el id del niño seleccionado
+      var ninoSeleccionado = $("#nino_seleccionado").val();
+      if (!ninoSeleccionado) {
+          alert("Por favor seleccione un niño");
+          $("#btnGuardar_asis").prop("disabled",false);
+          return;
+      }
 
-     	success: function(datos){
-     		alert(datos);
-     		$('#modalAsistencia').modal('hide');
-     		$("#btnGuardar_asis").prop("disabled",false);
-     		cargarDatosAsistencia();
-     		cargarEstadisticas();
-     	},
-     	error: function() {
-     		alert("Error al guardar la asistencia");
-     		$("#btnGuardar_asis").prop("disabled",false);
-     	}
-     });
+      // Extraer el id del niño del valor seleccionado (formato: "id-nombre")
+      var idNino = ninoSeleccionado.split('-')[0];
+
+      // Verificar que el ID del niño sea válido
+      if (!idNino || isNaN(idNino) || idNino <= 0) {
+          alert("ID de niño inválido. Por favor seleccione un niño válido de la lista.");
+          $("#btnGuardar_asis").prop("disabled",false);
+          return;
+      }
+
+      // DEBUG: Mostrar qué ID se está enviando
+      console.log("ID del niño a guardar:", idNino);
+      console.log("Valor seleccionado completo:", ninoSeleccionado);
+
+      // Asegurar que el campo id_nino tenga el valor correcto
+      $("#id_nino").val(idNino);
+      console.log("Campo id_nino establecido a:", $("#id_nino").val());
+
+      // DEBUG: Mostrar todos los datos del formulario antes de enviar
+      console.log("Datos del formulario:");
+      for (let [key, value] of formData.entries()) {
+          console.log(key + ': ' + value);
+      }
+
+      // Asegurar que id_nino tenga el valor correcto justo antes de enviar
+      if (!formData.has('id_nino') || formData.get('id_nino') === '') {
+          console.log("ADVERTENCIA: id_nino está vacío, agregándolo manualmente");
+          formData.set('id_nino', idNino);
+      }
+
+      $.ajax({
+      	url: "../ajax/asistencia.php?op=guardaryeditar",
+      	type: "POST",
+      	data: formData,
+      	contentType: false,
+      	processData: false,
+
+      	success: function(datos){
+      		console.log("Respuesta exitosa:", datos);
+
+      		// Usar bootbox para un mensaje más elegante
+      		if (datos.includes("correctamente")) {
+      			bootbox.alert({
+      				message: datos,
+      				backdrop: true,
+      				callback: function() {
+      					$('#modalAsistencia').modal('hide');
+      					cargarDatosAsistencia();
+      					cargarEstadisticas();
+      				}
+      			});
+      		} else {
+      			bootbox.alert(datos);
+      			$('#modalAsistencia').modal('hide');
+      			cargarDatosAsistencia();
+      			cargarEstadisticas();
+      		}
+
+      		$("#btnGuardar_asis").prop("disabled",false);
+      	},
+      	error: function(xhr, status, error) {
+      		console.error("Error al guardar asistencia:", error);
+      		console.error("Status:", status);
+      		console.error("Respuesta completa:", xhr.responseText);
+
+      		// Usar bootbox para errores también
+      		let mensajeError = "Error al guardar la asistencia. Verifique los datos e intente nuevamente.";
+      		if (xhr.responseText && xhr.responseText.includes("Integrity constraint violation")) {
+      			mensajeError = "Error: El niño seleccionado no existe o ya tiene asistencia registrada para esta fecha.";
+      		} else if (xhr.responseText && xhr.responseText.includes("Duplicate entry")) {
+      			mensajeError = "Error: Este niño ya tiene asistencia registrada para la fecha seleccionada.";
+      		}
+
+      		bootbox.alert(mensajeError);
+      		$("#btnGuardar_asis").prop("disabled",false);
+      	}
+      });
 }
 
 function exportarReporte(formato){
@@ -427,6 +544,81 @@ function mostrarAyuda() {
 • Excel: Formato nativo de Microsoft Excel`);
 }
 
+//función para cargar niños en el select del modal
+function cargarNinosParaAsistencia(ninoSeleccionado = null){
+    const aula_id = $("#filtro_aula").val();
+    const seccion_id = $("#filtro_seccion").val();
+
+    $.ajax({
+        url: "../ajax/asistencia.php?op=obtenerNinos",
+        type: "POST",
+        data: {
+            aula_id: aula_id,
+            seccion_id: seccion_id
+        },
+        success: function(response){
+            try {
+                const ninos = JSON.parse(response);
+                const select = $("#nino_seleccionado");
+                select.empty();
+                select.append('<option value="">Seleccione un niño</option>');
+
+                ninos.forEach(function(nino) {
+                    const selected = (ninoSeleccionado && ninoSeleccionado == nino.id_nino) ? 'selected' : '';
+                    select.append(`<option value="${nino.id_nino}-${nino.nombre_completo}" ${selected}>${nino.nombre_completo}</option>`);
+                });
+
+                // Agregar evento change para cargar información del niño seleccionado
+                select.off('change').on('change', function() {
+                    const valorSeleccionado = $(this).val();
+                    if (valorSeleccionado) {
+                        const idNino = valorSeleccionado.split('-')[0];
+                        cargarInformacionNino(idNino);
+                    } else {
+                        $("#aula_info").val("");
+                        $("#seccion_info").val("");
+                    }
+                });
+
+                // Si hay un niño preseleccionado, cargar su información
+                if (ninoSeleccionado) {
+                    cargarInformacionNino(ninoSeleccionado);
+                }
+            } catch(e) {
+                console.error("Error al cargar niños:", e);
+            }
+        },
+        error: function() {
+            console.error("Error al cargar niños para asistencia");
+        }
+    });
+}
+
+//función para cargar información del niño seleccionado
+function cargarInformacionNino(idNino) {
+    $.ajax({
+        url: "../ajax/ninos.php?op=mostrar",
+        type: "POST",
+        data: {idnino: idNino},
+        success: function(response) {
+            try {
+                const data = JSON.parse(response);
+                $("#aula_info").val(data.nombre_aula || "");
+                $("#seccion_info").val(data.nombre_seccion || "");
+            } catch(e) {
+                console.error("Error al cargar información del niño:", e);
+                $("#aula_info").val("");
+                $("#seccion_info").val("");
+            }
+        },
+        error: function() {
+            console.error("Error al cargar información del niño");
+            $("#aula_info").val("");
+            $("#seccion_info").val("");
+        }
+    });
+}
+
 // Asegurar que las funciones estén disponibles globalmente
 window.aplicarFiltros = aplicarFiltros;
 window.limpiarFiltros = limpiarFiltros;
@@ -434,6 +626,7 @@ window.mostrarAsistencia = mostrarAsistencia;
 window.eliminarAsistencia = eliminarAsistencia;
 window.exportarReporte = exportarReporte;
 window.registrarAsistenciaHoy = registrarAsistenciaHoy;
+window.mostrarFormulario = mostrarFormulario;
 window.mostrarAyuda = mostrarAyuda;
 
 $(document).ready(function() {

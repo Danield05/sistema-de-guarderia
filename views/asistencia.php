@@ -144,16 +144,21 @@ if ((isset($_SESSION['grupos']) && $_SESSION['grupos']==1) || (isset($_SESSION['
         </div>
       </div>
 
-      <!-- Botones de reporte -->
+      <!-- Botones de acción -->
       <div class="quick-actions">
-        <h3 class="activity-title">📁 Exportar Reportes</h3>
+        <h3 class="activity-title">⚡ Acciones Rápidas</h3>
         <div class="row">
-          <div class="col-md-6 mb-3">
+          <div class="col-md-4 mb-3">
+            <button type="button" class="btn btn-primary" style="border-radius: 25px; padding: 0.75rem 2rem; font-weight: 600; box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);" onclick="mostrarFormulario(0)">
+              <i class="fa fa-plus-circle"></i> Registrar Asistencia
+            </button>
+          </div>
+          <div class="col-md-4 mb-3">
             <button class="action-button" onclick="exportarReporte('csv')">
               📊 Exportar CSV
             </button>
           </div>
-          <div class="col-md-6 mb-3">
+          <div class="col-md-4 mb-3">
             <button class="action-button" onclick="exportarReporte('xls')">
               📈 Exportar Excel
             </button>
@@ -189,54 +194,95 @@ if ((isset($_SESSION['grupos']) && $_SESSION['grupos']==1) || (isset($_SESSION['
 
     </main>
 
-  <!--Modal para registrar/editar asistencia-->
+  <!-- Modal para registrar/editar asistencia -->
   <div class="modal fade" id="modalAsistencia" tabindex="-1" role="dialog" aria-labelledby="modalAsistenciaLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-          <h4 class="modal-title" id="modalTitulo">Registrar Asistencia</h4>
+    <div class="modal-dialog modal-xl" role="document">
+      <div class="modal-content" style="border-radius: 20px; border: none; box-shadow: 0 20px 60px rgba(0,0,0,0.2);">
+        <div class="modal-header" style="background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%); color: white; border-radius: 20px 20px 0 0; border-bottom: none; padding: 2rem;">
+          <h4 class="modal-title" id="modalTitulo" style="font-weight: 600; font-size: 1.5rem;">
+            <i class="fa fa-calendar-check"></i> Registrar Asistencia
+          </h4>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="color: white; opacity: 0.8;">
+            <span aria-hidden="true" style="font-size: 2rem;">&times;</span>
+          </button>
         </div>
-        <div class="modal-body">
-          <form action="" name="formulario_asis" id="formulario_asis" method="POST">
-            <div class="form-group">
-              <label for="nino_seleccionado">
-                <i class="fa fa-child"></i> Niño
-              </label>
-              <input type="hidden" id="idasistencia" name="idasistencia">
-              <input type="hidden" id="id_nino" name="id_nino">
-              <input type="hidden" id="fecha" name="fecha" value="<?php echo date('Y-m-d'); ?>">
-              <input type="text" class="form-control" id="nino_seleccionado" name="nino_seleccionado" readonly placeholder="Seleccione un niño">
+        <form action="" name="formulario_asis" id="formulario_asis" method="POST">
+          <div class="modal-body" style="padding: 2.5rem;">
+            <div class="row">
+              <div class="col-md-6" id="idFieldAsis" style="display: none;">
+                <div class="form-group">
+                  <label for="idasistencia" style="font-weight: 600; color: #3c8dbc; margin-bottom: 0.5rem;">
+                    <i class="fa fa-id-card"></i> ID
+                  </label>
+                  <input type="text" class="form-control" id="idasistencia" name="idasistencia" readonly style="border-radius: 10px; border: 2px solid #e9ecef; padding: 0.75rem; font-size: 0.95rem; background: #f8f9fa;">
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="nino_seleccionado" style="font-weight: 600; color: #3c8dbc; margin-bottom: 0.5rem;">
+                    <i class="fa fa-child"></i> Niño *
+                  </label>
+                  <input type="hidden" id="id_nino" name="id_nino">
+                  <input type="hidden" id="fecha" name="fecha" value="<?php echo date('Y-m-d'); ?>">
+                  <select class="form-control" id="nino_seleccionado" name="nino_seleccionado" required style="border-radius: 10px; border: 2px solid #e9ecef; padding: 0.75rem; font-size: 0.95rem; min-height: 45px;">
+                    <option value="">Seleccione un niño...</option>
+                  </select>
+                </div>
+              </div>
             </div>
-            <div class="form-group">
-              <label for="estado_id">
-                <i class="fa fa-check-circle"></i> Estado de Asistencia
-              </label>
-              <select class="form-control" id="estado_id" name="estado_id" required>        
-                <option value="">Seleccionar estado</option>
-                <option value="1">Asistió</option>
-                <option value="2">Inasistencia</option>
-                <option value="3">Permiso</option>
-                <option value="4">Tardanza</option>
-                <option value="5">Salida temprana</option>
-              </select>
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="estado_id" style="font-weight: 600; color: #3c8dbc; margin-bottom: 0.5rem;">
+                    <i class="fa fa-check-circle"></i> Estado de Asistencia *
+                  </label>
+                  <select class="form-control" id="estado_id" name="estado_id" required style="border-radius: 10px; border: 2px solid #e9ecef; padding: 0.75rem; font-size: 0.95rem; min-height: 45px;">
+                    <option value="">Seleccionar estado...</option>
+                    <option value="1">Asistió</option>
+                    <option value="2">Inasistencia</option>
+                    <option value="3">Permiso</option>
+                    <option value="4">Tardanza</option>
+                    <option value="5">Salida temprana</option>
+                  </select>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="observaciones" style="font-weight: 600; color: #3c8dbc; margin-bottom: 0.5rem;">
+                    <i class="fa fa-comment"></i> Observaciones
+                  </label>
+                  <textarea class="form-control" id="observaciones" name="observaciones" rows="3" style="border-radius: 10px; border: 2px solid #e9ecef; padding: 0.75rem; font-size: 0.95rem;" placeholder="Observaciones adicionales..."></textarea>
+                </div>
+              </div>
             </div>
-            <div class="form-group">
-              <label for="observaciones">
-                <i class="fa fa-comment"></i> Observaciones
-              </label>
-              <textarea class="form-control" id="observaciones" name="observaciones" rows="3"></textarea>
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="aula_info" style="font-weight: 600; color: #3c8dbc; margin-bottom: 0.5rem;">
+                    <i class="fa fa-university"></i> Aula
+                  </label>
+                  <input type="text" class="form-control" id="aula_info" name="aula_info" readonly style="border-radius: 10px; border: 2px solid #e9ecef; padding: 0.75rem; font-size: 0.95rem; background: #f8f9fa;">
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="seccion_info" style="font-weight: 600; color: #3c8dbc; margin-bottom: 0.5rem;">
+                    <i class="fa fa-sitemap"></i> Sección
+                  </label>
+                  <input type="text" class="form-control" id="seccion_info" name="seccion_info" readonly style="border-radius: 10px; border: 2px solid #e9ecef; padding: 0.75rem; font-size: 0.95rem; background: #f8f9fa;">
+                </div>
+              </div>
             </div>
-            <div class="form-group">
-              <button class="action-button" type="submit" id="btnGuardar_asis">
-                <i class="fa fa-save"></i> Guardar
-              </button>
-              <button class="action-button pull-right" data-dismiss="modal" type="button">
-                <i class="fa fa-arrow-circle-left"></i> Cancelar
-              </button>
-            </div>
-          </form>
-        </div>
+          </div>
+          <div class="modal-footer" style="border-top: none; padding: 2rem; background: #f8f9fa; border-radius: 0 0 20px 20px;">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal" style="border-radius: 25px; padding: 0.5rem 2rem; font-weight: 600; border: none; background: #6c757d;">
+              <i class="fa fa-times"></i> Cancelar
+            </button>
+            <button type="submit" class="btn btn-primary" id="btnGuardar_asis" style="border-radius: 25px; padding: 0.5rem 2rem; font-weight: 600; border: none; background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%); box-shadow: 0 4px 15px rgba(44, 62, 80, 0.4);">
+              <i class="fa fa-save"></i> Guardar Asistencia
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   </div>
