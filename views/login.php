@@ -18,7 +18,7 @@
     <!-- Estilos personalizados para login moderno -->
     <style>
     body {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         min-height: 100vh;
         display: flex;
@@ -41,7 +41,7 @@
     }
 
     .login-header {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
         color: white;
         padding: 2.5rem 2rem;
         text-align: center;
@@ -87,9 +87,9 @@
         font-weight: 500;
         margin-bottom: 2rem;
         padding: 0.5rem;
-        background: rgba(102, 126, 234, 0.1);
+        background: rgba(231, 76, 60, 0.1);
         border-radius: 10px;
-        border-left: 4px solid #667eea;
+        border-left: 4px solid #e74c3c;
     }
 
     .form-group {
@@ -100,7 +100,7 @@
     .form-control {
         border: 2px solid #e9ecef;
         border-radius: 12px;
-        padding: 0.875rem 1rem;
+        padding: 0.875rem 3rem 0.875rem 1rem;
         font-size: 1rem;
         transition: all 0.3s ease;
         background: rgba(255, 255, 255, 0.8);
@@ -108,9 +108,13 @@
         backdrop-filter: blur(5px);
     }
 
+    .form-control.has-icon {
+        padding-right: 3rem;
+    }
+
     .form-control:focus {
-        border-color: #667eea;
-        box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+        border-color: #e74c3c;
+        box-shadow: 0 0 0 0.2rem rgba(231, 76, 60, 0.25);
         background: white;
     }
 
@@ -124,13 +128,13 @@
         right: 1rem;
         top: 50%;
         transform: translateY(-50%);
-        color: #667eea;
+        color: #e74c3c;
         font-size: 1.1rem;
         z-index: 5;
     }
 
     .btn-login {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
         border: none;
         border-radius: 12px;
         padding: 0.875rem 2rem;
@@ -141,13 +145,13 @@
         transition: all 0.3s ease;
         text-transform: uppercase;
         letter-spacing: 0.5px;
-        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
     }
 
     .btn-login:hover {
         transform: translateY(-2px);
-        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
-        background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+        box-shadow: 0 8px 25px rgba(231, 76, 60, 0.4);
+        background: linear-gradient(135deg, #c0392b 0%, #a93226 100%);
     }
 
     .btn-login:active {
@@ -164,7 +168,7 @@
     }
 
     .login-footer a {
-        color: #667eea;
+        color: #e74c3c;
         text-decoration: none;
         font-weight: 500;
     }
@@ -252,7 +256,7 @@
           </div>
 
           <div class="form-group">
-            <input type="password" id="clavea" name="clavea" class="form-control" placeholder="Contraseña" required>
+            <input type="password" id="clavea" name="clavea" class="form-control has-icon" placeholder="Contraseña" required>
             <i class="fas fa-lock input-icon" id="togglePassword" style="cursor: pointer;" title="Mostrar/ocultar contraseña"></i>
           </div>
 
@@ -264,7 +268,7 @@
 
       <div class="login-footer">
         <p>&copy; 2025 PEQUE CONTROL. Todos los derechos reservados.</p>
-        <p><a href="#" onclick="alert('Contacte al administrador del sistema')">¿Olvidaste tu contraseña?</a></p>
+        <p><a href="#" onclick="mostrarAlertaRecuperacion()">¿Olvidaste tu contraseña?</a></p>
       </div>
     </div>
 
@@ -296,6 +300,57 @@
             this.setAttribute('title', type === 'password' ? 'Mostrar contraseña' : 'Ocultar contraseña');
         });
     });
+
+    // Función para mostrar alerta de recuperación de contraseña
+    function mostrarAlertaRecuperacion() {
+        // Crear overlay de alerta
+        var overlay = $('<div class="alert-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 9999; display: flex; align-items: center; justify-content: center;"></div>');
+
+        // Colores para warning
+        var colores = {
+            bg: '#fff3cd',
+            border: '#ffeeba',
+            text: '#856404',
+            icon: '⚠️'
+        };
+
+        // Crear contenido de la alerta
+        var alertContent = $('<div class="alert-content" style="background: ' + colores.bg + '; border: 2px solid ' + colores.border + '; color: ' + colores.text + '; padding: 30px; border-radius: 15px; text-align: center; max-width: 500px; margin: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); animation: slideIn 0.3s ease;"></div>');
+
+        // Título con icono
+        alertContent.append('<h3 style="margin: 0 0 15px 0; font-size: 20px; font-weight: bold;"><span style="font-size: 24px; margin-right: 10px;">' + colores.icon + '</span>Recuperación de Contraseña</h3>');
+
+        // Mensaje
+        alertContent.append('<p style="margin: 0 0 20px 0; font-size: 16px; line-height: 1.5;">Para recuperar su contraseña, contacte al administrador del sistema. Se le proporcionarán las instrucciones necesarias para restablecer su acceso.</p>');
+
+        // Información adicional
+        alertContent.append('<div style="background: rgba(255,255,255,0.5); padding: 15px; border-radius: 8px; margin-bottom: 20px;"><strong>Información de Contacto:</strong><br>• Email: admin@pequecontrol.com<br>• Teléfono: (503) 1234-5678<br>• Horario: Lunes a Viernes 8:00 AM - 5:00 PM</div>');
+
+        // Botón de cerrar
+        var btnCerrar = $('<button style="background: ' + colores.text + '; color: white; border: none; padding: 10px 25px; border-radius: 8px; font-size: 16px; cursor: pointer; transition: all 0.3s ease;">Entendido</button>');
+        btnCerrar.click(function() {
+            overlay.fadeOut(300, function() {
+                overlay.remove();
+            });
+        });
+
+        // Hover effects para el botón
+        btnCerrar.hover(
+            function() { $(this).css('opacity', '0.8'); },
+            function() { $(this).css('opacity', '1'); }
+        );
+
+        alertContent.append(btnCerrar);
+        overlay.append(alertContent);
+
+        // Agregar al body
+        $('body').append(overlay);
+
+        // Agregar estilos CSS para animación
+        if (!$('#alert-styles').length) {
+            $('head').append('<style id="alert-styles">@keyframes slideIn { from { transform: translateY(-50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }</style>');
+        }
+    }
     </script>
 
   </body>

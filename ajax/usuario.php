@@ -274,8 +274,8 @@ switch ($_GET["op"]) {
 	       session_unset();
 	       //Destruìmos la sesión
 	       session_destroy();
-	       //Redireccionamos al login
-	       header("Location: ../views/login.php");
+	       //Redireccionamos al landing
+	       header("Location: ../views/landing.php");
 
 	break;
 }

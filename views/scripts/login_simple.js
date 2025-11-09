@@ -23,17 +23,17 @@ $("#frmAcceso").on('submit',function(e)
        
        if (data!="null")
        {
-           mostrarAlerta("✅ ¡Bienvenido al Sistema!", "Credenciales correctas. Redirigiendo al escritorio...", "success");
-           
+           mostrarAlerta(" ¡Bienvenido al Sistema!", "Credenciales correctas. Redirigiendo al escritorio...", "success");
+
            // Redirección después de mostrar la alerta
            setTimeout(function() {
                $(location).attr("href","escritorio.php");
            }, 2000);
        }
-        else
-        {
-            mostrarAlerta("❌ Credenciales Incorrectas", "Usuario y/o Password inválidos. Verifique sus credenciales e inténtelo nuevamente. 💡 Sugerencia: Recuerde usar su email completo", "error");
-        }
+       else
+       {
+           mostrarAlerta(" Credenciales Incorrectas", "La contraseña o el usuario son incorrectos. Verifique que haya escrito correctamente sus datos de acceso e inténtelo nuevamente.", "error");
+       }
     }).fail(function() {
         $btn.html(textoOriginal).prop('disabled', false);
         mostrarAlerta("🌐 Error de Conexión", "No se pudo conectar con el servidor. Verifique su conexión a internet e inténtelo nuevamente.", "warning");

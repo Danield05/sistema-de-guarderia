@@ -1,5 +1,5 @@
 <?php
-//redireccionar a la vista de login
+//redireccionar a la vista de landing page
 
-header('Location: views/login.php');
+header('Location: views/landing.php');
 ?>

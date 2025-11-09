@@ -12,7 +12,7 @@ class UsuarioController {
 
         $fetch = $rspta->fetch(PDO::FETCH_OBJ);
 
-        if (isset($fetch)) {
+        if (isset($fetch) && $fetch !== false) {
             $_SESSION['idusuario'] = $fetch->id_usuario;
             $_SESSION['nombre'] = $fetch->nombre_completo;
             $_SESSION['email'] = $fetch->email;
@@ -51,15 +51,17 @@ class UsuarioController {
                 $_SESSION['asistencias'] = 0;
                 $_SESSION['reportes'] = 0;
             }
-        }
 
-        return json_encode($fetch);
+            return json_encode($fetch);
+        } else {
+            return "null";
+        }
     }
 
     public function salir() {
         session_unset();
         session_destroy();
-        header("Location: ../index.php");
+        header("Location: ../views/landing.php");
     }
 }
 ?>
