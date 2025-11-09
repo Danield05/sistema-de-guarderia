@@ -49,36 +49,80 @@ function cancelarform(){
 
 //funcion listar
 function listar(){
-    $.ajax({
-        url: "../ajax/medicamentos.php?op=listar",
-        type: "POST",
-        dataType: "json",
-        success: function(data) {
-            var tbody = $('#medicamentosTableBody');
-            tbody.empty();
+    // Verificar si es padre/tutor para filtrar solo sus medicamentos
+    $.post("../ajax/usuario.php?op=mostrar_perfil", {}, function(userData){
+        userData = JSON.parse(userData);
+        var url = "../ajax/medicamentos.php?op=listar";
 
-            if (data.aaData && data.aaData.length > 0) {
-                $.each(data.aaData, function(index, medicamento) {
-                    var acciones = '<button class="btn btn-outline-info btn-sm" style="margin-right: 0.5rem; border-radius: 20px;" onclick="mostrar(' + medicamento[6] + ')"><i class="fa fa-eye"></i> Ver</button>';
-
-                    var row = '<tr style="border-bottom: 1px solid rgba(0,0,0,0.05); transition: all 0.3s ease;">' +
-                        '<td style="padding: 1rem;">' + acciones + '</td>' +
-                        '<td style="padding: 1rem; font-weight: 600; color: #3c8dbc;">' + medicamento[1] + '</td>' +
-                        '<td style="padding: 1rem;">' + medicamento[2] + '</td>' +
-                        '<td style="padding: 1rem;">' + (medicamento[3] || '') + '</td>' +
-                        '<td style="padding: 1rem;">' + (medicamento[4] || '') + '</td>' +
-                        '<td style="padding: 1rem;">' + (medicamento[5] || '') + '</td>' +
-                        '</tr>';
-
-                    tbody.append(row);
-                });
-            } else {
-                tbody.append('<tr><td colspan="6" style="text-align: center; padding: 2rem; color: #666;">No hay medicamentos registrados</td></tr>');
-            }
-        },
-        error: function(xhr, status, error) {
-            $('#medicamentosTableBody').html('<tr><td colspan="6" style="text-align: center; padding: 2rem; color: #dc3545;">Error al cargar los datos</td></tr>');
+        // Para padres/tutores, usar endpoint filtrado
+        if (userData.rol === 'Padre/Tutor') {
+            url = "../ajax/medicamentos.php?op=listarPorTutor";
         }
+
+        $.ajax({
+            url: url,
+            type: "POST",
+            dataType: "json",
+            success: function(data) {
+                var tbody = $('#medicamentosTableBody');
+                tbody.empty();
+
+                if (data.aaData && data.aaData.length > 0) {
+                    $.each(data.aaData, function(index, medicamento) {
+                        var acciones = '<button class="btn btn-outline-info btn-sm" style="margin-right: 0.5rem; border-radius: 20px;" onclick="mostrar(' + medicamento[6] + ')"><i class="fa fa-eye"></i> Ver</button>';
+
+                        var row = '<tr style="border-bottom: 1px solid rgba(0,0,0,0.05); transition: all 0.3s ease;">' +
+                            '<td style="padding: 1rem;">' + acciones + '</td>' +
+                            '<td style="padding: 1rem; font-weight: 600; color: #3c8dbc;">' + medicamento[1] + '</td>' +
+                            '<td style="padding: 1rem;">' + medicamento[2] + '</td>' +
+                            '<td style="padding: 1rem;">' + (medicamento[3] || '') + '</td>' +
+                            '<td style="padding: 1rem;">' + (medicamento[4] || '') + '</td>' +
+                            '<td style="padding: 1rem;">' + (medicamento[5] || '') + '</td>' +
+                            '</tr>';
+
+                        tbody.append(row);
+                    });
+                } else {
+                    tbody.append('<tr><td colspan="6" style="text-align: center; padding: 2rem; color: #666;">No hay medicamentos registrados</td></tr>');
+                }
+            },
+            error: function(xhr, status, error) {
+                $('#medicamentosTableBody').html('<tr><td colspan="6" style="text-align: center; padding: 2rem; color: #dc3545;">Error al cargar los datos</td></tr>');
+            }
+        });
+    }).fail(function(){
+        // Fallback: mostrar todos los medicamentos
+        $.ajax({
+            url: "../ajax/medicamentos.php?op=listar",
+            type: "POST",
+            dataType: "json",
+            success: function(data) {
+                var tbody = $('#medicamentosTableBody');
+                tbody.empty();
+
+                if (data.aaData && data.aaData.length > 0) {
+                    $.each(data.aaData, function(index, medicamento) {
+                        var acciones = '<button class="btn btn-outline-info btn-sm" style="margin-right: 0.5rem; border-radius: 20px;" onclick="mostrar(' + medicamento[6] + ')"><i class="fa fa-eye"></i> Ver</button>';
+
+                        var row = '<tr style="border-bottom: 1px solid rgba(0,0,0,0.05); transition: all 0.3s ease;">' +
+                            '<td style="padding: 1rem;">' + acciones + '</td>' +
+                            '<td style="padding: 1rem; font-weight: 600; color: #3c8dbc;">' + medicamento[1] + '</td>' +
+                            '<td style="padding: 1rem;">' + medicamento[2] + '</td>' +
+                            '<td style="padding: 1rem;">' + (medicamento[3] || '') + '</td>' +
+                            '<td style="padding: 1rem;">' + (medicamento[4] || '') + '</td>' +
+                            '<td style="padding: 1rem;">' + (medicamento[5] || '') + '</td>' +
+                            '</tr>';
+
+                        tbody.append(row);
+                    });
+                } else {
+                    tbody.append('<tr><td colspan="6" style="text-align: center; padding: 2rem; color: #666;">No hay medicamentos registrados</td></tr>');
+                }
+            },
+            error: function(xhr, status, error) {
+                $('#medicamentosTableBody').html('<tr><td colspan="6" style="text-align: center; padding: 2rem; color: #dc3545;">Error al cargar los datos</td></tr>');
+            }
+        });
     });
 }
 

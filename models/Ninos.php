@@ -81,6 +81,21 @@ class Ninos{
 			return ejecutarConsulta($sql);
 		}
 
+	//listar registros para padres/tutores (solo su niño)
+		public function listarParaPadre($padre_id){
+			$sql="SELECT n.id_nino, n.nombre_completo, n.fecha_nacimiento, n.edad, n.peso,
+			a.nombre_aula, s.nombre_seccion,
+			u1.nombre_completo as maestro, u2.nombre_completo as tutor, n.estado
+			FROM ninos n
+			LEFT JOIN aulas a ON n.aula_id=a.id_aula
+			LEFT JOIN secciones s ON n.seccion_id=s.id_seccion
+			LEFT JOIN usuarios u1 ON n.maestro_id=u1.id_usuario
+			LEFT JOIN usuarios u2 ON n.tutor_id=u2.id_usuario
+			WHERE n.tutor_id='$padre_id' AND n.estado=1
+			ORDER BY n.nombre_completo ASC";
+			return ejecutarConsulta($sql);
+		}
+
 	//listar niños por aula
 	public function listarPorAula($aula_id){
 		$sql="SELECT n.id_nino, n.nombre_completo, n.edad, s.nombre_seccion 

@@ -61,6 +61,16 @@ class Alertas{
 		return ejecutarConsulta($sql);
 	}
 
+	//listar registros para padres/tutores (solo alertas de su niño)
+	public function listarParaPadre($padre_id){
+		$sql="SELECT a.id_alerta, n.nombre_completo as nino, a.mensaje, a.tipo, a.estado, a.fecha_alerta
+		FROM alertas a
+		LEFT JOIN ninos n ON a.id_nino=n.id_nino
+		WHERE n.tutor_id='$padre_id' AND n.estado=1
+		ORDER BY a.fecha_alerta DESC, a.id_alerta DESC";
+		return ejecutarConsulta($sql);
+	}
+
 	//listar alertas por niño
 	public function listarPorNino($id_nino){
 		$sql="SELECT id_alerta, fecha_alerta, mensaje, tipo, estado 

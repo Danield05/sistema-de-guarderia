@@ -9,7 +9,7 @@ if (!isset($_SESSION['nombre'])) {
 $_SESSION['modern_layout'] = true;
 
 require 'header.php';
-if ((isset($_SESSION['escritorio']) && $_SESSION['escritorio']==1) || (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Administrador') || (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Médico/Enfermería') || (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Maestro')) {
+if ((isset($_SESSION['escritorio']) && $_SESSION['escritorio']==1) || (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Administrador') || (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Médico/Enfermería') || (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Maestro') || (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Padre/Tutor')) {
 ?>
 <main class="container-fluid py-5 px-3 main-dashboard" style="padding-top: 3rem; padding-bottom: 3rem;">
       <!-- Header de la página -->

@@ -47,35 +47,78 @@ function cancelarform(){
 
 //funcion listar
 function listar(){
-    $.ajax({
-        url: "../ajax/enfermedades.php?op=listar",
-        type: "POST",
-        dataType: "json",
-        success: function(data) {
-            var tbody = $('#enfermedadesTableBody');
-            tbody.empty();
+    // Verificar si es padre/tutor para filtrar solo sus enfermedades
+    $.post("../ajax/usuario.php?op=mostrar_perfil", {}, function(userData){
+        userData = JSON.parse(userData);
+        var url = "../ajax/enfermedades.php?op=listar";
 
-            if (data.aaData && data.aaData.length > 0) {
-                $.each(data.aaData, function(index, enfermedad) {
-                    var acciones = '<button class="btn btn-outline-info btn-sm" style="margin-right: 0.5rem; border-radius: 20px;" onclick="mostrar(' + enfermedad[5] + ')"><i class="fa fa-eye"></i> Ver</button>';
-
-                    var row = '<tr style="border-bottom: 1px solid rgba(0,0,0,0.05); transition: all 0.3s ease;">' +
-                        '<td style="padding: 1rem;">' + acciones + '</td>' +
-                        '<td style="padding: 1rem; font-weight: 600; color: #3c8dbc;">' + enfermedad[1] + '</td>' +
-                        '<td style="padding: 1rem;">' + enfermedad[2] + '</td>' +
-                        '<td style="padding: 1rem;">' + (enfermedad[3] || '') + '</td>' +
-                        '<td style="padding: 1rem;">' + enfermedad[4] + '</td>' +
-                        '</tr>';
-
-                    tbody.append(row);
-                });
-            } else {
-                tbody.append('<tr><td colspan="5" style="text-align: center; padding: 2rem; color: #666;">No hay enfermedades registradas</td></tr>');
-            }
-        },
-        error: function(xhr, status, error) {
-            $('#enfermedadesTableBody').html('<tr><td colspan="5" style="text-align: center; padding: 2rem; color: #dc3545;">Error al cargar los datos</td></tr>');
+        // Para padres/tutores, usar endpoint filtrado
+        if (userData.rol === 'Padre/Tutor') {
+            url = "../ajax/enfermedades.php?op=listarPorTutor";
         }
+
+        $.ajax({
+            url: url,
+            type: "POST",
+            dataType: "json",
+            success: function(data) {
+                var tbody = $('#enfermedadesTableBody');
+                tbody.empty();
+
+                if (data.aaData && data.aaData.length > 0) {
+                    $.each(data.aaData, function(index, enfermedad) {
+                        var acciones = '<button class="btn btn-outline-info btn-sm" style="margin-right: 0.5rem; border-radius: 20px;" onclick="mostrar(' + enfermedad[5] + ')"><i class="fa fa-eye"></i> Ver</button>';
+
+                        var row = '<tr style="border-bottom: 1px solid rgba(0,0,0,0.05); transition: all 0.3s ease;">' +
+                            '<td style="padding: 1rem;">' + acciones + '</td>' +
+                            '<td style="padding: 1rem; font-weight: 600; color: #3c8dbc;">' + enfermedad[1] + '</td>' +
+                            '<td style="padding: 1rem;">' + enfermedad[2] + '</td>' +
+                            '<td style="padding: 1rem;">' + (enfermedad[3] || '') + '</td>' +
+                            '<td style="padding: 1rem;">' + enfermedad[4] + '</td>' +
+                            '</tr>';
+
+                        tbody.append(row);
+                    });
+                } else {
+                    tbody.append('<tr><td colspan="5" style="text-align: center; padding: 2rem; color: #666;">No hay enfermedades registradas</td></tr>');
+                }
+            },
+            error: function(xhr, status, error) {
+                $('#enfermedadesTableBody').html('<tr><td colspan="5" style="text-align: center; padding: 2rem; color: #dc3545;">Error al cargar los datos</td></tr>');
+            }
+        });
+    }).fail(function(){
+        // Fallback: mostrar todas las enfermedades
+        $.ajax({
+            url: "../ajax/enfermedades.php?op=listar",
+            type: "POST",
+            dataType: "json",
+            success: function(data) {
+                var tbody = $('#enfermedadesTableBody');
+                tbody.empty();
+
+                if (data.aaData && data.aaData.length > 0) {
+                    $.each(data.aaData, function(index, enfermedad) {
+                        var acciones = '<button class="btn btn-outline-info btn-sm" style="margin-right: 0.5rem; border-radius: 20px;" onclick="mostrar(' + enfermedad[5] + ')"><i class="fa fa-eye"></i> Ver</button>';
+
+                        var row = '<tr style="border-bottom: 1px solid rgba(0,0,0,0.05); transition: all 0.3s ease;">' +
+                            '<td style="padding: 1rem;">' + acciones + '</td>' +
+                            '<td style="padding: 1rem; font-weight: 600; color: #3c8dbc;">' + enfermedad[1] + '</td>' +
+                            '<td style="padding: 1rem;">' + enfermedad[2] + '</td>' +
+                            '<td style="padding: 1rem;">' + (enfermedad[3] || '') + '</td>' +
+                            '<td style="padding: 1rem;">' + enfermedad[4] + '</td>' +
+                            '</tr>';
+
+                        tbody.append(row);
+                    });
+                } else {
+                    tbody.append('<tr><td colspan="5" style="text-align: center; padding: 2rem; color: #666;">No hay enfermedades registradas</td></tr>');
+                }
+            },
+            error: function(xhr, status, error) {
+                $('#enfermedadesTableBody').html('<tr><td colspan="5" style="text-align: center; padding: 2rem; color: #dc3545;">Error al cargar los datos</td></tr>');
+            }
+        });
     });
 }
 

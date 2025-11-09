@@ -6,13 +6,13 @@ if (!isset($_SESSION['nombre'])) {
 } else {
   require 'header.php';
 
-  if ((isset($_SESSION['escritorio']) && $_SESSION['escritorio'] == 1) || (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Médico/Enfermería') || (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Maestro')) {
+  if ((isset($_SESSION['escritorio']) && $_SESSION['escritorio'] == 1) || (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Médico/Enfermería') || (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Maestro') || (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Padre/Tutor')) {
     $user_id = $_SESSION["idusuario"];
     require_once "../models/Consultas.php";
     $consulta = new Consultas();
 
-    // Para maestros, contar solo sus niños asignados
-    if (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Maestro') {
+    // Para maestros y padres/tutores, contar solo sus niños asignados
+    if (isset($_SESSION['cargo']) && ($_SESSION['cargo'] == 'Maestro' || $_SESSION['cargo'] == 'Padre/Tutor')) {
       $regv = $consulta->cantidad_ninos($user_id);
     } else {
       $regv = $consulta->cantidad_ninos(); // Sin user_id para contar todos los niños activos
@@ -120,6 +120,35 @@ if (!isset($_SESSION['nombre'])) {
             </div>
             <div class="metric-label">Alertas Pendientes</div>
           </div>
+        <?php elseif (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Padre/Tutor'): ?>
+          <!-- Estadísticas para Padres/Tutores -->
+          <div class="metric-card metric-card-light-bg">
+            <div class="metric-icon">👶</div>
+            <div class="metric-value"><?php echo $totalestudiantes; ?></div>
+            <div class="metric-label">Mi Niño</div>
+          </div>
+
+          <div class="metric-card metric-card-light-bg">
+            <div class="metric-icon">📅</div>
+            <div class="metric-value">
+              <?php
+              // Mostrar estado de asistencia de hoy para el niño del padre/tutor
+              echo 'Ver Horarios';
+              ?>
+            </div>
+            <div class="metric-label">Horarios</div>
+          </div>
+
+          <div class="metric-card metric-card-light-bg">
+            <div class="metric-icon">🔔</div>
+            <div class="metric-value">
+              <?php
+              // Contar alertas de su niño
+              echo 'Ver Alertas';
+              ?>
+            </div>
+            <div class="metric-label">Alertas</div>
+          </div>
         <?php else: ?>
           <!-- Estadísticas para Administradores -->
           <div class="metric-card metric-card-light-bg">
@@ -216,6 +245,14 @@ if (!isset($_SESSION['nombre'])) {
         } elseif (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Maestro') {
           // Para maestros, mostrar solo alertas de sus niños asignados
           $rsptalertas = $consulta->alertas_recientes_para_maestro($_SESSION['idusuario'], 10);
+          $alertasFiltradas = array();
+          while ($alerta = $rsptalertas->fetch(PDO::FETCH_OBJ)) {
+            $alertasFiltradas[] = $alerta;
+            if (count($alertasFiltradas) >= 5) break; // Limitar a 5
+          }
+        } elseif (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Padre/Tutor') {
+          // Para padres/tutores, mostrar solo alertas de su niño
+          $rsptalertas = $consulta->alertas_recientes_para_padre($_SESSION['idusuario'], 10);
           $alertasFiltradas = array();
           while ($alerta = $rsptalertas->fetch(PDO::FETCH_OBJ)) {
             $alertasFiltradas[] = $alerta;
@@ -327,6 +364,32 @@ if (!isset($_SESSION['nombre'])) {
             </div>
             <div class="col-md-4 mb-3">
               <a href="responsables_retiro.php" class="action-button">👥 Responsables de Retiro</a>
+            </div>
+            <div class="col-md-4 mb-3">
+              <a href="acerca.php" class="action-button">ℹ️ Acerca del Sistema</a>
+            </div>
+          <?php elseif (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Padre/Tutor'): ?>
+            <!-- Acciones para Padres/Tutores -->
+            <div class="col-md-4 mb-3">
+              <a href="horarios.php" class="action-button">📅 Ver Horarios de Mi Niño</a>
+            </div>
+            <div class="col-md-4 mb-3">
+              <a href="alertas.php" class="action-button">🔔 Ver Alertas de Mi Niño</a>
+            </div>
+            <div class="col-md-4 mb-3">
+              <a href="permisos_ausencia.php" class="action-button">📋 Gestionar Permisos de Ausencia</a>
+            </div>
+            <div class="col-md-4 mb-3">
+              <a href="responsables_retiro.php" class="action-button">👥 Gestionar Responsables de Retiro</a>
+            </div>
+            <div class="col-md-4 mb-3">
+              <a href="enfermedades.php" class="action-button">🏥 Ver Información Médica</a>
+            </div>
+            <div class="col-md-4 mb-3">
+              <a href="medicamentos.php" class="action-button">💊 Ver Medicamentos</a>
+            </div>
+            <div class="col-md-4 mb-3">
+              <a href="alergias.php" class="action-button">🤧 Ver Alergias</a>
             </div>
             <div class="col-md-4 mb-3">
               <a href="acerca.php" class="action-button">ℹ️ Acerca del Sistema</a>

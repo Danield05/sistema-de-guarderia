@@ -52,6 +52,25 @@ class UsuarioController {
                 $_SESSION['asistencias'] = 1;
                 $_SESSION['reportes'] = 1;
             }
+            // Permisos para Padres/Tutores
+            elseif ($fetch->nombre_rol == 'Padre/Tutor') {
+                $_SESSION['escritorio'] = 1;
+                $_SESSION['aulas'] = 0;
+                $_SESSION['secciones'] = 0;
+                $_SESSION['ninos'] = 1; // Solo ver su niño
+                $_SESSION['grupos'] = 0;
+                $_SESSION['acceso'] = 0;
+                $_SESSION['enfermedades'] = 1; // Solo información médica de su niño
+                $_SESSION['medicamentos'] = 1;
+                $_SESSION['alergias'] = 1;
+                $_SESSION['usuarios'] = 0;
+                $_SESSION['asistencias'] = 0;
+                $_SESSION['reportes'] = 0;
+                $_SESSION['horarios'] = 1; // Ver horarios de su niño
+                $_SESSION['alertas'] = 1; // Ver alertas de su niño
+                $_SESSION['permisos_ausencia'] = 1; // Gestionar permisos de ausencia de su niño
+                $_SESSION['responsables_retiro'] = 1; // Gestionar responsables de retiro de su niño
+            }
             // Otros roles tienen permisos básicos
             else {
                 $_SESSION['escritorio'] = 1;

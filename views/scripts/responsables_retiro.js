@@ -82,8 +82,9 @@ function listar(){
 
             if (data.aaData && data.aaData.length > 0) {
                 $.each(data.aaData, function(index, responsable) {
-                    // Para maestros, solo mostrar botón de ver
-                    var acciones = '<button class="btn btn-outline-info btn-sm" style="border-radius: 20px;" onclick="mostrar(' + responsable[8] + ')"><i class="fa fa-eye"></i> Ver</button>';
+                    // Para maestros, solo mostrar botón de ver; para padres/tutores y admin, mostrar editar y eliminar
+                    var acciones = '<button class="btn btn-outline-warning btn-sm" style="margin-right: 0.5rem; border-radius: 20px;" onclick="mostrar(' + responsable[8] + ')"><i class="fa fa-pencil"></i> Editar</button>' +
+                                   '<button class="btn btn-outline-danger btn-sm" style="border-radius: 20px;" onclick="eliminar_responsable(' + responsable[8] + ')"><i class="fa fa-trash"></i> Eliminar</button>';
 
                     var row = '<tr style="border-bottom: 1px solid rgba(0,0,0,0.05); transition: all 0.3s ease;">' +
                         '<td style="padding: 1rem;">' + acciones + '</td>' +
@@ -207,12 +208,29 @@ function activar(id_responsable){
 
 // Función para cargar la lista de niños
 function cargarNinos(){
-    $.post("../ajax/ninos.php?op=select", function(r){
+    // Para padres/tutores, solo mostrar su propio niño
+    var url = "../ajax/ninos.php?op=select";
+
+    $.post(url, function(r){
         $("#id_nino").html('<option value="">Seleccionar niño</option>');
-        var data = JSON.parse(r);
-        $.each(data, function(index, item){
-            $("#id_nino").append('<option value="' + item[0] + '">' + item[1] + '</option>');
-        });
+        // Verificar si la respuesta es HTML (opción) o JSON
+        if (r.trim().startsWith('<option')) {
+            // Es HTML directo
+            $("#id_nino").append(r.replace('<option value="">Seleccionar niño</option>', ''));
+        } else {
+            // Es JSON
+            try {
+                var data = JSON.parse(r);
+                $.each(data, function(index, item){
+                    $("#id_nino").append('<option value="' + item[0] + '">' + item[1] + '</option>');
+                });
+            } catch(e) {
+                console.error("Error parsing JSON:", e);
+                console.log("Response:", r);
+            }
+        }
+    }).fail(function(xhr, status, error) {
+        console.error("Error loading children:", xhr.responseText);
     });
 }
 

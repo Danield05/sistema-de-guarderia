@@ -63,10 +63,21 @@ class Medicamentos{
 
 	//listar medicamentos por niño
 	public function listarPorNino($id_nino){
-		$sql="SELECT id_medicamento, nombre_medicamento, dosis, frecuencia, observaciones 
-		FROM medicamentos 
-		WHERE id_nino='$id_nino' 
+		$sql="SELECT id_medicamento, nombre_medicamento, dosis, frecuencia, observaciones
+		FROM medicamentos
+		WHERE id_nino='$id_nino'
 		ORDER BY nombre_medicamento";
+		return ejecutarConsulta($sql);
+	}
+
+	//listar medicamentos por tutor/padre
+	public function listarPorTutor($tutor_id){
+		$sql="SELECT m.id_medicamento, m.nombre_medicamento, m.dosis, m.frecuencia, m.observaciones,
+		n.nombre_completo as nino, n.id_nino
+		FROM medicamentos m
+		LEFT JOIN ninos n ON m.id_nino=n.id_nino
+		WHERE n.tutor_id='$tutor_id' AND n.estado=1
+		ORDER BY m.id_medicamento DESC";
 		return ejecutarConsulta($sql);
 	}
 }

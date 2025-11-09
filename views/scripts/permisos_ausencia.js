@@ -48,22 +48,32 @@ function cancelarform(){
 
 //funcion listar
 function listar(){
-    $.ajax({
-        url: "../ajax/permisos_ausencia.php?op=listar",
-        type: "POST",
-        dataType: "json",
-        success: function(data) {
-            var tbody = $('#permisosTableBody');
-            tbody.empty();
+    // Verificar si es padre/tutor para filtrar solo sus permisos
+    $.post("../ajax/usuario.php?op=mostrar_perfil", {}, function(userData){
+        userData = JSON.parse(userData);
+        var url = "../ajax/permisos_ausencia.php?op=listar";
 
-            // Usar variable global definida en PHP
+        // Para padres/tutores, usar endpoint filtrado
+        if (userData.rol === 'Padre/Tutor') {
+            url = "../ajax/permisos_ausencia.php?op=listarPorTutor";
+        }
 
-            if (data.aaData && data.aaData.length > 0) {
-                $.each(data.aaData, function(index, permiso) {
-                    // Filtrar solo permisos médicos para usuarios médicos
-                    if (isMedicoGlobal === 'true' && permiso[2] !== 'Médico') {
-                        return true; // continue to next iteration
-                    }
+        $.ajax({
+            url: url,
+            type: "POST",
+            dataType: "json",
+            success: function(data) {
+                var tbody = $('#permisosTableBody');
+                tbody.empty();
+
+                // Usar variable global definida en PHP
+
+                if (data.aaData && data.aaData.length > 0) {
+                    $.each(data.aaData, function(index, permiso) {
+                        // Filtrar solo permisos médicos para usuarios médicos
+                        if (isMedicoGlobal === 'true' && permiso[2] !== 'Médico') {
+                            return true; // continue to next iteration
+                        }
 
                     var acciones = '';
                     if (isMedicoGlobal === 'true') {
@@ -96,6 +106,56 @@ function listar(){
         error: function(xhr, status, error) {
             $('#permisosTableBody').html('<tr><td colspan="9" style="text-align: center; padding: 2rem; color: #dc3545;">Error al cargar los datos</td></tr>');
         }
+        });
+    }).fail(function(){
+        // Fallback: mostrar todos los permisos
+        $.ajax({
+            url: "../ajax/permisos_ausencia.php?op=listar",
+            type: "POST",
+            dataType: "json",
+            success: function(data) {
+                var tbody = $('#permisosTableBody');
+                tbody.empty();
+
+                if (data.aaData && data.aaData.length > 0) {
+                    $.each(data.aaData, function(index, permiso) {
+                        // Filtrar solo permisos médicos para usuarios médicos
+                        if (isMedicoGlobal === 'true' && permiso[2] !== 'Médico') {
+                            return true; // continue to next iteration
+                        }
+
+                        var acciones = '';
+                        if (isMedicoGlobal === 'true') {
+                            acciones = '<button class="btn btn-outline-warning btn-sm" style="margin-right: 0.5rem; border-radius: 20px;" onclick="mostrar(' + permiso[9] + ')"><i class="fa fa-pencil"></i> Editar</button>';
+                        } else {
+                            acciones = '<button class="btn btn-outline-warning btn-sm" style="margin-right: 0.5rem; border-radius: 20px;" onclick="mostrar(' + permiso[9] + ')"><i class="fa fa-pencil"></i> Editar</button>' +
+                                       '<button class="btn btn-outline-danger btn-sm" style="border-radius: 20px;" onclick="eliminar(' + permiso[9] + ')"><i class="fa fa-trash"></i> Eliminar</button>';
+                        }
+
+                        var archivoLink = permiso[8] ? '<a href="../files/permisos/' + permiso[8] + '" target="_blank" class="btn btn-outline-info btn-sm" style="border-radius: 20px;"><i class="fa fa-file"></i> Ver</a>' : 'Sin archivo';
+
+                        var row = '<tr style="border-bottom: 1px solid rgba(0,0,0,0.05); transition: all 0.3s ease;">' +
+                            '<td style="padding: 1rem;">' + acciones + '</td>' +
+                            '<td style="padding: 1rem; font-weight: 600; color: #3c8dbc;">' + permiso[1] + '</td>' +
+                            '<td style="padding: 1rem;">' + permiso[2] + '</td>' +
+                            '<td style="padding: 1rem;">' + (permiso[3] || '') + '</td>' +
+                            '<td style="padding: 1rem;">' + permiso[4] + '</td>' +
+                            '<td style="padding: 1rem;">' + permiso[5] + '</td>' +
+                            '<td style="padding: 1rem;">' + (permiso[6] || '') + '</td>' +
+                            '<td style="padding: 1rem;">' + (permiso[7] || '') + '</td>' +
+                            '<td style="padding: 1rem; text-align: center;">' + archivoLink + '</td>' +
+                            '</tr>';
+
+                        tbody.append(row);
+                    });
+                } else {
+                    tbody.append('<tr><td colspan="9" style="text-align: center; padding: 2rem; color: #666;">No hay permisos registrados</td></tr>');
+                }
+            },
+            error: function(xhr, status, error) {
+                $('#permisosTableBody').html('<tr><td colspan="9" style="text-align: center; padding: 2rem; color: #dc3545;">Error al cargar los datos</td></tr>');
+            }
+        });
     });
 }
 

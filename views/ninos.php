@@ -6,7 +6,7 @@ if (!isset($_SESSION['nombre'])) {
 } else {
   require 'header.php';
 
-  if ((isset($_SESSION['ninos']) && $_SESSION['ninos'] == 1) || (isset($_SESSION['rol']) && $_SESSION['rol'] == 'Administrador') || (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Médico/Enfermería') || (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Maestro')) {
+  if ((isset($_SESSION['ninos']) && $_SESSION['ninos'] == 1) || (isset($_SESSION['rol']) && $_SESSION['rol'] == 'Administrador') || (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Médico/Enfermería') || (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Maestro') || (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Padre/Tutor')) {
 ?>
     <!-- 🔧 Quitamos padding lateral con clases personalizadas -->
     <main class="container-fluid py-5 px-3 main-dashboard" style="padding-top: 3rem; padding-bottom: 3rem;">
@@ -36,7 +36,7 @@ if (!isset($_SESSION['nombre'])) {
       </div>
 
       <!-- Botón para abrir modal de registro (solo para administradores) -->
-      <?php if (!isset($_SESSION['cargo']) || $_SESSION['cargo'] != 'Médico/Enfermería'): ?>
+      <?php if ((!isset($_SESSION['cargo']) || $_SESSION['cargo'] != 'Médico/Enfermería') && (!isset($_SESSION['cargo']) || $_SESSION['cargo'] != 'Padre/Tutor')): ?>
       <div class="mb-4">
         <button type="button" class="btn btn-primary" style="border-radius: 25px; padding: 0.75rem 2rem; font-weight: 600; box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);" onclick="mostrarFormulario(0)">
           <i class="fa fa-plus-circle"></i> Agregar Nuevo Niño
@@ -44,7 +44,8 @@ if (!isset($_SESSION['nombre'])) {
       </div>
       <?php endif; ?>
 
-      <!-- Filtros de búsqueda -->
+      <!-- Filtros de búsqueda (solo para administradores y maestros) -->
+      <?php if (!isset($_SESSION['cargo']) || ($_SESSION['cargo'] != 'Médico/Enfermería' && $_SESSION['cargo'] != 'Padre/Tutor')): ?>
       <div class="mb-4">
         <div class="row">
           <div class="col-md-4">
@@ -87,6 +88,7 @@ if (!isset($_SESSION['nombre'])) {
           </div>
         </div>
       </div>
+      <?php endif; ?>
 
       <!-- Tabla de niños -->
       <div class="activity-feed">
@@ -115,7 +117,12 @@ if (!isset($_SESSION['nombre'])) {
               // Si es maestro, mostrar solo sus niños asignados
               if (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Maestro') {
                   $rspta = $ninos->listarParaMaestro($_SESSION['idusuario']);
-              } else {
+              }
+              // Si es padre/tutor, mostrar solo su niño
+              elseif (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Padre/Tutor') {
+                  $rspta = $ninos->listarParaPadre($_SESSION['idusuario']);
+              }
+              else {
                   $rspta = $ninos->listar();
               }
 
@@ -128,6 +135,9 @@ if (!isset($_SESSION['nombre'])) {
                 } elseif (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Maestro') {
                   // Para maestros: solo botón de ver información básica
                   echo '<button class="btn btn-info btn-sm" style="border-radius: 20px;" onclick="verDetalles(' . $reg->id_nino . ')"><i class="fa fa-eye"></i> Ver Información</button>';
+                } elseif (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Padre/Tutor') {
+                  // Para padres/tutores: solo botón de ver información de su niño
+                  echo '<button class="btn btn-info btn-sm" style="border-radius: 20px;" onclick="verDetalles(' . $reg->id_nino . ')"><i class="fa fa-eye"></i> Ver Mi Niño</button>';
                 } else {
                   // Para administradores: botones completos
                   echo '<button class="btn btn-warning btn-sm" style="margin-right: 0.5rem; border-radius: 20px;" onclick="mostrar(' . $reg->id_nino . ')"><i class="fa fa-pencil"></i> Editar</button>';
@@ -162,7 +172,7 @@ if (!isset($_SESSION['nombre'])) {
       </div>
 
       <!-- Modal para registro y edición (solo para administradores) -->
-      <?php if (!isset($_SESSION['cargo']) || $_SESSION['cargo'] != 'Médico/Enfermería'): ?>
+      <?php if ((!isset($_SESSION['cargo']) || $_SESSION['cargo'] != 'Médico/Enfermería') && (!isset($_SESSION['cargo']) || $_SESSION['cargo'] != 'Padre/Tutor')): ?>
       <div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
         <div class="modal-dialog modal-xl" role="document">
           <div class="modal-content" style="border-radius: 20px; border: none; box-shadow: 0 20px 60px rgba(0,0,0,0.2);">

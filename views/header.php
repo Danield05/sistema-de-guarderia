@@ -169,7 +169,8 @@ if (strlen(session_id()) < 1) {
                     <?php
                     $mostrar_info_medica = (isset($_SESSION['escritorio']) && $_SESSION['escritorio'] == 1) ||
                                          (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Médico/Enfermería') ||
-                                         (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Maestro');
+                                         (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Maestro') ||
+                                         (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Padre/Tutor');
                     ?>
 
                     <?php if ($mostrar_info_medica): ?>

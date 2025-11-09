@@ -39,7 +39,11 @@ switch ($_GET["op"]) {
 		break;
 
     case 'listarPorFechas':
-		$permisos_ausenciaController->listarPorFechas();
-		break;
+  $permisos_ausenciaController->listarPorFechas();
+  break;
+
+    case 'listarPorTutor':
+  $permisos_ausenciaController->listarPorTutor();
+  break;
 }
 ?>

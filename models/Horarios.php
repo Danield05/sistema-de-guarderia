@@ -77,10 +77,10 @@ class Horarios{
 	//listar horarios por tutor (solo para el hijo del tutor)
 	public function listarPorTutor($id_usuario){
 		$sql="SELECT h.id_horario, h.id_nino, h.dia_semana, h.hora_entrada, h.hora_salida, h.descripcion,
-		n.nombre_completo, h.estado
+		n.nombre_completo, 1 as estado
 		FROM horarios_estudio h
 		INNER JOIN ninos n ON h.id_nino=n.id_nino
-		WHERE n.tutor_id='$id_usuario' AND h.estado=1
+		WHERE n.tutor_id='$id_usuario' AND n.estado=1
 		ORDER BY n.nombre_completo, FIELD(h.dia_semana, 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo')";
 		return ejecutarConsulta($sql);
 	}

@@ -114,7 +114,12 @@ class NinosController {
         // Si es maestro, mostrar solo sus niños asignados
         if (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Maestro') {
             $rspta = $ninos->listarParaMaestro($_SESSION['idusuario']);
-        } else {
+        }
+        // Si es padre/tutor, mostrar solo su niño
+        elseif (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Padre/Tutor') {
+            $rspta = $ninos->listarParaPadre($_SESSION['idusuario']);
+        }
+        else {
             $rspta = $ninos->listar();
         }
 

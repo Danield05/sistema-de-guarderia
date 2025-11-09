@@ -8,7 +8,7 @@ if (!isset($_SESSION['nombre'])) {
 
   if ((isset($_SESSION['horarios']) && $_SESSION['horarios'] == 1) ||
       (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Administrador') ||
-      (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Tutor')) {
+      (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Padre/Tutor')) {
 ?>
     <!-- 🔧 Quitamos padding lateral con clases personalizadas -->
     <main class="container-fluid py-5 px-3 main-dashboard" style="padding-top: 3rem; padding-bottom: 3rem;">
@@ -16,9 +16,9 @@ if (!isset($_SESSION['nombre'])) {
       <!-- Título de la sección -->
       <div class="welcome-card">
         <div class="welcome-content">
-          <?php if (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Tutor'): ?>
-            <h1 class="welcome-title">⏰ Horarios de Mi Hijo</h1>
-            <p class="welcome-subtitle">Consulta los horarios de clase de tu hijo en la guardería</p>
+          <?php if (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Padre/Tutor'): ?>
+            <h1 class="welcome-title">⏰ Horarios de Mi Niño</h1>
+            <p class="welcome-subtitle">Consulta los horarios de clase de tu niño en la guardería</p>
           <?php else: ?>
             <h1 class="welcome-title">⏰ Gestión de Horarios</h1>
             <p class="welcome-subtitle">Administra los horarios de clase de los niños en la guardería</p>
@@ -27,7 +27,7 @@ if (!isset($_SESSION['nombre'])) {
       </div>
 
       <!-- Filtros (solo para admin/profesor) -->
-      <?php if (!isset($_SESSION['cargo']) || $_SESSION['cargo'] != 'Tutor'): ?>
+      <?php if (!isset($_SESSION['cargo']) || $_SESSION['cargo'] != 'Padre/Tutor'): ?>
       <div class="mb-4">
         <div class="row">
           <div class="col-md-3">
@@ -69,7 +69,7 @@ if (!isset($_SESSION['nombre'])) {
           <table class="table table-hover">
             <thead style="background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%); color: white;">
               <tr>
-                <?php if (!isset($_SESSION['cargo']) || $_SESSION['cargo'] != 'Tutor'): ?>
+                <?php if (!isset($_SESSION['cargo']) || $_SESSION['cargo'] != 'Padre/Tutor'): ?>
                 <th style="border: none; padding: 1rem;"><i class="fa fa-cogs"></i> Acciones</th>
                 <?php endif; ?>
                 <th style="border: none; padding: 1rem;"><i class="fa fa-user"></i> Niño</th>
@@ -84,9 +84,9 @@ if (!isset($_SESSION['nombre'])) {
               require_once "../models/Horarios.php";
               $horarios = new Horarios();
 
-              // Verificar si es tutor para mostrar solo sus hijos
-              if (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Tutor') {
-                $rspta = $horarios->listarPorTutor($_SESSION['id_usuario']);
+              // Verificar si es padre/tutor para mostrar solo sus hijos
+              if (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Padre/Tutor') {
+                $rspta = $horarios->listarPorTutor($_SESSION['idusuario']);
               } else {
                 // Obtener filtros de la URL
                 $nombre_nino = isset($_GET['nombre_nino']) ? $_GET['nombre_nino'] : '';
@@ -103,8 +103,8 @@ if (!isset($_SESSION['nombre'])) {
               while ($reg = $rspta->fetch(PDO::FETCH_OBJ)) {
                 echo '<tr style="border-bottom: 1px solid rgba(0,0,0,0.05); transition: all 0.3s ease;">';
 
-                // Solo mostrar columna de acciones si no es tutor
-                if (!isset($_SESSION['cargo']) || $_SESSION['cargo'] != 'Tutor') {
+                // Solo mostrar columna de acciones si no es padre/tutor
+                if (!isset($_SESSION['cargo']) || $_SESSION['cargo'] != 'Padre/Tutor') {
                   echo '<td style="padding: 1rem;">';
                   echo '<button class="btn btn-warning btn-sm" style="margin-right: 0.5rem; border-radius: 20px;" onclick="mostrar(' . $reg->id_horario . ')"><i class="fa fa-pencil"></i> Editar</button>';
                   echo '<button class="btn btn-danger btn-sm" style="border-radius: 20px;" onclick="desactivar(' . $reg->id_horario . ')"><i class="fa fa-trash"></i> Eliminar</button>';
@@ -126,7 +126,7 @@ if (!isset($_SESSION['nombre'])) {
       </div>
 
       <!-- Modal para registro y edición (solo para admin/profesor) -->
-      <?php if (!isset($_SESSION['cargo']) || $_SESSION['cargo'] != 'Tutor'): ?>
+      <?php if (!isset($_SESSION['cargo']) || $_SESSION['cargo'] != 'Padre/Tutor'): ?>
       <div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
           <div class="modal-content" style="border-radius: 20px; border: none; box-shadow: 0 20px 60px rgba(0,0,0,0.2);">
@@ -253,6 +253,6 @@ if (!isset($_SESSION['nombre'])) {
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
 <script src="../public/js/bootbox.min.js"></script>
-<?php if (!isset($_SESSION['cargo']) || $_SESSION['cargo'] != 'Tutor'): ?>
+<?php if (!isset($_SESSION['cargo']) || $_SESSION['cargo'] != 'Padre/Tutor'): ?>
 <script src="scripts/horarios.js"></script>
 <?php endif; ?>

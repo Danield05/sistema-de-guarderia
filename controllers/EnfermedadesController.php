@@ -93,5 +93,40 @@ class EnfermedadesController {
         }
         echo json_encode($data);
     }
+
+    public function listarPorTutor() {
+        $enfermedades = new Enfermedades();
+
+        if (!isset($_SESSION['idusuario'])) {
+            echo json_encode(array("sEcho" => 1, "iTotalRecords" => 0, "iTotalDisplayRecords" => 0, "aaData" => array()));
+            return;
+        }
+
+        $user_id = $_SESSION['idusuario'];
+        $rspta = $enfermedades->listarPorTutor($user_id);
+
+        $data = Array();
+
+        while ($reg = $rspta->fetch(PDO::FETCH_OBJ)) {
+            // Para padres/tutores, solo mostrar botón de ver
+            $acciones = '<button class="btn btn-info btn-xs" onclick="mostrar(' . $reg->id_enfermedad . ')"><i class="fa fa-eye"></i></button>';
+
+            $data[] = array(
+                "0" => $acciones,
+                "1" => $reg->nino,
+                "2" => $reg->nombre_enfermedad,
+                "3" => $reg->descripcion,
+                "4" => $reg->fecha_diagnostico,
+                "5" => $reg->id_enfermedad
+            );
+        }
+        $results = array(
+            "sEcho" => 1,
+            "iTotalRecords" => count($data),
+            "iTotalDisplayRecords" => count($data),
+            "aaData" => $data
+        );
+        echo json_encode($results);
+    }
 }
 ?>

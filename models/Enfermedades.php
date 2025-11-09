@@ -62,10 +62,21 @@ class Enfermedades{
 
 	//listar enfermedades por niño
 	public function listarPorNino($id_nino){
-		$sql="SELECT id_enfermedad, nombre_enfermedad, descripcion, fecha_diagnostico 
-		FROM enfermedades 
-		WHERE id_nino='$id_nino' 
+		$sql="SELECT id_enfermedad, nombre_enfermedad, descripcion, fecha_diagnostico
+		FROM enfermedades
+		WHERE id_nino='$id_nino'
 		ORDER BY fecha_diagnostico DESC";
+		return ejecutarConsulta($sql);
+	}
+
+	//listar enfermedades por tutor/padre
+	public function listarPorTutor($tutor_id){
+		$sql="SELECT e.id_enfermedad, e.nombre_enfermedad, e.descripcion, e.fecha_diagnostico,
+		n.nombre_completo as nino, n.id_nino
+		FROM enfermedades e
+		LEFT JOIN ninos n ON e.id_nino=n.id_nino
+		WHERE n.tutor_id='$tutor_id' AND n.estado=1
+		ORDER BY e.id_enfermedad DESC";
 		return ejecutarConsulta($sql);
 	}
 }

@@ -9,7 +9,7 @@ if (!isset($_SESSION['nombre'])) {
 $_SESSION['modern_layout'] = true;
 
 require 'header.php';
-if ((isset($_SESSION['escritorio']) && $_SESSION['escritorio']==1) || (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Administrador') || (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Médico/Enfermería') || (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Maestro')) {
+if ((isset($_SESSION['escritorio']) && $_SESSION['escritorio']==1) || (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Administrador') || (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Médico/Enfermería') || (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Maestro') || (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Padre/Tutor')) {
 ?>
 <main class="container-fluid py-5 px-3 main-dashboard" style="padding-top: 3rem; padding-bottom: 3rem;">
       <!-- Header de la página -->
@@ -24,7 +24,7 @@ if ((isset($_SESSION['escritorio']) && $_SESSION['escritorio']==1) || (isset($_S
       <div class="activity-feed">
         <div class="d-flex justify-content-between align-items-center mb-4">
           <h3 class="activity-title">🏥 Lista de Diagnósticos</h3>
-          <?php if($_SESSION['cargo'] != 'Maestro'): ?>
+          <?php if($_SESSION['cargo'] != 'Maestro' && $_SESSION['cargo'] != 'Padre/Tutor'): ?>
           <button type="button" class="btn btn-primary" style="border-radius: 25px; padding: 0.75rem 2rem; font-weight: 600; box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);" onclick="mostrarform(true)">
             <i class="fa fa-plus-circle"></i> Nuevo Diagnóstico
           </button>

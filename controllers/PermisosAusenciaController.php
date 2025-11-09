@@ -150,5 +150,44 @@ class PermisosAusenciaController {
         }
         echo json_encode($data);
     }
+
+    public function listarPorTutor() {
+        $permisos_ausencia = new PermisosAusencia();
+
+        if (!isset($_SESSION['idusuario'])) {
+            echo json_encode(array("sEcho" => 1, "iTotalRecords" => 0, "iTotalDisplayRecords" => 0, "aaData" => array()));
+            return;
+        }
+
+        $user_id = $_SESSION['idusuario'];
+        $rspta = $permisos_ausencia->listarPorTutor($user_id);
+
+        $data = Array();
+
+        while ($reg = $rspta->fetch(PDO::FETCH_OBJ)) {
+            // Para padres/tutores, solo mostrar botón de ver
+            $acciones = '<button class="btn btn-info btn-xs" onclick="mostrar(' . $reg->id_permiso . ')"><i class="fa fa-eye"></i></button>';
+
+            $data[] = array(
+                "0" => $acciones,
+                "1" => $reg->nino,
+                "2" => $reg->tipo_permiso,
+                "3" => $reg->descripcion,
+                "4" => $reg->fecha_inicio,
+                "5" => $reg->fecha_fin,
+                "6" => $reg->hora_inicio,
+                "7" => $reg->hora_fin,
+                "8" => $reg->archivo_permiso,
+                "9" => $reg->id_permiso
+            );
+        }
+        $results = array(
+            "sEcho" => 1,
+            "iTotalRecords" => count($data),
+            "iTotalDisplayRecords" => count($data),
+            "aaData" => $data
+        );
+        echo json_encode($results);
+    }
 }
 ?>

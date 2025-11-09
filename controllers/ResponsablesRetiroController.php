@@ -77,16 +77,21 @@ class ResponsablesRetiroController {
             // Para maestros, mostrar solo responsables de sus niños asignados
             if (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Maestro') {
                 $rspta = $responsables_retiro->listarParaMaestro($_SESSION['idusuario'], $busqueda, $filtroEstado);
-            } else {
+            }
+            // Para padres/tutores, mostrar solo responsables de su niño
+            elseif (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Padre/Tutor') {
+                $rspta = $responsables_retiro->listarParaPadre($_SESSION['idusuario'], $busqueda, $filtroEstado);
+            }
+            else {
                 $rspta = $responsables_retiro->listarConFiltros($busqueda, $filtroEstado);
             }
 
             $data = Array();
 
             while ($reg = $rspta->fetch(PDO::FETCH_OBJ)) {
-                // Para maestros, solo mostrar botón de ver
-                if (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Maestro') {
-                    $acciones = '<button class="btn btn-info btn-xs" onclick="mostrar(' . $reg->id_responsable . ')"><i class="fa fa-eye"></i></button>';
+                // Para maestros y padres/tutores, mostrar botones de gestión
+                if (isset($_SESSION['cargo']) && ($_SESSION['cargo'] == 'Maestro' || $_SESSION['cargo'] == 'Padre/Tutor')) {
+                    $acciones = '<button class="btn btn-warning btn-xs" onclick="mostrar(' . $reg->id_responsable . ')"><i class="fa fa-pencil"></i></button>' . ' ' . '<button class="btn btn-danger btn-xs" onclick="eliminar(' . $reg->id_responsable . ')"><i class="fa fa-trash"></i></button>';
                 } else {
                     $acciones = '<button class="btn btn-warning btn-xs" onclick="mostrar(' . $reg->id_responsable . ')"><i class="fa fa-pencil"></i></button>' . ' ' . '<button class="btn btn-danger btn-xs" onclick="eliminar(' . $reg->id_responsable . ')"><i class="fa fa-trash"></i></button>';
                 }

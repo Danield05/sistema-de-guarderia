@@ -10,14 +10,19 @@ if (!isset($_SESSION['nombre'])) {
 $_SESSION['modern_layout'] = true;
 
 require 'header.php';
-if ((isset($_SESSION['escritorio']) && $_SESSION['escritorio']==1) || (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Administrador') || (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Maestro')) {
+if ((isset($_SESSION['escritorio']) && $_SESSION['escritorio']==1) || (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Administrador') || (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Maestro') || (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Padre/Tutor')) {
 ?>
 <main class="container-fluid py-5 px-3 main-dashboard" style="padding-top: 3rem; padding-bottom: 3rem;">
       <!-- Header de la página -->
       <div class="welcome-card">
         <div class="welcome-content">
-          <h1 class="welcome-title" style="color: #28a745;">👥 Gestión de Responsables de Retiro</h1>
-          <p class="welcome-subtitle">Administra las personas autorizadas para retirar a los niños</p>
+          <?php if (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Padre/Tutor'): ?>
+            <h1 class="welcome-title" style="color: #28a745;">👥 Responsables de Retiro de Mi Niño</h1>
+            <p class="welcome-subtitle">Gestiona las personas autorizadas para retirar a tu niño</p>
+          <?php else: ?>
+            <h1 class="welcome-title" style="color: #28a745;">👥 Gestión de Responsables de Retiro</h1>
+            <p class="welcome-subtitle">Administra las personas autorizadas para retirar a los niños</p>
+          <?php endif; ?>
         </div>
       </div>
 
@@ -25,11 +30,9 @@ if ((isset($_SESSION['escritorio']) && $_SESSION['escritorio']==1) || (isset($_S
       <div class="activity-feed">
         <div class="d-flex justify-content-between align-items-center mb-4">
           <h3 class="activity-title" style="color: #28a745;">👥 Lista de Responsables de Retiro</h3>
-          <?php if ($_SESSION['cargo'] != 'Maestro'): ?>
           <button type="button" class="btn btn-success" style="border-radius: 25px; padding: 0.75rem 2rem; font-weight: 600; box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);" onclick="mostrarform(true)">
-        <i class="fa fa-plus-circle"></i> Nuevo Responsable
+        <i class="fa fa-plus-circle"></i> <?php echo (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Padre/Tutor') ? 'Nuevo Responsable' : 'Nuevo Responsable'; ?>
       </button>
-          <?php endif; ?>
         </div>
 
         <!-- Barra de búsqueda y filtros -->

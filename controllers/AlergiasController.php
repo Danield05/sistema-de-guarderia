@@ -88,5 +88,39 @@ class AlergiasController {
         }
         echo json_encode($data);
     }
+
+    public function listarPorTutor() {
+        $alergias = new Alergias();
+
+        if (!isset($_SESSION['idusuario'])) {
+            echo json_encode(array("sEcho" => 1, "iTotalRecords" => 0, "iTotalDisplayRecords" => 0, "aaData" => array()));
+            return;
+        }
+
+        $user_id = $_SESSION['idusuario'];
+        $rspta = $alergias->listarPorTutor($user_id);
+
+        $data = Array();
+
+        while ($reg = $rspta->fetch(PDO::FETCH_OBJ)) {
+            // Para padres/tutores, solo mostrar botón de ver
+            $acciones = '<button class="btn btn-info btn-xs" onclick="mostrar(' . $reg->id_alergia . ')"><i class="fa fa-eye"></i></button>';
+
+            $data[] = array(
+                "0" => $acciones,
+                "1" => $reg->nino,
+                "2" => $reg->tipo_alergia,
+                "3" => $reg->descripcion,
+                "4" => $reg->id_alergia
+            );
+        }
+        $results = array(
+            "sEcho" => 1,
+            "iTotalRecords" => count($data),
+            "iTotalDisplayRecords" => count($data),
+            "aaData" => $data
+        );
+        echo json_encode($results);
+    }
 }
 ?>

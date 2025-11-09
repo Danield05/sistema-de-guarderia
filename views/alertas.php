@@ -8,15 +8,20 @@ if (!isset($_SESSION['nombre'])) {
 
 require 'header.php';
 
-if ((isset($_SESSION['escritorio']) && $_SESSION['escritorio']==1) || (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Administrador') || (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Médico/Enfermería') || (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Maestro')) {
+if ((isset($_SESSION['escritorio']) && $_SESSION['escritorio']==1) || (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Administrador') || (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Médico/Enfermería') || (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Maestro') || (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Padre/Tutor')) {
 
 ?>
     <main class="container-fluid py-5 px-3 main-dashboard" style="padding-top: 3rem; padding-bottom: 3rem;">
       <!-- Header de la página -->
       <div class="welcome-card">
         <div class="welcome-content">
-          <h1 class="welcome-title">🔔 Gestión de Alertas</h1>
-          <p class="welcome-subtitle">Administra y gestiona las alertas del sistema de guardería</p>
+          <?php if (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Padre/Tutor'): ?>
+            <h1 class="welcome-title">🔔 Alertas de Mi Niño</h1>
+            <p class="welcome-subtitle">Consulta las alertas relacionadas con tu niño</p>
+          <?php else: ?>
+            <h1 class="welcome-title">🔔 Gestión de Alertas</h1>
+            <p class="welcome-subtitle">Administra y gestiona las alertas del sistema de guardería</p>
+          <?php endif; ?>
         </div>
       </div>
 
@@ -24,7 +29,7 @@ if ((isset($_SESSION['escritorio']) && $_SESSION['escritorio']==1) || (isset($_S
       <div class="activity-feed">
         <div class="d-flex justify-content-between align-items-center mb-4">
           <h3 class="activity-title">🔔 Lista de Alertas</h3>
-          <?php if($_SESSION['cargo'] != 'Maestro'): ?>
+          <?php if($_SESSION['cargo'] == 'Maestro' || $_SESSION['cargo'] != 'Padre/Tutor'): ?>
           <button class="action-button" id="btnagregar" onclick="mostrarform(true)">
             <i class="fa fa-plus-circle"></i> Nueva Alerta
           </button>
@@ -66,7 +71,20 @@ if ((isset($_SESSION['escritorio']) && $_SESSION['escritorio']==1) || (isset($_S
         </div>
 
         <!-- Formulario de registro -->
-        <div class="panel-body" id="formularioregistros">
+        <div class="modal fade" id="modalAlerta" tabindex="-1" role="dialog" aria-labelledby="modalAlertaLabel" aria-hidden="true">
+          <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content" style="border-radius: 20px; border: none; box-shadow: 0 20px 60px rgba(0,0,0,0.2);">
+              <div class="modal-header" style="background: linear-gradient(135deg, #17a2b8 0%, #20c997 100%); color: white; border-radius: 20px 20px 0 0; border-bottom: none; padding: 2rem;">
+                <h4 class="modal-title" id="modalAlertaLabel" style="font-weight: 600; font-size: 1.5rem;">
+                  <i class="fa fa-plus-circle"></i> Nueva Alerta
+                </h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="color: white; opacity: 0.8;">
+                  <span aria-hidden="true" style="font-size: 2rem;">&times;</span>
+                </button>
+              </div>
+              <form id="formulario">
+                <div class="modal-body" style="padding: 2.5rem;">
+                  <div class="panel-body" id="formularioregistros">
           <form action="" name="formulario" id="formulario" method="POST">
             <div class="row">
               <div class="form-group col-md-6">
@@ -106,7 +124,7 @@ if ((isset($_SESSION['escritorio']) && $_SESSION['escritorio']==1) || (isset($_S
                 <textarea class="form-control" name="mensaje" id="mensaje" rows="4" placeholder="Descripción de la alerta" required></textarea>
               </div>
             </div>
-            <div class="row">
+            <div class="row" id="botonesForm" style="display: none;">
               <div class="form-group col-md-12">
                 <div class="text-center">
                   <button class="btn btn-primary" type="submit" id="btnGuardar" style="margin-right: 10px; border-radius: 25px; padding: 0.75rem 2rem;">
@@ -118,7 +136,16 @@ if ((isset($_SESSION['escritorio']) && $_SESSION['escritorio']==1) || (isset($_S
                 </div>
               </div>
             </div>
-          </form>
+                  </div>
+                </div>
+                <div class="modal-footer" id="modalFooter" style="border-top: none; padding: 2rem; background: #f8f9fa; border-radius: 0 0 20px 20px; justify-content: center;">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal" style="border-radius: 25px; padding: 0.5rem 2rem; font-weight: 600; border: none; background: #6c757d;">
+                    <i class="fa fa-times"></i> Cerrar
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
         </div>
       </div>
     </main>

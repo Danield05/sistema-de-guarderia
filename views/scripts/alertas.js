@@ -26,21 +26,28 @@ function limpiar(){
 function mostrarform(flag){
 	limpiar();
 	if(flag){
-		$(".table-responsive").hide();
-		$("#formularioregistros").show();
+		$('#modalAlertaLabel').html('<i class="fa fa-plus-circle"></i> Nueva Alerta');
+		$('#modalAlerta').appendTo('body').modal({
+			backdrop: 'static',
+			keyboard: true
+		});
+		// Habilitar campos para edición
+		$("#id_nino").prop("disabled", false);
+		$("#mensaje").prop("disabled", false);
+		$("#tipo").prop("disabled", false);
+		$("#estado").prop("disabled", false);
+		$("#botonesForm").show();
+		$("#modalFooter").show();
 		$("#btnGuardar").prop("disabled",false);
-		$("#btnagregar").hide();
 	}else{
-		$(".table-responsive").show();
-		$("#formularioregistros").hide();
-		$("#btnagregar").show();
+		$('#modalAlerta').modal('hide');
 	}
 }
 
 //cancelar form
 function cancelarform(){
 	limpiar();
-	mostrarform(false);
+	$('#modalAlerta').modal('hide');
 }
 
 //funcion listar
@@ -93,14 +100,13 @@ function renderizarTabla(data){
         // Columna Opciones (con botones)
         const tdOpciones = document.createElement('td');
         tdOpciones.style.cssText = 'padding: 1rem;';
-        const buttons = [
-            '<button class="btn btn-outline-warning btn-sm" style="margin-right: 0.5rem; border-radius: 20px;" onclick="mostrar(' + row[0] + ')"><i class="fa fa-pencil"></i> Editar</button>'
-        ];
+        const buttons = [];
 
+        // Para padres/tutores: solo responder si pendiente, ver si respondida
         if (row[4] === 'Pendiente') {
             buttons.push('<button class="btn btn-outline-success btn-sm" style="border-radius: 20px;" onclick="marcarRespondida(' + row[0] + ')"><i class="fa fa-check"></i> Responder</button>');
         } else {
-            buttons.push('<button class="btn btn-outline-danger btn-sm" style="border-radius: 20px;" onclick="eliminar(' + row[0] + ')"><i class="fa fa-trash"></i> Eliminar</button>');
+            buttons.push('<button class="btn btn-outline-info btn-sm" style="border-radius: 20px;" onclick="mostrarSoloLectura(' + row[0] + ')"><i class="fa fa-eye"></i> Ver</button>');
         }
 
         tdOpciones.innerHTML = buttons.join(' ');
@@ -178,10 +184,9 @@ function guardaryeditar(e){
 
           	success: function(datos){
           		bootbox.alert(datos);
-          		mostrarform(false);
-          		if (tabla) tabla.refresh();
+          		$('#modalAlerta').modal('hide');
+          		listar();
           		cargarEstadisticas();
-          		configurarRolUsuario(); // Recargar la lista con filtros aplicados
           	}
           });
 
@@ -206,7 +211,11 @@ function mostrar(idalerta){
 					return;
 				}
 
-				mostrarform(true);
+				$('#modalAlertaLabel').html('<i class="fa fa-edit"></i> Editar Alerta');
+				$('#modalAlerta').appendTo('body').modal({
+					backdrop: 'static',
+					keyboard: true
+				});
 				$("#id_nino").val(data.id_nino);
 				$("#mensaje").val(data.mensaje);
 				$("#tipo").val(data.tipo);
@@ -216,6 +225,38 @@ function mostrar(idalerta){
 				bootbox.alert("Error al verificar permisos del usuario");
 			});
 		})
+}
+
+function mostrarSoloLectura(idalerta){
+	$.post("../ajax/alertas.php?op=mostrar",{idalerta : idalerta},
+		function(data,status)
+		{
+			data=JSON.parse(data);
+
+			$('#modalAlertaLabel').html('<i class="fa fa-eye"></i> Ver Alerta');
+			$('#modalAlerta').appendTo('body').modal({
+				backdrop: 'static',
+				keyboard: true
+			});
+			$("#id_nino").val(data.id_nino);
+			$("#mensaje").val(data.mensaje);
+			$("#tipo").val(data.tipo);
+			$("#estado").val(data.estado);
+			$("#idalerta").val(data.id_alerta);
+
+			// Deshabilitar campos para solo lectura
+			$("#id_nino").prop("disabled", true);
+			$("#mensaje").prop("disabled", true);
+			$("#tipo").prop("disabled", true);
+			$("#estado").prop("disabled", true);
+
+			// Ocultar botones del formulario y footer para padres/tutores
+			$("#botonesForm").hide();
+			$("#modalFooter").hide();
+		})
+		.fail(function(xhr, status, error) {
+			alert("Error al cargar los datos de la alerta");
+		});
 }
 
 function verDetalles(idalerta){
@@ -371,34 +412,60 @@ function listarFiltrado(tipoPermitido){
 
 //función para cargar estadísticas
 function cargarEstadisticas(){
-    // Usar el nuevo endpoint de estadísticas completas
-    $.post("../ajax/alertas.php?op=estadisticasCompletas",{}, function(data){
-        data = JSON.parse(data);
-        $('#total-alertas').text(data.total || 0);
-        $('#alertas-pendientes').text(data.pendientes || 0);
-        $('#alertas-respondidas').text(data.respondidas || 0);
-    }).fail(function() {
-        // Fallback si falla la consulta de estadísticas, obtener datos de la tabla actual
-        const tbody = document.querySelector('#tbody-alertas');
-        if (tbody) {
-            const rows = tbody.querySelectorAll('tr');
-            const total = rows.length;
-            let pendientes = 0;
-            let respondidas = 0;
+    // Verificar si es padre/tutor para mostrar solo estadísticas de su niño
+    $.post("../ajax/usuario.php?op=mostrar_perfil", {}, function(userData){
+        userData = JSON.parse(userData);
+        if (userData.rol === 'Padre/Tutor') {
+            // Para padres/tutores, mostrar estadísticas solo de su niño
+            $.post("../ajax/alertas.php?op=estadisticasPorTutor", {}, function(data){
+                data = JSON.parse(data);
+                $('#total-alertas').text(data.total || 0);
+                $('#alertas-pendientes').text(data.pendientes || 0);
+                $('#alertas-respondidas').text(data.respondidas || 0);
+            }).fail(function() {
+                $('#total-alertas').text('0');
+                $('#alertas-pendientes').text('0');
+                $('#alertas-respondidas').text('0');
+            });
+        } else {
+            // Para administradores y maestros, mostrar estadísticas completas
+            $.post("../ajax/alertas.php?op=estadisticasCompletas",{}, function(data){
+                data = JSON.parse(data);
+                $('#total-alertas').text(data.total || 0);
+                $('#alertas-pendientes').text(data.pendientes || 0);
+                $('#alertas-respondidas').text(data.respondidas || 0);
+            }).fail(function() {
+                // Fallback si falla la consulta de estadísticas, obtener datos de la tabla actual
+                const tbody = document.querySelector('#tbody-alertas');
+                if (tbody) {
+                    const rows = tbody.querySelectorAll('tr');
+                    const total = rows.length;
+                    let pendientes = 0;
+                    let respondidas = 0;
 
-            rows.forEach(function(row) {
-                const estadoText = row.cells[4].textContent;
-                if (estadoText.includes('⏰')) {
-                    pendientes++;
-                } else if (estadoText.includes('✅')) {
-                    respondidas++;
+                    rows.forEach(function(row) {
+                        const estadoText = row.cells[4].textContent;
+                        if (estadoText.includes('⏰')) {
+                            pendientes++;
+                        } else if (estadoText.includes('✅')) {
+                            respondidas++;
+                        }
+                    });
+
+                    $('#total-alertas').text(total);
+                    $('#alertas-pendientes').text(pendientes);
+                    $('#alertas-respondidas').text(respondidas);
                 }
             });
-
-            $('#total-alertas').text(total);
-            $('#alertas-pendientes').text(pendientes);
-            $('#alertas-respondidas').text(respondidas);
         }
+    }).fail(function(){
+        // Fallback: mostrar estadísticas generales
+        $.post("../ajax/alertas.php?op=estadisticasCompletas",{}, function(data){
+            data = JSON.parse(data);
+            $('#total-alertas').text(data.total || 0);
+            $('#alertas-pendientes').text(data.pendientes || 0);
+            $('#alertas-respondidas').text(data.respondidas || 0);
+        });
     });
 }
 

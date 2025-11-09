@@ -75,12 +75,23 @@ class PermisosAusencia{
 
 	//listar permisos por fechas
 	public function listarPorFechas($fecha_inicio, $fecha_fin){
-		$sql="SELECT p.id_permiso, p.tipo_permiso, p.descripcion, p.fecha_inicio, p.fecha_fin, p.hora_inicio, p.hora_fin, p.archivo_permiso, 
-		n.nombre_completo as nino 
-		FROM permisos_ausencia p 
-		LEFT JOIN ninos n ON p.id_nino=n.id_nino 
+		$sql="SELECT p.id_permiso, p.tipo_permiso, p.descripcion, p.fecha_inicio, p.fecha_fin, p.hora_inicio, p.hora_fin, p.archivo_permiso,
+		n.nombre_completo as nino
+		FROM permisos_ausencia p
+		LEFT JOIN ninos n ON p.id_nino=n.id_nino
 		WHERE (p.fecha_inicio BETWEEN '$fecha_inicio' AND '$fecha_fin') OR (p.fecha_fin BETWEEN '$fecha_inicio' AND '$fecha_fin')
 		ORDER BY p.fecha_inicio DESC";
+		return ejecutarConsulta($sql);
+	}
+
+	//listar permisos por tutor/padre
+	public function listarPorTutor($tutor_id){
+		$sql="SELECT p.id_permiso, p.tipo_permiso, p.descripcion, p.fecha_inicio, p.fecha_fin, p.hora_inicio, p.hora_fin, p.archivo_permiso,
+		n.nombre_completo as nino, n.id_nino
+		FROM permisos_ausencia p
+		LEFT JOIN ninos n ON p.id_nino=n.id_nino
+		WHERE n.tutor_id='$tutor_id' AND n.estado=1
+		ORDER BY p.id_permiso DESC";
 		return ejecutarConsulta($sql);
 	}
 }

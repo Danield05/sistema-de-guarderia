@@ -32,13 +32,31 @@ class Consultas{
 	//metodo para contar total de niños
 	public function cantidad_ninos($user_id = null){
 		if ($user_id) {
-			$sql="SELECT COUNT(*) total_ninos FROM ninos n
+			// Para maestros: contar niños asignados
+			$sql_maestro="SELECT COUNT(*) total_ninos FROM ninos n
 			INNER JOIN usuarios u ON n.maestro_id=u.id_usuario
 			WHERE u.id_usuario='$user_id' AND n.estado=1";
+
+			// Para padres/tutores: contar niños relacionados (tutor_id)
+			$sql_padre="SELECT COUNT(*) total_ninos FROM ninos n
+			WHERE n.tutor_id='$user_id' AND n.estado=1";
+
+			// Ejecutar la consulta apropiada según el rol del usuario
+			require_once "../models/Usuario.php";
+			$usuario = new Usuario();
+			$datos_usuario = $usuario->mostrar($user_id);
+
+			if ($datos_usuario && isset($datos_usuario['rol']) && $datos_usuario['rol'] == 'Maestro') {
+				return ejecutarConsultaSimpleFila($sql_maestro);
+			} elseif ($datos_usuario && isset($datos_usuario['rol']) && $datos_usuario['rol'] == 'Padre/Tutor') {
+				return ejecutarConsultaSimpleFila($sql_padre);
+			} else {
+				return ejecutarConsultaSimpleFila($sql_maestro); // fallback
+			}
 		} else {
 			$sql="SELECT COUNT(*) total_ninos FROM ninos WHERE estado=1";
+			return ejecutarConsultaSimpleFila($sql);
 		}
-		return ejecutarConsultaSimpleFila($sql);
 	}
 
 	//metodo para contar total de secciones
@@ -111,6 +129,17 @@ class Consultas{
 		return ejecutarConsulta($sql);
 	}
 
+	//metodo para obtener alertas recientes de los niños de un padre/tutor
+	public function alertas_recientes_para_padre($padre_id, $limite = 5){
+		$sql="SELECT al.id_alerta, al.fecha_alerta, al.mensaje, al.tipo, al.estado, n.nombre_completo
+		FROM alertas al
+		INNER JOIN ninos n ON al.id_nino=n.id_nino
+		WHERE n.tutor_id='$padre_id' AND n.estado=1
+		ORDER BY al.fecha_alerta DESC
+		LIMIT $limite";
+		return ejecutarConsulta($sql);
+	}
+
 	//metodo para obtener resumen de aulas
 	public function resumen_aulas(){
 		$sql="SELECT
@@ -158,6 +187,24 @@ class Consultas{
 		$sql="SELECT COUNT(*) as total_ninos
 		FROM ninos
 		WHERE aula_id = '$aula_id' AND maestro_id = '$maestro_id' AND estado = 1";
+		return ejecutarConsultaSimpleFila($sql);
+	}
+
+	//metodo para contar alertas por tutor/padre
+	public function contar_alertas_por_tutor(){
+		if (!isset($_SESSION['idusuario'])) {
+			return ['total' => 0, 'pendientes' => 0, 'respondidas' => 0];
+		}
+
+		$user_id = $_SESSION['idusuario'];
+		$sql="SELECT
+			SUM(CASE WHEN al.estado = 'Pendiente' THEN 1 ELSE 0 END) as pendientes,
+			SUM(CASE WHEN al.estado = 'Respondida' THEN 1 ELSE 0 END) as respondidas,
+			SUM(CASE WHEN DATE(al.fecha_alerta) = CURDATE() THEN 1 ELSE 0 END) as hoy,
+			COUNT(*) as total
+			FROM alertas al
+			INNER JOIN ninos n ON al.id_nino = n.id_nino
+			WHERE n.tutor_id = '$user_id' AND n.estado = 1";
 		return ejecutarConsultaSimpleFila($sql);
 	}
 }

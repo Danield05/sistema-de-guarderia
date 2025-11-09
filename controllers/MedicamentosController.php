@@ -94,5 +94,41 @@ class MedicamentosController {
         }
         echo json_encode($data);
     }
+
+    public function listarPorTutor() {
+        $medicamentos = new Medicamentos();
+
+        if (!isset($_SESSION['idusuario'])) {
+            echo json_encode(array("sEcho" => 1, "iTotalRecords" => 0, "iTotalDisplayRecords" => 0, "aaData" => array()));
+            return;
+        }
+
+        $user_id = $_SESSION['idusuario'];
+        $rspta = $medicamentos->listarPorTutor($user_id);
+
+        $data = Array();
+
+        while ($reg = $rspta->fetch(PDO::FETCH_OBJ)) {
+            // Para padres/tutores, solo mostrar botón de ver
+            $acciones = '<button class="btn btn-info btn-xs" onclick="mostrar(' . $reg->id_medicamento . ')"><i class="fa fa-eye"></i></button>';
+
+            $data[] = array(
+                "0" => $acciones,
+                "1" => $reg->nino,
+                "2" => $reg->nombre_medicamento,
+                "3" => $reg->dosis,
+                "4" => $reg->frecuencia,
+                "5" => $reg->observaciones,
+                "6" => $reg->id_medicamento
+            );
+        }
+        $results = array(
+            "sEcho" => 1,
+            "iTotalRecords" => count($data),
+            "iTotalDisplayRecords" => count($data),
+            "aaData" => $data
+        );
+        echo json_encode($results);
+    }
 }
 ?>

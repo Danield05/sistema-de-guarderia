@@ -61,10 +61,21 @@ class Alergias{
 
 	//listar alergias por niño
 	public function listarPorNino($id_nino){
-		$sql="SELECT id_alergia, tipo_alergia, descripcion 
-		FROM alergias 
-		WHERE id_nino='$id_nino' 
+		$sql="SELECT id_alergia, tipo_alergia, descripcion
+		FROM alergias
+		WHERE id_nino='$id_nino'
 		ORDER BY tipo_alergia";
+		return ejecutarConsulta($sql);
+	}
+
+	//listar alergias por tutor/padre
+	public function listarPorTutor($tutor_id){
+		$sql="SELECT a.id_alergia, a.tipo_alergia, a.descripcion,
+		n.nombre_completo as nino, n.id_nino
+		FROM alergias a
+		LEFT JOIN ninos n ON a.id_nino=n.id_nino
+		WHERE n.tutor_id='$tutor_id' AND n.estado=1
+		ORDER BY a.id_alergia DESC";
 		return ejecutarConsulta($sql);
 	}
 }

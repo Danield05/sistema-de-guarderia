@@ -32,7 +32,11 @@ switch ($_GET["op"]) {
 		break;
 
     case 'listarPorNino':
-		$medicamentosController->listarPorNino();
-		break;
+  $medicamentosController->listarPorNino();
+  break;
+
+    case 'listarPorTutor':
+  $medicamentosController->listarPorTutor();
+  break;
 }
 ?>

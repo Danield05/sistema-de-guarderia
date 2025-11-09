@@ -49,8 +49,13 @@ switch ($_GET["op"]) {
 		break;
 
     case 'estadisticasCompletas':
-		$result = $consulta->contar_alertas_por_estado();
-		echo json_encode($result);
-		break;
+  $result = $consulta->contar_alertas_por_estado();
+  echo json_encode($result);
+  break;
+
+    case 'estadisticasPorTutor':
+  $result = $consulta->contar_alertas_por_tutor();
+  echo json_encode($result);
+  break;
 }
 ?>
