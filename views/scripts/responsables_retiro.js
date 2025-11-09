@@ -40,6 +40,14 @@ function mostrarform(flag){
 	if(flag){
 		$('#modalResponsableLabel').html('<i class="fa fa-plus-circle"></i> Nuevo Responsable de Retiro');
 		$('#modalResponsable').modal('show');
+		// Habilitar campos para edición
+		$("#id_nino").prop("disabled", false);
+		$("#nombre_completo").prop("disabled", false);
+		$("#parentesco").prop("disabled", false);
+		$("#telefono").prop("disabled", false);
+		$("#periodo_inicio").prop("disabled", false);
+		$("#periodo_fin").prop("disabled", false);
+		$("#btnGuardar").show();
 		// Cambiar texto del botón cuando se crea nuevo
 		$("#btnGuardar").html('<i class="fa fa-save"></i> Guardar Responsable');
 	}else{
@@ -74,8 +82,8 @@ function listar(){
 
             if (data.aaData && data.aaData.length > 0) {
                 $.each(data.aaData, function(index, responsable) {
-                    var acciones = '<button class="btn btn-outline-warning btn-sm" style="margin-right: 0.5rem; border-radius: 20px;" onclick="mostrar(' + responsable[8] + ')"><i class="fa fa-pencil"></i> Editar</button>' +
-                                    '<button class="btn btn-outline-danger btn-sm" style="border-radius: 20px;" onclick="eliminar_responsable(' + responsable[8] + ')"><i class="fa fa-trash"></i> Eliminar</button>';
+                    // Para maestros, solo mostrar botón de ver
+                    var acciones = '<button class="btn btn-outline-info btn-sm" style="border-radius: 20px;" onclick="mostrar(' + responsable[8] + ')"><i class="fa fa-eye"></i> Ver</button>';
 
                     var row = '<tr style="border-bottom: 1px solid rgba(0,0,0,0.05); transition: all 0.3s ease;">' +
                         '<td style="padding: 1rem;">' + acciones + '</td>' +
@@ -141,30 +149,36 @@ function guardaryeditar(e){
 }
 
 function mostrar(id_responsable){
-	$.post("../ajax/responsables_retiro.php?op=mostrar",{id_responsable : id_responsable},
-		function(data,status)
-		{
-			data=JSON.parse(data);
-			$('#modalResponsableLabel').html('<i class="fa fa-edit"></i> Editar Responsable de Retiro');
-			$('#modalResponsable').modal('show');
+$.post("../ajax/responsables_retiro.php?op=mostrar",{id_responsable : id_responsable},
+	function(data,status)
+	{
+		data=JSON.parse(data);
+		$('#modalResponsableLabel').html('<i class="fa fa-eye"></i> Ver Responsable de Retiro');
+		$('#modalResponsable').modal('show');
 
-			$("#id_responsable").val(data.id_responsable);
-			$("#id_nino").val(data.id_nino);
-			$("#nombre_completo").val(data.nombre_completo);
-			$("#parentesco").val(data.parentesco);
-			$("#telefono").val(data.telefono);
-			$("#periodo_inicio").val(data.periodo_inicio);
-			$("#periodo_fin").val(data.periodo_fin);
-			$("#firma_actual").val(data.autorizacion_firma);
+		$("#id_responsable").val(data.id_responsable);
+		$("#id_nino").val(data.id_nino);
+		$("#nombre_completo").val(data.nombre_completo);
+		$("#parentesco").val(data.parentesco);
+		$("#telefono").val(data.telefono);
+		$("#periodo_inicio").val(data.periodo_inicio);
+		$("#periodo_fin").val(data.periodo_fin);
+		$("#firma_actual").val(data.autorizacion_firma);
 
-			// Sin firma por ahora
+		// Deshabilitar campos para solo lectura
+		$("#id_nino").prop("disabled", true);
+		$("#nombre_completo").prop("disabled", true);
+		$("#parentesco").prop("disabled", true);
+		$("#telefono").prop("disabled", true);
+		$("#periodo_inicio").prop("disabled", true);
+		$("#periodo_fin").prop("disabled", true);
 
-			// Cambiar texto del botón cuando se edita
-			$("#btnGuardar").html('<i class="fa fa-edit"></i> Actualizar Responsable');
-		})
-		.fail(function(xhr, status, error) {
-			alert("Error al cargar los datos del responsable: " + xhr.responseText);
-		});
+		// Ocultar botón de guardar
+		$("#btnGuardar").hide();
+	})
+	.fail(function(xhr, status, error) {
+		alert("Error al cargar los datos del responsable: " + xhr.responseText);
+	});
 }
 
 //funcion para eliminar

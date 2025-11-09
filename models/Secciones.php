@@ -46,5 +46,16 @@ class Secciones{
 		$sql="SELECT * FROM secciones WHERE aula_id='$aula_id' ORDER BY id_seccion DESC";
 		return ejecutarConsulta($sql);
 	}
+
+	//listar secciones para maestros (solo secciones donde tienen niños asignados)
+	public function listarParaMaestro($maestro_id){
+		$sql="SELECT DISTINCT s.*, a.nombre_aula
+		FROM secciones s
+		INNER JOIN ninos n ON s.id_seccion = n.seccion_id
+		LEFT JOIN aulas a ON s.aula_id = a.id_aula
+		WHERE n.maestro_id = '$maestro_id' AND n.estado = 1
+		ORDER BY s.id_seccion DESC";
+		return ejecutarConsulta($sql);
+	}
 }
 ?>

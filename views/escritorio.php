@@ -30,13 +30,29 @@ if (!isset($_SESSION['nombre'])) {
       <!-- Tarjeta de bienvenida -->
       <div class="welcome-card">
         <div class="welcome-content">
-          <h1 class="welcome-title">🏥 Bienvenido, <?php echo $_SESSION['nombre']; ?></h1>
+          <h1 class="welcome-title">
+            <?php
+            if (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Médico/Enfermería') {
+              echo '🏥 Bienvenido, ' . $_SESSION['nombre'];
+            } elseif (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Maestro') {
+              echo '👨‍🏫 Bienvenido, ' . $_SESSION['nombre'];
+            } elseif (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Administrador') {
+              echo '👔 Bienvenido, ' . $_SESSION['nombre'];
+            } else {
+              echo '👤 Bienvenido, ' . $_SESSION['nombre'];
+            }
+            ?>
+          </h1>
           <p class="welcome-subtitle">
             <?php
             if (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Médico/Enfermería') {
               echo 'Gestiona la salud y bienestar de los niños';
+            } elseif (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Maestro') {
+              echo 'Gestiona la educación y desarrollo de tus niños asignados';
+            } elseif (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Administrador') {
+              echo 'Administra y supervisa todas las operaciones de la guardería';
             } else {
-              echo 'Gestiona tu guardería de manera más eficiente';
+              echo 'Accede a la información de tu niño en la guardería';
             }
             ?>
           </p>
@@ -308,6 +324,9 @@ if (!isset($_SESSION['nombre'])) {
             </div>
             <div class="col-md-4 mb-3">
               <a href="permisos_ausencia.php" class="action-button">📋 Permisos de Ausencia</a>
+            </div>
+            <div class="col-md-4 mb-3">
+              <a href="responsables_retiro.php" class="action-button">👥 Responsables de Retiro</a>
             </div>
             <div class="col-md-4 mb-3">
               <a href="acerca.php" class="action-button">ℹ️ Acerca del Sistema</a>

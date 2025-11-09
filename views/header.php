@@ -90,9 +90,14 @@ if (strlen(session_id()) < 1) {
                     
                     <!-- Gestión Académica (Dropdown) -->
                     <?php
-                    $mostrar_gestion_academica = (isset($_SESSION['aulas']) && $_SESSION['aulas'] == 1) ||
+                    $mostrar_gestion_academica = ((isset($_SESSION['aulas']) && $_SESSION['aulas'] == 1) ||
                                                 (isset($_SESSION['secciones']) && $_SESSION['secciones'] == 1) ||
-                                                (isset($_SESSION['ninos']) && $_SESSION['ninos'] == 1);
+                                                (isset($_SESSION['ninos']) && $_SESSION['ninos'] == 1) ||
+                                                (isset($_SESSION['horarios']) && $_SESSION['horarios'] == 1) ||
+                                                (isset($_SESSION['escritorio']) && $_SESSION['escritorio'] == 1) ||
+                                                (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Administrador') ||
+                                                (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Maestro')) &&
+                                                $_SESSION['cargo'] != 'Médico/Enfermería';
                     ?>
 
                     <?php if ($mostrar_gestion_academica): ?>
@@ -105,11 +110,11 @@ if (strlen(session_id()) < 1) {
                                     <li><a href="aulas.php" class="dropdown-item"><i class="fas fa-school"></i> <span>Aulas</span></a></li>
                                 <?php endif; ?>
 
-                                <?php if (isset($_SESSION['secciones']) && $_SESSION['secciones'] == 1): ?>
+                                <?php if ((isset($_SESSION['secciones']) && $_SESSION['secciones'] == 1) && $_SESSION['cargo'] != 'Maestro'): ?>
                                     <li><a href="secciones.php" class="dropdown-item"><i class="fas fa-layer-group"></i> <span>Secciones</span></a></li>
                                 <?php endif; ?>
 
-                                <?php if (isset($_SESSION['ninos']) && $_SESSION['ninos'] == 1): ?>
+                                <?php if ((isset($_SESSION['ninos']) && $_SESSION['ninos'] == 1) && $_SESSION['cargo'] != 'Maestro'): ?>
                                     <li><a href="ninos.php" class="dropdown-item"><i class="fas fa-baby"></i> <span>Niños</span></a></li>
                                 <?php endif; ?>
 

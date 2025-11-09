@@ -6,7 +6,7 @@ if (!isset($_SESSION['nombre'])) {
 } else {
   require 'header.php';
 
-  if ((isset($_SESSION['secciones']) && $_SESSION['secciones'] == 1) || $_SESSION['cargo'] == 'Administrador') {
+  if ((isset($_SESSION['secciones']) && $_SESSION['secciones'] == 1) || $_SESSION['cargo'] == 'Administrador' || $_SESSION['cargo'] == 'Maestro') {
 ?>
     <!-- 🔧 Quitamos padding lateral con clases personalizadas -->
     <main class="container-fluid py-5 px-3 main-dashboard" style="padding-top: 3rem; padding-bottom: 3rem;">
@@ -19,12 +19,14 @@ if (!isset($_SESSION['nombre'])) {
         </div>
       </div>
 
-      <!-- Botón para abrir modal de registro -->
+      <!-- Botón para abrir modal de registro (solo para administradores) -->
+      <?php if ($_SESSION['cargo'] != 'Maestro'): ?>
       <div class="mb-4">
         <button type="button" class="btn btn-primary" style="border-radius: 25px; padding: 0.75rem 2rem; font-weight: 600; box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);" onclick="mostrarFormulario(0)">
           <i class="fa fa-plus-circle"></i> Agregar Nueva Sección
         </button>
       </div>
+      <?php endif; ?>
 
       <!-- Tabla de secciones -->
       <div class="activity-feed">
@@ -42,12 +44,26 @@ if (!isset($_SESSION['nombre'])) {
               <?php
               require_once "../models/Secciones.php";
               $secciones = new Secciones();
-              $rspta = $secciones->listar();
+
+              // Para maestros, mostrar solo secciones donde tienen niños asignados
+              if ($_SESSION['cargo'] == 'Maestro') {
+                $rspta = $secciones->listarParaMaestro($_SESSION['idusuario']);
+              } else {
+                $rspta = $secciones->listar();
+              }
+
               while ($reg = $rspta->fetch(PDO::FETCH_OBJ)) {
                 echo '<tr style="border-bottom: 1px solid rgba(0,0,0,0.05); transition: all 0.3s ease;">';
                 echo '<td style="padding: 1rem;">';
-                echo '<button class="btn btn-outline-warning btn-sm" style="margin-right: 0.5rem; border-radius: 20px;" onclick="mostrarFormulario(' . $reg->id_seccion . ')"><i class="fa fa-pencil"></i> Editar</button>';
-                echo '<button class="btn btn-outline-danger btn-sm" style="border-radius: 20px;" onclick="eliminar_seccion(' . $reg->id_seccion . ')"><i class="fa fa-trash"></i> Eliminar</button>';
+
+                // Para maestros, solo mostrar botón de ver
+                if ($_SESSION['cargo'] == 'Maestro') {
+                  echo '<button class="btn btn-outline-info btn-sm" style="border-radius: 20px;" onclick="verSeccion(' . $reg->id_seccion . ')"><i class="fa fa-eye"></i> Ver</button>';
+                } else {
+                  echo '<button class="btn btn-outline-warning btn-sm" style="margin-right: 0.5rem; border-radius: 20px;" onclick="mostrarFormulario(' . $reg->id_seccion . ')"><i class="fa fa-pencil"></i> Editar</button>';
+                  echo '<button class="btn btn-outline-danger btn-sm" style="border-radius: 20px;" onclick="eliminar_seccion(' . $reg->id_seccion . ')"><i class="fa fa-trash"></i> Eliminar</button>';
+                }
+
                 echo '</td>';
                 echo '<td style="padding: 1rem; font-weight: 600; color: #3c8dbc;">' . $reg->nombre_seccion . '</td>';
                 echo '<td style="padding: 1rem; color: #666;">' . $reg->nombre_aula . '</td>';
@@ -91,11 +107,13 @@ if (!isset($_SESSION['nombre'])) {
               </div>
               <div class="modal-footer" style="border-top: none; padding: 2rem; background: #f8f9fa; border-radius: 0 0 20px 20px;">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal" style="border-radius: 25px; padding: 0.5rem 2rem; font-weight: 600; border: none; background: #6c757d;">
-                  <i class="fa fa-times"></i> Cancelar
+                  <i class="fa fa-times"></i> Cerrar
                 </button>
+                <?php if($_SESSION['cargo'] != 'Maestro'): ?>
                 <button type="submit" class="btn btn-primary" style="border-radius: 25px; padding: 0.5rem 2rem; font-weight: 600; border: none; background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%); box-shadow: 0 4px 15px rgba(44, 62, 80, 0.4);">
                   <i class="fa fa-save"></i> Guardar Sección
                 </button>
+                <?php endif; ?>
               </div>
             </form>
           </div>
@@ -127,12 +145,41 @@ if (!isset($_SESSION['nombre'])) {
         keyboard: true
       });
 
+      // Habilitar campos para edición
+      $('#nombre_seccion').prop('disabled', false);
+      $('#aula_id').prop('disabled', false);
+      $('button[type="submit"]').show();
+
       // Cargar aulas en el select
       cargarAulas();
 
       if (id > 0) {
         mostrar(id);
       }
+    }
+
+    // Función para ver sección (solo lectura para maestros)
+    function verSeccion(id) {
+      $('#formulario')[0].reset();
+      $('#modalLabel').html('<i class="fa fa-eye"></i> Ver Sección');
+
+      $('#modal').appendTo('body').modal({
+        backdrop: 'static',
+        keyboard: true
+      });
+
+      // Cargar aulas en el select
+      cargarAulas();
+
+      // Mostrar datos
+      mostrar(id);
+
+      // Deshabilitar campos para solo lectura
+      $('#nombre_seccion').prop('disabled', true);
+      $('#aula_id').prop('disabled', true);
+
+      // Ocultar botón de guardar
+      $('button[type="submit"]').hide();
     }
 
     // Función para mostrar datos de una sección

@@ -76,10 +76,30 @@ class ResponsablesRetiro{
 
 	//listar responsables por niño
 	public function listarPorNino($id_nino){
-		$sql="SELECT id_responsable, nombre_completo, parentesco, telefono, autorizacion_firma, periodo_inicio, periodo_fin 
-		FROM responsables_retiro 
-		WHERE id_nino='$id_nino' 
+		$sql="SELECT id_responsable, nombre_completo, parentesco, telefono, autorizacion_firma, periodo_inicio, periodo_fin
+		FROM responsables_retiro
+		WHERE id_nino='$id_nino'
 		ORDER BY nombre_completo";
+		return ejecutarConsulta($sql);
+	}
+
+	//listar responsables para maestros (solo de sus niños asignados)
+	public function listarParaMaestro($maestro_id, $busqueda = '', $filtroEstado = ''){
+		$sql="SELECT r.id_responsable, r.nombre_completo, r.parentesco, r.telefono, r.autorizacion_firma, r.periodo_inicio, r.periodo_fin,
+		n.nombre_completo as nino, n.id_nino, '1' as estado
+		FROM responsables_retiro r
+		INNER JOIN ninos n ON r.id_nino=n.id_nino
+		WHERE n.maestro_id='$maestro_id' AND n.estado=1";
+
+		if (!empty($busqueda)) {
+			$sql .= " AND (r.nombre_completo LIKE '%$busqueda%' OR n.nombre_completo LIKE '%$busqueda%' OR r.parentesco LIKE '%$busqueda%')";
+		}
+
+		if (!empty($filtroEstado)) {
+			$sql .= " AND '1' = '$filtroEstado'";
+		}
+
+		$sql .= " ORDER BY r.id_responsable DESC";
 		return ejecutarConsulta($sql);
 	}
 }
