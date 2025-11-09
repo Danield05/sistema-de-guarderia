@@ -97,4 +97,23 @@ function readURL(input) {
 // Inicializar cuando el documento esté listo
 $(document).ready(function() {
     init();
+
+    // Actualizar imagen del navbar cuando se carga la página
+    actualizarImagenNavbar();
 });
+
+// Función para actualizar la imagen del navbar desde cualquier página
+function actualizarImagenNavbar() {
+    $.post("../ajax/usuario.php?op=mostrar_perfil", function(data, status) {
+        data = JSON.parse(data);
+
+        // Mostrar imagen en el navbar
+        if (data.fotografia) {
+            $("#navbarUserImage").html('<img src="../files/usuarios/' + data.fotografia + '" style="width: 100%; height: 100%; object-fit: cover;">');
+        } else {
+            $("#navbarUserImage").html('<i class="fas fa-user" style="font-size: 1.2rem; color: #666;"></i>');
+        }
+    }).fail(function(xhr, status, error) {
+        console.error("Error actualizando imagen del navbar:", error);
+    });
+}

@@ -32,6 +32,30 @@ if (strlen(session_id()) < 1) {
     
     <!-- JavaScript personalizado para dropdown del navbar -->
     <script src="../views/scripts/navbar.js?v=<?php echo time(); ?>"></script>
+    <!-- Script para actualizar imagen del navbar -->
+    <script>
+        // Función para actualizar la imagen del navbar desde cualquier página
+        function actualizarImagenNavbar() {
+            fetch('../ajax/usuario.php?op=mostrar_perfil')
+                .then(response => response.json())
+                .then(data => {
+                    // Mostrar imagen en el navbar
+                    if (data.fotografia) {
+                        document.getElementById('navbarUserImage').innerHTML = '<img src="../files/usuarios/' + data.fotografia + '" style="width: 100%; height: 100%; object-fit: cover;">';
+                    } else {
+                        document.getElementById('navbarUserImage').innerHTML = '<i class="fas fa-user" style="font-size: 1.2rem; color: #666;"></i>';
+                    }
+                })
+                .catch(error => {
+                    console.error("Error actualizando imagen del navbar:", error);
+                });
+        }
+
+        // Actualizar imagen del navbar cuando se carga la página
+        document.addEventListener('DOMContentLoaded', function() {
+            actualizarImagenNavbar();
+        });
+    </script>
 </head>
 
 <body class="hold-transition">
