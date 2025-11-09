@@ -16,20 +16,45 @@ class EnfermedadesController {
         $descripcion = isset($_POST["descripcion"]) ? limpiarCadena($_POST["descripcion"]) : "";
         $fecha_diagnostico = isset($_POST["fecha_diagnostico"]) ? limpiarCadena($_POST["fecha_diagnostico"]) : "";
 
+        // Verificar permisos
+        $cargo = isset($_SESSION['cargo']) ? $_SESSION['cargo'] : '';
+        $esMaestro = ($cargo == 'Maestro');
+        $esPadreTutor = ($cargo == 'Padre/Tutor');
+
         if (empty($id)) {
-            $rspta = $enfermedades->insertar($id_nino, $nombre_enfermedad, $descripcion, $fecha_diagnostico);
-            echo $rspta ? "Enfermedad registrada correctamente" : "No se pudo registrar la enfermedad";
+            // Agregar nueva enfermedad - solo médicos y administradores
+            if ($esMaestro || $esPadreTutor) {
+                echo "No tienes permisos para registrar enfermedades";
+            } else {
+                $rspta = $enfermedades->insertar($id_nino, $nombre_enfermedad, $descripcion, $fecha_diagnostico);
+                echo $rspta ? "Enfermedad registrada correctamente" : "No se pudo registrar la enfermedad";
+            }
         } else {
-            $rspta = $enfermedades->editar($id, $id_nino, $nombre_enfermedad, $descripcion, $fecha_diagnostico);
-            echo $rspta ? "Enfermedad actualizada correctamente" : "No se pudo actualizar la enfermedad";
+            // Editar enfermedad existente - solo médicos y administradores
+            if ($esMaestro || $esPadreTutor) {
+                echo "No tienes permisos para editar enfermedades";
+            } else {
+                $rspta = $enfermedades->editar($id, $id_nino, $nombre_enfermedad, $descripcion, $fecha_diagnostico);
+                echo $rspta ? "Enfermedad actualizada correctamente" : "No se pudo actualizar la enfermedad";
+            }
         }
     }
 
     public function eliminar() {
         $enfermedades = new Enfermedades();
         $id = isset($_POST["id_enfermedad"]) ? limpiarCadena($_POST["id_enfermedad"]) : "";
-        $rspta = $enfermedades->eliminar($id);
-        echo $rspta ? "Enfermedad eliminada correctamente" : "No se pudo eliminar la enfermedad";
+
+        // Verificar permisos
+        $cargo = isset($_SESSION['cargo']) ? $_SESSION['cargo'] : '';
+        $esMaestro = ($cargo == 'Maestro');
+        $esPadreTutor = ($cargo == 'Padre/Tutor');
+
+        if ($esMaestro || $esPadreTutor) {
+            echo "No tienes permisos para eliminar enfermedades";
+        } else {
+            $rspta = $enfermedades->eliminar($id);
+            echo $rspta ? "Enfermedad eliminada correctamente" : "No se pudo eliminar la enfermedad";
+        }
     }
 
     public function mostrar() {
@@ -52,11 +77,14 @@ class EnfermedadesController {
         $data = Array();
 
         while ($reg = $rspta->fetch(PDO::FETCH_OBJ)) {
-            // Para maestros, solo mostrar botón de ver
-            if (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Maestro') {
+            // Para médicos y administradores pueden editar/eliminar, maestros y padres/tutores solo ver
+            $cargo = isset($_SESSION['cargo']) ? $_SESSION['cargo'] : '';
+            if ($cargo == 'Médico/Enfermería' || $cargo == 'Administrador') {
+                $acciones = '<button class="btn btn-warning btn-xs" onclick="mostrar(' . $reg->id_enfermedad . ')"><i class="fa fa-pencil"></i></button>' . ' ' . '<button class="btn btn-danger btn-xs" onclick="eliminar(' . $reg->id_enfermedad . ')"><i class="fa fa-trash"></i></button>';
+            } elseif ($cargo == 'Maestro' || $cargo == 'Padre/Tutor') {
                 $acciones = '<button class="btn btn-info btn-xs" onclick="mostrar(' . $reg->id_enfermedad . ')"><i class="fa fa-eye"></i></button>';
             } else {
-                $acciones = '<button class="btn btn-warning btn-xs" onclick="mostrar(' . $reg->id_enfermedad . ')"><i class="fa fa-pencil"></i></button>' . ' ' . '<button class="btn btn-danger btn-xs" onclick="eliminar(' . $reg->id_enfermedad . ')"><i class="fa fa-trash"></i></button>';
+                $acciones = '<button class="btn btn-info btn-xs" onclick="mostrar(' . $reg->id_enfermedad . ')"><i class="fa fa-eye"></i></button>';
             }
 
             $data[] = array(

@@ -24,7 +24,7 @@ if ((isset($_SESSION['escritorio']) && $_SESSION['escritorio']==1) || (isset($_S
       <div class="activity-feed">
         <div class="d-flex justify-content-between align-items-center mb-4">
           <h3 class="activity-title">🏥 Lista de Diagnósticos</h3>
-          <?php if($_SESSION['cargo'] != 'Maestro' && $_SESSION['cargo'] != 'Padre/Tutor'): ?>
+          <?php if($_SESSION['cargo'] == 'Administrador' || $_SESSION['cargo'] == 'Médico/Enfermería'): ?>
           <button type="button" class="btn btn-primary" style="border-radius: 25px; padding: 0.75rem 2rem; font-weight: 600; box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);" onclick="mostrarform(true)">
             <i class="fa fa-plus-circle"></i> Nuevo Diagnóstico
           </button>
@@ -131,7 +131,7 @@ if ((isset($_SESSION['escritorio']) && $_SESSION['escritorio']==1) || (isset($_S
               <button type="button" class="btn btn-secondary" data-dismiss="modal" style="border-radius: 25px; padding: 0.5rem 2rem; font-weight: 600; border: none; background: #6c757d;">
                 <i class="fa fa-times"></i> Cerrar
               </button>
-              <?php if($_SESSION['cargo'] != 'Maestro'): ?>
+              <?php if($_SESSION['cargo'] == 'Administrador' || $_SESSION['cargo'] == 'Médico/Enfermería'): ?>
               <button type="submit" id="btnGuardar" class="btn btn-primary" style="border-radius: 25px; padding: 0.5rem 2rem; font-weight: 600; border: none; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);">
                 <i class="fa fa-save"></i> Guardar Diagnóstico
               </button>

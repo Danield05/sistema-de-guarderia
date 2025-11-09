@@ -19,18 +19,18 @@ if (!isset($_SESSION['nombre'])) {
         </div>
       </div>
 
-      <!-- Botón para abrir modal de registro (solo para administradores) -->
-      <?php if ($_SESSION['cargo'] == 'Administrador'): ?>
-      <div class="mb-4">
-        <button type="button" class="btn btn-primary" style="border-radius: 25px; padding: 0.75rem 2rem; font-weight: 600; box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);" onclick="mostrarFormulario(0)">
-          <i class="fa fa-plus-circle"></i> Agregar Nueva Aula
-        </button>
-      </div>
-      <?php endif; ?>
 
       <!-- Tabla de aulas -->
       <div class="activity-feed">
-        <h3 class="activity-title">🏫 Lista de Aulas</h3>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <h3 class="activity-title">🏫 Lista de Aulas</h3>
+          <!-- Botón para abrir modal de registro (solo para administradores) -->
+          <?php if ($_SESSION['cargo'] == 'Administrador'): ?>
+          <button type="button" class="btn btn-primary" style="border-radius: 25px; padding: 0.75rem 2rem; font-weight: 600; box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);" onclick="mostrarFormulario(0)">
+            <i class="fa fa-plus-circle"></i> Agregar Nueva Aula
+          </button>
+          <?php endif; ?>
+        </div>
         <div class="table-responsive">
           <table class="table table-hover">
             <thead style="background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%); color: white;">

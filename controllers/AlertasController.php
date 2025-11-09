@@ -14,20 +14,43 @@ class AlertasController {
         $tipo = isset($_POST["tipo"]) ? limpiarCadena($_POST["tipo"]) : "";
         $estado = isset($_POST["estado"]) ? limpiarCadena($_POST["estado"]) : "Pendiente";
 
+        // Verificar permisos
+        $cargo = isset($_SESSION['cargo']) ? $_SESSION['cargo'] : '';
+        $esPadreTutor = ($cargo == 'Padre/Tutor');
+
         if (empty($id)) {
-            $rspta = $alertas->insertar($id_nino, $mensaje, $tipo, $estado);
-            echo $rspta ? "Alerta registrada correctamente" : "No se pudo registrar la alerta";
+            // Agregar nueva alerta
+            if ($esPadreTutor) {
+                echo "No tienes permisos para registrar alertas";
+            } else {
+                $rspta = $alertas->insertar($id_nino, $mensaje, $tipo, $estado);
+                echo $rspta ? "Alerta registrada correctamente" : "No se pudo registrar la alerta";
+            }
         } else {
-            $rspta = $alertas->editar($id, $id_nino, $mensaje, $tipo, $estado);
-            echo $rspta ? "Alerta actualizada correctamente" : "No se pudo actualizar la alerta";
+            // Editar alerta existente
+            if ($esPadreTutor) {
+                echo "No tienes permisos para editar alertas existentes";
+            } else {
+                $rspta = $alertas->editar($id, $id_nino, $mensaje, $tipo, $estado);
+                echo $rspta ? "Alerta actualizada correctamente" : "No se pudo actualizar la alerta";
+            }
         }
     }
 
     public function eliminar() {
         $alertas = new Alertas();
         $id = isset($_POST["idalerta"]) ? limpiarCadena($_POST["idalerta"]) : "";
-        $rspta = $alertas->eliminar($id);
-        echo $rspta ? "Alerta eliminada correctamente" : "No se pudo eliminar la alerta";
+
+        // Verificar permisos
+        $cargo = isset($_SESSION['cargo']) ? $_SESSION['cargo'] : '';
+        $esPadreTutor = ($cargo == 'Padre/Tutor');
+
+        if ($esPadreTutor) {
+            echo "No tienes permisos para eliminar alertas";
+        } else {
+            $rspta = $alertas->eliminar($id);
+            echo $rspta ? "Alerta eliminada correctamente" : "No se pudo eliminar la alerta";
+        }
     }
 
     public function marcarRespondida() {
@@ -62,13 +85,24 @@ class AlertasController {
         $data = Array();
 
         while ($reg = $rspta->fetch(PDO::FETCH_OBJ)) {
+            // Para administradores, maestros y médicos pueden editar/eliminar, padres/tutores solo ver
+            $cargo = isset($_SESSION['cargo']) ? $_SESSION['cargo'] : '';
+            if ($cargo == 'Administrador' || $cargo == 'Maestro' || $cargo == 'Médico/Enfermería') {
+                $acciones = '<button class="btn btn-warning btn-xs" onclick="mostrar(' . $reg->id_alerta . ')"><i class="fa fa-pencil"></i></button>' . ' ' . '<button class="btn btn-danger btn-xs" onclick="eliminar(' . $reg->id_alerta . ')"><i class="fa fa-trash"></i></button>';
+            } elseif ($cargo == 'Padre/Tutor') {
+                $acciones = '<button class="btn btn-info btn-xs" onclick="mostrarSoloLectura(' . $reg->id_alerta . ')"><i class="fa fa-eye"></i></button>';
+            } else {
+                $acciones = '<button class="btn btn-info btn-xs" onclick="mostrarSoloLectura(' . $reg->id_alerta . ')"><i class="fa fa-eye"></i></button>';
+            }
+
             $data[] = array(
-                "0" => $reg->id_alerta,        // ID
-                "1" => $reg->nino,             // Niño
-                "2" => $reg->mensaje,          // Mensaje
-                "3" => $reg->tipo,             // Tipo
-                "4" => $reg->estado,           // Estado
-                "5" => $reg->fecha_alerta      // Fecha
+                "0" => $acciones,              // Acciones
+                "1" => $reg->id_alerta,        // ID
+                "2" => $reg->nino,             // Niño
+                "3" => $reg->mensaje,          // Mensaje
+                "4" => $reg->tipo,             // Tipo
+                "5" => $reg->estado,           // Estado
+                "6" => $reg->fecha_alerta      // Fecha
             );
         }
         $results = array(

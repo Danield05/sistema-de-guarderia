@@ -176,7 +176,7 @@ if (!isset($_SESSION['nombre'])) {
         <?php endif; ?>
       </div>
       <!-- Aulas disponibles -->
-      <?php if (!isset($_SESSION['cargo']) || $_SESSION['cargo'] != 'Médico/Enfermería'): ?>
+      <?php if (!isset($_SESSION['cargo']) || ($_SESSION['cargo'] != 'Médico/Enfermería' && $_SESSION['cargo'] != 'Padre/Tutor')): ?>
       <div class="activity-feed">
         <h3 class="activity-title">🏫 Aulas Disponibles</h3>
         <?php

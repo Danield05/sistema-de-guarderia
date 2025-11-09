@@ -15,20 +15,53 @@ class MedicamentosController {
         $frecuencia = isset($_POST["frecuencia"]) ? limpiarCadena($_POST["frecuencia"]) : "";
         $observaciones = isset($_POST["observaciones"]) ? limpiarCadena($_POST["observaciones"]) : "";
 
+        // Verificar permisos
+        $cargo = isset($_SESSION['cargo']) ? $_SESSION['cargo'] : '';
+        $esPadreTutor = ($cargo == 'Padre/Tutor');
+
         if (empty($id)) {
+            // Agregar nuevo medicamento - padres/tutores pueden hacerlo
             $rspta = $medicamentos->insertar($id_nino, $nombre_medicamento, $dosis, $frecuencia, $observaciones);
             echo $rspta ? "Medicamento registrado correctamente" : "No se pudo registrar el medicamento";
         } else {
-            $rspta = $medicamentos->editar($id, $id_nino, $nombre_medicamento, $dosis, $frecuencia, $observaciones);
-            echo $rspta ? "Medicamento actualizado correctamente" : "No se pudo actualizar el medicamento";
+            // Editar medicamento existente
+            if ($esPadreTutor) {
+                // Verificar si el medicamento pertenece a un niño del tutor
+                $medicamento = $medicamentos->mostrar($id);
+                if ($medicamento && $this->perteneceAlTutor($medicamento['id_nino'], $_SESSION['idusuario'])) {
+                    $rspta = $medicamentos->editar($id, $id_nino, $nombre_medicamento, $dosis, $frecuencia, $observaciones);
+                    echo $rspta ? "Medicamento actualizado correctamente" : "No se pudo actualizar el medicamento";
+                } else {
+                    echo "No tienes permisos para editar este medicamento";
+                }
+            } else {
+                $rspta = $medicamentos->editar($id, $id_nino, $nombre_medicamento, $dosis, $frecuencia, $observaciones);
+                echo $rspta ? "Medicamento actualizado correctamente" : "No se pudo actualizar el medicamento";
+            }
         }
     }
 
     public function eliminar() {
         $medicamentos = new Medicamentos();
         $id = isset($_POST["id_medicamento"]) ? limpiarCadena($_POST["id_medicamento"]) : "";
-        $rspta = $medicamentos->eliminar($id);
-        echo $rspta ? "Medicamento eliminado correctamente" : "No se pudo eliminar el medicamento";
+
+        // Verificar permisos
+        $cargo = isset($_SESSION['cargo']) ? $_SESSION['cargo'] : '';
+        $esPadreTutor = ($cargo == 'Padre/Tutor');
+
+        if ($esPadreTutor) {
+            // Verificar si el medicamento pertenece a un niño del tutor
+            $medicamento = $medicamentos->mostrar($id);
+            if ($medicamento && $this->perteneceAlTutor($medicamento['id_nino'], $_SESSION['idusuario'])) {
+                $rspta = $medicamentos->eliminar($id);
+                echo $rspta ? "Medicamento eliminado correctamente" : "No se pudo eliminar el medicamento";
+            } else {
+                echo "No tienes permisos para eliminar este medicamento";
+            }
+        } else {
+            $rspta = $medicamentos->eliminar($id);
+            echo $rspta ? "Medicamento eliminado correctamente" : "No se pudo eliminar el medicamento";
+        }
     }
 
     public function mostrar() {
@@ -51,11 +84,14 @@ class MedicamentosController {
         $data = Array();
 
         while ($reg = $rspta->fetch(PDO::FETCH_OBJ)) {
-            // Para maestros, solo mostrar botón de ver
-            if (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Maestro') {
+            // Para médicos y administradores pueden editar/eliminar, maestros y padres/tutores solo ver
+            $cargo = isset($_SESSION['cargo']) ? $_SESSION['cargo'] : '';
+            if ($cargo == 'Médico/Enfermería' || $cargo == 'Administrador') {
+                $acciones = '<button class="btn btn-warning btn-xs" onclick="mostrar(' . $reg->id_medicamento . ')"><i class="fa fa-pencil"></i></button>' . ' ' . '<button class="btn btn-danger btn-xs" onclick="eliminar(' . $reg->id_medicamento . ')"><i class="fa fa-trash"></i></button>';
+            } elseif ($cargo == 'Maestro' || $cargo == 'Padre/Tutor') {
                 $acciones = '<button class="btn btn-info btn-xs" onclick="mostrar(' . $reg->id_medicamento . ')"><i class="fa fa-eye"></i></button>';
             } else {
-                $acciones = '<button class="btn btn-warning btn-xs" onclick="mostrar(' . $reg->id_medicamento . ')"><i class="fa fa-pencil"></i></button>' . ' ' . '<button class="btn btn-danger btn-xs" onclick="eliminar(' . $reg->id_medicamento . ')"><i class="fa fa-trash"></i></button>';
+                $acciones = '<button class="btn btn-info btn-xs" onclick="mostrar(' . $reg->id_medicamento . ')"><i class="fa fa-eye"></i></button>';
             }
 
             $data[] = array(
@@ -64,8 +100,7 @@ class MedicamentosController {
                 "2" => $reg->nombre_medicamento,
                 "3" => $reg->dosis,
                 "4" => $reg->frecuencia,
-                "5" => $reg->observaciones,
-                "6" => $reg->id_medicamento
+                "5" => $reg->observaciones
             );
         }
         $results = array(
@@ -109,7 +144,7 @@ class MedicamentosController {
         $data = Array();
 
         while ($reg = $rspta->fetch(PDO::FETCH_OBJ)) {
-            // Para padres/tutores, solo mostrar botón de ver
+            // Para padres/tutores, mostrar solo botón de ver
             $acciones = '<button class="btn btn-info btn-xs" onclick="mostrar(' . $reg->id_medicamento . ')"><i class="fa fa-eye"></i></button>';
 
             $data[] = array(
@@ -118,8 +153,7 @@ class MedicamentosController {
                 "2" => $reg->nombre_medicamento,
                 "3" => $reg->dosis,
                 "4" => $reg->frecuencia,
-                "5" => $reg->observaciones,
-                "6" => $reg->id_medicamento
+                "5" => $reg->observaciones
             );
         }
         $results = array(
@@ -129,6 +163,20 @@ class MedicamentosController {
             "aaData" => $data
         );
         echo json_encode($results);
+    }
+
+    // Método auxiliar para verificar si un niño pertenece a un tutor
+    private function perteneceAlTutor($id_nino, $id_usuario) {
+        require_once "../models/Ninos.php";
+        $ninos = new Ninos();
+        $rspta = $ninos->listarParaPadre($id_usuario);
+
+        while ($reg = $rspta->fetch(PDO::FETCH_OBJ)) {
+            if ($reg->id_nino == $id_nino) {
+                return true;
+            }
+        }
+        return false;
     }
 }
 ?>

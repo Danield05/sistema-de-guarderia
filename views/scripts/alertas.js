@@ -102,50 +102,45 @@ function renderizarTabla(data){
         tdOpciones.style.cssText = 'padding: 1rem;';
         const buttons = [];
 
-        // Para padres/tutores: solo responder si pendiente, ver si respondida
-        if (row[4] === 'Pendiente') {
-            buttons.push('<button class="btn btn-outline-success btn-sm" style="border-radius: 20px;" onclick="marcarRespondida(' + row[0] + ')"><i class="fa fa-check"></i> Responder</button>');
-        } else {
-            buttons.push('<button class="btn btn-outline-info btn-sm" style="border-radius: 20px;" onclick="mostrarSoloLectura(' + row[0] + ')"><i class="fa fa-eye"></i> Ver</button>');
-        }
-
-        tdOpciones.innerHTML = buttons.join(' ');
+        // Verificar rol del usuario para mostrar botones apropiados
+        // row[0] contiene las acciones HTML generadas por el controlador
+        tdOpciones.innerHTML = row[0]; // Usar las acciones generadas por el controlador
         tr.appendChild(tdOpciones);
 
-        // Niño (ahora en posición 1)
+        // Niño (ahora en posición 2)
         const tdNino = document.createElement('td');
         tdNino.style.cssText = 'padding: 1rem; color: #666;';
-        tdNino.textContent = row[1] || '';
+        tdNino.textContent = row[2] || '';
         tr.appendChild(tdNino);
 
-        // Mensaje (ahora en posición 2)
+        // Mensaje (ahora en posición 3)
         const tdMensaje = document.createElement('td');
         tdMensaje.style.cssText = 'padding: 1rem; color: #666;';
-        tdMensaje.textContent = row[2] || '';
+        tdMensaje.textContent = row[3] || '';
         tr.appendChild(tdMensaje);
 
-        // Tipo (ahora en posición 3)
+        // Tipo (ahora en posición 4)
         const tdTipo = document.createElement('td');
         tdTipo.style.cssText = 'padding: 1rem; color: #666;';
-        tdTipo.textContent = row[3] || '';
+        tdTipo.textContent = row[4] || '';
         tr.appendChild(tdTipo);
 
-        // Estado (ahora en posición 4)
+        // Estado (ahora en posición 5)
         const tdEstado = document.createElement('td');
         tdEstado.style.cssText = 'padding: 1rem; color: #666;';
-        const estado = row[4];
+        const estado = row[5];
         const emoji = estado === 'Pendiente' ? '⏰' : '✅';
         tdEstado.textContent = emoji + ' ' + (estado || '');
         tr.appendChild(tdEstado);
 
-        // Fecha (ahora en posición 5)
+        // Fecha (ahora en posición 6)
         const tdFecha = document.createElement('td');
         tdFecha.style.cssText = 'padding: 1rem; color: #666;';
         try {
-            const date = new Date(row[5]);
+            const date = new Date(row[6]);
             tdFecha.textContent = date.toLocaleDateString('es-ES');
         } catch (e) {
-            tdFecha.textContent = row[5] || '';
+            tdFecha.textContent = row[6] || '';
         }
         tr.appendChild(tdFecha);
 

@@ -67,7 +67,7 @@ function listar(){
 
                 if (data.aaData && data.aaData.length > 0) {
                     $.each(data.aaData, function(index, enfermedad) {
-                        var acciones = '<button class="btn btn-outline-info btn-sm" style="margin-right: 0.5rem; border-radius: 20px;" onclick="mostrar(' + enfermedad[5] + ')"><i class="fa fa-eye"></i> Ver</button>';
+                        var acciones = enfermedad[0]; // Usar las acciones generadas por el controlador
 
                         var row = '<tr style="border-bottom: 1px solid rgba(0,0,0,0.05); transition: all 0.3s ease;">' +
                             '<td style="padding: 1rem;">' + acciones + '</td>' +
@@ -99,7 +99,7 @@ function listar(){
 
                 if (data.aaData && data.aaData.length > 0) {
                     $.each(data.aaData, function(index, enfermedad) {
-                        var acciones = '<button class="btn btn-outline-info btn-sm" style="margin-right: 0.5rem; border-radius: 20px;" onclick="mostrar(' + enfermedad[5] + ')"><i class="fa fa-eye"></i> Ver</button>';
+                        var acciones = enfermedad[0]; // Usar las acciones generadas por el controlador
 
                         var row = '<tr style="border-bottom: 1px solid rgba(0,0,0,0.05); transition: all 0.3s ease;">' +
                             '<td style="padding: 1rem;">' + acciones + '</td>' +
