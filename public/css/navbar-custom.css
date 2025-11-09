@@ -1,0 +1,108 @@
+/* Estilos CSS para los dropdowns personalizados */
+.custom-caret {
+    display: inline-block;
+    width: 0;
+    height: 0;
+    margin-left: 8px;
+    vertical-align: middle;
+    border-top: 4px solid;
+    border-right: 4px solid transparent;
+    border-left: 4px solid transparent;
+}
+
+.custom-dropdown.show .custom-caret {
+    transform: rotate(180deg);
+}
+
+/* Estilos para el dropdown del usuario */
+.user-profile-widget {
+    display: flex;
+    align-items: center;
+    padding: 8px 15px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.user-profile-widget:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 6px;
+}
+
+.user-image {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    margin-right: 10px;
+    object-fit: cover;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.user-info {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.2;
+}
+
+.user-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: #fff;
+}
+
+.user-role {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+/* Estilos para el menú del dropdown del usuario */
+.user-dropdown-menu {
+    min-width: 180px;
+    padding: 8px 0;
+    margin-top: 5px;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.95);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+}
+
+.user-dropdown-menu .dropdown-item {
+    padding: 10px 20px;
+    color: #333;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    transition: all 0.2s ease;
+}
+
+.user-dropdown-menu .dropdown-item:hover {
+    background-color: #f8f9fa;
+    color: #007bff;
+}
+
+.user-dropdown-menu .dropdown-item i {
+    margin-right: 10px;
+    width: 16px;
+    text-align: center;
+}
+
+.user-dropdown-menu .divider {
+    height: 1px;
+    background-color: #e9ecef;
+    margin: 5px 0;
+}
+
+.user-dropdown-menu .text-danger {
+    color: #dc3545 !important;
+}
+
+.user-dropdown-menu .text-danger:hover {
+    background-color: #f8d7da;
+    color: #721c24 !important;
+}
+
+/* Ocultar el caret automático de Bootstrap */
+.dropdown-toggle::after {
+    display: none !important;
+}
