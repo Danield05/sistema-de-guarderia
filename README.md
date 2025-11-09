@@ -27,6 +27,11 @@ Un sistema integral de gestión para guarderías infantiles que facilita la admi
 - Registros de administración de medicamentos
 - Sistema de gestión de alergias
 - Registro de consultas médicas
+- **Sistema de permisos especializados:**
+  - **Médicos y Administradores**: Control total (crear, editar, eliminar)
+  - **Maestros**: Solo pueden ver alergias y medicamentos
+  - **Padres/Tutores**: Pueden agregar alergias y medicamentos nuevos, solo ver enfermedades
+  - **Alertas**: Médicos/administradores/maestros pueden gestionar, padres/tutores solo ver
 
 ### 🔐 Sistema de Permisos
 - Gestión completa de permisos del sistema
@@ -167,6 +172,11 @@ sistema-de-guarderia/
 - Funcionalidad de horarios implementada con filtros avanzados y control de permisos por rol
 - Sistema de permisos médicos especializados para usuarios Médico/Enfermería
 - Página Acerca del Sistema con diseño moderno de tarjetas
+- **Sistema de permisos granular implementado:**
+  - Control de acceso basado en roles para información médica
+  - Validaciones en backend y frontend según permisos del usuario
+  - Interfaz adaptativa que muestra solo las opciones permitidas
+  - Seguridad reforzada para datos sensibles de salud infantil
 
 ## 📞 Soporte
 
