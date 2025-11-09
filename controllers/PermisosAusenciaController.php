@@ -8,7 +8,7 @@ class PermisosAusenciaController {
     public function guardarYEditar() {
         $permisos_ausencia = new PermisosAusencia();
 
-        $id = isset($_POST["idpermiso"]) ? limpiarCadena($_POST["idpermiso"]) : "";
+        $id = isset($_POST["id_permiso"]) ? limpiarCadena($_POST["id_permiso"]) : "";
         $id_nino = isset($_POST["id_nino"]) ? limpiarCadena($_POST["id_nino"]) : "";
         $tipo_permiso = isset($_POST["tipo_permiso"]) ? limpiarCadena($_POST["tipo_permiso"]) : "";
         $descripcion = isset($_POST["descripcion"]) ? limpiarCadena($_POST["descripcion"]) : "";
@@ -16,7 +16,31 @@ class PermisosAusenciaController {
         $fecha_fin = isset($_POST["fecha_fin"]) ? limpiarCadena($_POST["fecha_fin"]) : "";
         $hora_inicio = isset($_POST["hora_inicio"]) ? limpiarCadena($_POST["hora_inicio"]) : "";
         $hora_fin = isset($_POST["hora_fin"]) ? limpiarCadena($_POST["hora_fin"]) : "";
-        $archivo_permiso = isset($_POST["archivo_permiso"]) ? limpiarCadena($_POST["archivo_permiso"]) : "";
+        // Manejo del archivo
+        $archivo_permiso = "";
+        if (!file_exists($_FILES['archivo_permiso']['tmp_name']) || !is_uploaded_file($_FILES['archivo_permiso']['tmp_name'])) {
+            $archivo_permiso = isset($_POST["archivo_actual"]) && !empty($_POST["archivo_actual"]) ? $_POST["archivo_actual"] : "";
+        } else {
+            $ext = explode(".", $_FILES["archivo_permiso"]["name"]);
+            if ($_FILES['archivo_permiso']['type'] == "application/pdf" ||
+                $_FILES['archivo_permiso']['type'] == "image/jpg" ||
+                $_FILES['archivo_permiso']['type'] == "image/jpeg" ||
+                $_FILES['archivo_permiso']['type'] == "image/png" ||
+                $_FILES['archivo_permiso']['type'] == "application/msword" ||
+                $_FILES['archivo_permiso']['type'] == "application/vnd.openxmlformats-officedocument.wordprocessingml.document") {
+
+                $archivo_permiso = round(microtime(true)) . '.' . end($ext);
+                $target_path = "../files/permisos/" . $archivo_permiso;
+
+                if (move_uploaded_file($_FILES["archivo_permiso"]["tmp_name"], $target_path)) {
+                    // Archivo subido correctamente
+                } else {
+                    $archivo_permiso = isset($_POST["archivo_actual"]) && !empty($_POST["archivo_actual"]) ? $_POST["archivo_actual"] : "";
+                }
+            } else {
+                $archivo_permiso = isset($_POST["archivo_actual"]) && !empty($_POST["archivo_actual"]) ? $_POST["archivo_actual"] : "";
+            }
+        }
 
         if (empty($id)) {
             $rspta = $permisos_ausencia->insertar($id_nino, $tipo_permiso, $descripcion, $fecha_inicio, $fecha_fin, $hora_inicio, $hora_fin, $archivo_permiso);
@@ -29,14 +53,14 @@ class PermisosAusenciaController {
 
     public function eliminar() {
         $permisos_ausencia = new PermisosAusencia();
-        $id = isset($_POST["idpermiso"]) ? limpiarCadena($_POST["idpermiso"]) : "";
+        $id = isset($_POST["id_permiso"]) ? limpiarCadena($_POST["id_permiso"]) : "";
         $rspta = $permisos_ausencia->eliminar($id);
         echo $rspta ? "Permiso eliminado correctamente" : "No se pudo eliminar el permiso";
     }
 
     public function mostrar() {
         $permisos_ausencia = new PermisosAusencia();
-        $id = isset($_POST["idpermiso"]) ? limpiarCadena($_POST["idpermiso"]) : "";
+        $id = isset($_POST["id_permiso"]) ? limpiarCadena($_POST["id_permiso"]) : "";
         $rspta = $permisos_ausencia->mostrar($id);
         echo json_encode($rspta);
     }

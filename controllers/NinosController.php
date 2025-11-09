@@ -111,15 +111,12 @@ class NinosController {
     public function select() {
         $ninos = new Ninos();
         $rspta = $ninos->listar();
-        $data = Array();
+        $html = '<option value="">Seleccionar niño</option>';
 
         while ($reg = $rspta->fetch(PDO::FETCH_OBJ)) {
-            $data[] = array(
-                "0" => $reg->id_nino,
-                "1" => $reg->nombre_completo
-            );
+            $html .= '<option value="' . $reg->id_nino . '">' . $reg->nombre_completo . '</option>';
         }
-        echo json_encode($data);
+        echo $html;
     }
 }
 ?>

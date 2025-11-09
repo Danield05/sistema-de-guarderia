@@ -31,21 +31,17 @@ function limpiar(){
 function mostrarform(flag){
 	limpiar();
 	if(flag){
-		$("#listadoregistros").hide();
-		$("#formularioregistros").show();
-		$("#btnGuardar").prop("disabled",false);
-		$("#btnagregar").hide();
+		$("#modalPermiso").modal('show');
+		$("#modalPermisoLabel").html('<i class="fa fa-plus-circle"></i> Nuevo Permiso de Ausencia');
 	}else{
-		$("#listadoregistros").show();
-		$("#formularioregistros").hide();
-		$("#btnagregar").show();
+		$("#modalPermiso").modal('hide');
 	}
 }
 
 //cancelar form
 function cancelarform(){
 	limpiar();
-	mostrarform(false);
+	$("#modalPermiso").modal('hide');
 }
 
 //funcion listar
@@ -104,8 +100,8 @@ function guardaryeditar(e){
 
       	success: function(datos){
       		bootbox.alert(datos);
-      		mostrarform(false);
-      		if (tabla) tabla.refresh();
+      		$("#modalPermiso").modal('hide');
+      		listar();
       	}
      });
 
@@ -113,22 +109,23 @@ function guardaryeditar(e){
 }
 
 function mostrar(id_permiso){
-	$.post("../ajax/permisos_ausencia.php?op=mostrar",{id_permiso : id_permiso},
-		function(data,status)
-		{
-			data=JSON.parse(data);
-			mostrarform(true);
+$.post("../ajax/permisos_ausencia.php?op=mostrar",{id_permiso : id_permiso},
+	function(data,status)
+	{
+		data=JSON.parse(data);
+		$("#modalPermiso").modal('show');
+		$("#modalPermisoLabel").html('<i class="fa fa-edit"></i> Editar Permiso de Ausencia');
 
-			$("#id_permiso").val(data.id_permiso);
-			$("#id_nino").val(data.id_nino);
-			$("#tipo_permiso").val(data.tipo_permiso);
-			$("#descripcion").val(data.descripcion);
-			$("#fecha_inicio").val(data.fecha_inicio);
-			$("#fecha_fin").val(data.fecha_fin);
-			$("#hora_inicio").val(data.hora_inicio);
-			$("#hora_fin").val(data.hora_fin);
-			$("#archivo_actual").val(data.archivo_permiso);
-		})
+		$("#id_permiso").val(data.id_permiso);
+		$("#id_nino").val(data.id_nino);
+		$("#tipo_permiso").val(data.tipo_permiso);
+		$("#descripcion").val(data.descripcion);
+		$("#fecha_inicio").val(data.fecha_inicio);
+		$("#fecha_fin").val(data.fecha_fin);
+		$("#hora_inicio").val(data.hora_inicio);
+		$("#hora_fin").val(data.hora_fin);
+		$("#archivo_actual").val(data.archivo_permiso);
+	})
 }
 
 //funcion para eliminar
@@ -137,7 +134,7 @@ function eliminar(id_permiso){
 		if (result) {
 			$.post("../ajax/permisos_ausencia.php?op=eliminar", {id_permiso : id_permiso}, function(e){
 				bootbox.alert(e);
-				if (tabla) tabla.refresh();
+				listar();
 			});
 		}
 	})

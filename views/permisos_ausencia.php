@@ -60,101 +60,122 @@ if ((isset($_SESSION['escritorio']) && $_SESSION['escritorio']==1) || (isset($_S
     <div class="modal fade" id="modalPermiso" tabindex="-1" role="dialog" aria-labelledby="modalPermisoLabel" aria-hidden="true">
       <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content" style="border-radius: 20px; border: none; box-shadow: 0 20px 60px rgba(0,0,0,0.2);">
-          <div class="modal-header" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 20px 20px 0 0; border-bottom: none; padding: 2rem;">
+          <div class="modal-header" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%); color: white; border-radius: 20px 20px 0 0; border-bottom: none; padding: 2rem;">
             <h4 class="modal-title" id="modalPermisoLabel" style="font-weight: 600; font-size: 1.5rem;">
-              <i class="fa fa-plus-circle"></i> Nuevo Permiso de Ausencia
-            </h4>
+                <i class="fa fa-calendar-times"></i> Nuevo Permiso de Ausencia
+              </h4>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="color: white; opacity: 0.8;">
               <span aria-hidden="true" style="font-size: 2rem;">&times;</span>
             </button>
           </div>
           <form id="formulario">
             <div class="modal-body" style="padding: 2.5rem;">
-              <div class="row">
-                <div class="col-md-6">
-                  <div class="form-group">
-                    <label for="id_nino" style="font-weight: 600; color: #3c8dbc; margin-bottom: 0.5rem;">
-                      <i class="fa fa-child"></i> Niño *
-                    </label>
-                    <select class="form-control" name="id_nino" id="id_nino" required style="border-radius: 10px; border: 2px solid #e9ecef; padding: 0.75rem; font-size: 0.95rem; font-weight: 400; height: auto;">
-                      <option value="">Seleccionar niño</option>
-                    </select>
-                  </div>
+              <!-- Información del Permiso -->
+              <div class="card mb-4" style="border: none; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border-radius: 15px;">
+                <div class="card-header" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 15px 15px 0 0; border-bottom: none;">
+                  <h5 class="mb-0"><i class="fa fa-info-circle"></i> Información del Permiso</h5>
                 </div>
-                <div class="col-md-6">
-                  <div class="form-group">
-                    <label for="tipo_permiso" style="font-weight: 600; color: #3c8dbc; margin-bottom: 0.5rem;">
-                      <i class="fa fa-tag"></i> Tipo de Permiso *
-                    </label>
-                    <select class="form-control" name="tipo_permiso" id="tipo_permiso" required style="border-radius: 10px; border: 2px solid #e9ecef; padding: 0.75rem; font-size: 0.95rem; font-weight: 400; height: auto;">
-                      <option value="Médico">Médico</option>
-                      <option value="Personal">Personal</option>
-                      <option value="Otro">Otro</option>
-                    </select>
-                  </div>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-md-12">
-                  <div class="form-group">
-                    <label for="descripcion" style="font-weight: 600; color: #3c8dbc; margin-bottom: 0.5rem;">
-                      <i class="fa fa-file-text"></i> Descripción
-                    </label>
-                    <textarea class="form-control" name="descripcion" id="descripcion" rows="3" style="border-radius: 10px; border: 2px solid #e9ecef; padding: 0.75rem; font-size: 0.95rem;" placeholder="Describe el motivo de la ausencia"></textarea>
-                  </div>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-md-6">
-                  <div class="form-group">
-                    <label for="fecha_inicio" style="font-weight: 600; color: #3c8dbc; margin-bottom: 0.5rem;">
-                      <i class="fa fa-calendar-plus"></i> Fecha Inicio *
-                    </label>
-                    <input class="form-control" type="date" name="fecha_inicio" id="fecha_inicio" required style="border-radius: 10px; border: 2px solid #e9ecef; padding: 0.75rem; font-size: 0.95rem;">
-                  </div>
-                </div>
-                <div class="col-md-6">
-                  <div class="form-group">
-                    <label for="fecha_fin" style="font-weight: 600; color: #3c8dbc; margin-bottom: 0.5rem;">
-                      <i class="fa fa-calendar-minus"></i> Fecha Fin *
-                    </label>
-                    <input class="form-control" type="date" name="fecha_fin" id="fecha_fin" required style="border-radius: 10px; border: 2px solid #e9ecef; padding: 0.75rem; font-size: 0.95rem;">
-                  </div>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-md-6">
-                  <div class="form-group">
-                    <label for="hora_inicio" style="font-weight: 600; color: #3c8dbc; margin-bottom: 0.5rem;">
-                      <i class="fa fa-clock"></i> Hora Inicio
-                    </label>
-                    <input class="form-control" type="time" name="hora_inicio" id="hora_inicio" style="border-radius: 10px; border: 2px solid #e9ecef; padding: 0.75rem; font-size: 0.95rem;">
-                  </div>
-                </div>
-                <div class="col-md-6">
-                  <div class="form-group">
-                    <label for="hora_fin" style="font-weight: 600; color: #3c8dbc; margin-bottom: 0.5rem;">
-                      <i class="fa fa-clock"></i> Hora Fin
-                    </label>
-                    <input class="form-control" type="time" name="hora_fin" id="hora_fin" style="border-radius: 10px; border: 2px solid #e9ecef; padding: 0.75rem; font-size: 0.95rem;">
-                  </div>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-md-12">
-                  <div class="form-group">
-                    <label style="font-weight: 600; color: #3c8dbc; margin-bottom: 0.5rem;">
-                      <i class="fa fa-file-upload"></i> Archivo del Permiso
-                    </label>
-                    <input class="form-control" type="hidden" name="id_permiso" id="id_permiso">
-                    <div class="custom-file" style="margin-bottom: 1rem;">
-                      <input type="file" class="custom-file-input" name="archivo_permiso" id="archivo_permiso" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" style="display: none;">
-                      <input type="hidden" name="archivo_actual" id="archivo_actual">
-                      <label class="custom-file-label" for="archivo_permiso" style="border-radius: 10px; border: 2px solid #e9ecef; padding: 0.75rem; font-size: 0.95rem; background: white; cursor: pointer; display: block; text-align: center;">
-                        <i class="fa fa-upload"></i> Seleccionar archivo
-                      </label>
+                <div class="card-body" style="padding: 2rem;">
+                  <div class="row">
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <label for="id_nino" style="font-weight: 600; color: #3c8dbc; margin-bottom: 0.5rem;">
+                          <i class="fa fa-child"></i> Niño *
+                        </label>
+                        <select class="form-control" name="id_nino" id="id_nino" required style="border-radius: 10px; border: 2px solid #e9ecef; padding: 0.75rem; font-size: 0.95rem; font-weight: 400; height: auto; background: white;">
+                          <option value="">Seleccionar niño</option>
+                        </select>
+                      </div>
                     </div>
-                    <small class="text-muted">Formatos permitidos: PDF, JPG, PNG, DOC, DOCX</small>
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <label for="tipo_permiso" style="font-weight: 600; color: #3c8dbc; margin-bottom: 0.5rem;">
+                          <i class="fa fa-tag"></i> Tipo de Permiso *
+                        </label>
+                        <select class="form-control" name="tipo_permiso" id="tipo_permiso" required style="border-radius: 10px; border: 2px solid #e9ecef; padding: 0.75rem; font-size: 0.95rem; font-weight: 400; height: auto; background: white;">
+                          <option value="Médico">🏥 Médico</option>
+                          <option value="Personal">👤 Personal</option>
+                          <option value="Otro">📝 Otro</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-12">
+                      <div class="form-group">
+                        <label for="descripcion" style="font-weight: 600; color: #3c8dbc; margin-bottom: 0.5rem;">
+                          <i class="fa fa-file-text"></i> Descripción
+                        </label>
+                        <textarea class="form-control" name="descripcion" id="descripcion" rows="3" style="border-radius: 10px; border: 2px solid #e9ecef; padding: 0.75rem; font-size: 0.95rem; background: white;" placeholder="Describe el motivo de la ausencia"></textarea>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- Fechas y Horarios -->
+              <div class="card mb-4" style="border: none; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border-radius: 15px;">
+                <div class="card-header" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%); color: white; border-radius: 15px 15px 0 0; border-bottom: none;">
+                  <h5 class="mb-0"><i class="fa fa-calendar"></i> Fechas y Horarios</h5>
+                </div>
+                <div class="card-body" style="padding: 2rem;">
+                  <div class="row">
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <label for="fecha_inicio" style="font-weight: 600; color: #3c8dbc; margin-bottom: 0.5rem;">
+                          <i class="fa fa-calendar-plus"></i> Fecha Inicio *
+                        </label>
+                        <input class="form-control" type="date" name="fecha_inicio" id="fecha_inicio" required style="border-radius: 10px; border: 2px solid #e9ecef; padding: 0.75rem; font-size: 0.95rem; background: white;">
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <label for="fecha_fin" style="font-weight: 600; color: #3c8dbc; margin-bottom: 0.5rem;">
+                          <i class="fa fa-calendar-minus"></i> Fecha Fin *
+                        </label>
+                        <input class="form-control" type="date" name="fecha_fin" id="fecha_fin" required style="border-radius: 10px; border: 2px solid #e9ecef; padding: 0.75rem; font-size: 0.95rem; background: white;">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <label for="hora_inicio" style="font-weight: 600; color: #3c8dbc; margin-bottom: 0.5rem;">
+                          <i class="fa fa-clock"></i> Hora Inicio
+                        </label>
+                        <input class="form-control" type="time" name="hora_inicio" id="hora_inicio" style="border-radius: 10px; border: 2px solid #e9ecef; padding: 0.75rem; font-size: 0.95rem; background: white;">
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <label for="hora_fin" style="font-weight: 600; color: #3c8dbc; margin-bottom: 0.5rem;">
+                          <i class="fa fa-clock"></i> Hora Fin
+                        </label>
+                        <input class="form-control" type="time" name="hora_fin" id="hora_fin" style="border-radius: 10px; border: 2px solid #e9ecef; padding: 0.75rem; font-size: 0.95rem; background: white;">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- Archivo del Permiso -->
+              <div class="card mb-4" style="border: none; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border-radius: 15px;">
+                <div class="card-header" style="background: linear-gradient(135deg, #17a2b8 0%, #20c997 100%); color: white; border-radius: 15px 15px 0 0; border-bottom: none;">
+                  <h5 class="mb-0"><i class="fa fa-file-upload"></i> Archivo del Permiso</h5>
+                </div>
+                <div class="card-body" style="padding: 2rem;">
+                  <input class="form-control" type="hidden" name="id_permiso" id="id_permiso">
+                  <input type="hidden" name="archivo_actual" id="archivo_actual">
+                  <div class="text-center">
+                    <div class="upload-area" style="border: 2px dashed #17a2b8; border-radius: 15px; padding: 2rem; background: rgba(23, 162, 184, 0.05); margin-bottom: 1rem; transition: all 0.3s ease;">
+                      <i class="fa fa-cloud-upload-alt" style="font-size: 3rem; color: #17a2b8; margin-bottom: 1rem;"></i>
+                      <p style="margin-bottom: 1rem; color: #666;">Arrastra y suelta tu archivo aquí o haz clic para seleccionar</p>
+                      <input type="file" class="form-control-file d-none" name="archivo_permiso" id="archivo_permiso" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx">
+                      <button type="button" class="btn btn-info" style="border-radius: 25px; padding: 0.5rem 2rem;" onclick="document.getElementById('archivo_permiso').click()">
+                        <i class="fa fa-folder-open"></i> Seleccionar Archivo
+                      </button>
+                    </div>
+                    <small class="text-muted">
+                      <i class="fa fa-info-circle"></i> Formatos permitidos: PDF, JPG, PNG, DOC, DOCX (máx. 5MB)
+                    </small>
                   </div>
                 </div>
               </div>

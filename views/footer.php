@@ -23,8 +23,6 @@
 
     <!-- SCRIPTS PERSONALIZADOS -->
     <script src="../public/js/frontend-modern.js"></script>
-    <script src="../public/js/custom-tables.js"></script>
-    <!-- Scripts específicos de páginas -->
-    <!-- <script src="scripts/ninos.js"></script> -->
+    
 </body>
 </html>
