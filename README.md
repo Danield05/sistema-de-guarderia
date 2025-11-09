@@ -106,7 +106,7 @@ sistema-de-guarderia/
 ├── controllers/       # Controladores de la aplicación
 │   ├── HorariosController.php  # Controlador de horarios 
 ├── models/            # Modelos de datos
-│   ├── Horarios.php   # Modelo de horarios (Nuevo)
+│   ├── Horarios.php   # Modelo de horarios
 ├── public/            # Archivos públicos (CSS, JS, imágenes)
 │   ├── css/           # Hojas de estilo
 │   ├── js/            # Librerías JavaScript
