@@ -114,7 +114,7 @@ if (strlen(session_id()) < 1) {
                                     <li><a href="secciones.php" class="dropdown-item"><i class="fas fa-layer-group"></i> <span>Secciones</span></a></li>
                                 <?php endif; ?>
 
-                                <?php if ((isset($_SESSION['ninos']) && $_SESSION['ninos'] == 1) && $_SESSION['cargo'] != 'Maestro'): ?>
+                                <?php if (isset($_SESSION['ninos']) && $_SESSION['ninos'] == 1): ?>
                                     <li><a href="ninos.php" class="dropdown-item"><i class="fas fa-baby"></i> <span>Niños</span></a></li>
                                 <?php endif; ?>
 
@@ -158,7 +158,9 @@ if (strlen(session_id()) < 1) {
                                     <li><a href="asistencia.php" class="dropdown-item"><i class="fas fa-calendar-check"></i> <span>Control de Asistencias</span></a></li>
                                 <?php endif; ?>
 
-                                <li><a href="ninos.php" class="dropdown-item"><i class="fas fa-baby"></i> <span> Ver Niños</span></a></li>
+                                <?php if (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Médico/Enfermería'): ?>
+                                    <li><a href="ninos.php" class="dropdown-item"><i class="fas fa-baby"></i> <span>Ver Niños</span></a></li>
+                                <?php endif; ?>
                             </ul>
                         </li>
                     <?php endif; ?>
