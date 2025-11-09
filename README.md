@@ -9,13 +9,14 @@ Un sistema integral de gestión para guarderías infantiles que facilita la admi
 - Sistema de permisos basado en roles
 - Gestión de perfiles con imágenes
 - Control de acceso seguro
+- Roles especializados (Administrador, Médico/Enfermería, Profesor)
 
 ### 👨‍👩‍👧‍👦 Gestión Académica
 - Gestión de aulas y secciones
 - Registro y seguimiento de estudiantes
 - Sistema de control de asistencia
 - Asignación de adultos responsables
-- **🕒 Gestión de Horarios de Clase** (Nuevo)
+- Gestión de horarios de clase
   - Asignación de horarios por niño y día de la semana
   - Filtros avanzados por nombre, aula y sección
   - Vista diferenciada por roles (Admin/Profesor vs Tutor)
@@ -48,6 +49,8 @@ Un sistema integral de gestión para guarderías infantiles que facilita la admi
 - Íconos expresivos y colores atractivos
 - Layout responsivo para todos los dispositivos
 - Efectos glassmorphism y animaciones
+- Sistema de permisos médicos especializados
+- Página de información del sistema con diseño de tarjetas
 
 ## 🛠️ Tecnologías Utilizadas
 
@@ -109,9 +112,13 @@ sistema-de-guarderia/
 │   ├── js/            # Librerías JavaScript
 │   └── plugins/       # Plugins de terceros
 ├── views/             # Vistas PHP
-│   ├── horarios.php   # Vista de gestión de horarios (Nuevo)
+│   ├── horarios.php   # Vista de gestión de horarios
 │   ├── scripts/       # Scripts JavaScript específicos
-│       ├── horarios.js  # JavaScript para horarios (Nuevo)
+│       ├── horarios.js  # JavaScript para horarios
+│   ├── styles/        # Hojas de estilo específicas
+│       ├── login.css     # Estilos para página de login
+│       ├── landing.css   # Estilos para página de inicio
+│       ├── acerca.css    # Estilos para página Acerca
 ├── files/             # Archivos subidos (imágenes, etc.)
 ├── index.php          # Punto de entrada principal
 ├── sis_school.sql     # Esquema de base de datos
@@ -123,12 +130,14 @@ sistema-de-guarderia/
 ### Panel Administrativo
 - **Escritorio**: Dashboard con estadísticas generales
 - **Gestión Académica**: Administración de aulas, secciones y estudiantes
-- **🕒 Horarios de Estudio**: Gestión completa de horarios de clase (Nuevo)
+- **Horarios de Estudio**: Gestión completa de horarios de clase
 - **Control de Asistencia**: Sistema de seguimiento de asistencia estudiantil
 - **Información Médica**: Gestión de enfermedades, medicamentos y alergias
+- **Permisos de Ausencia**: Gestión de permisos médicos y personales
 - **Gestión de Usuarios**: Administración de usuarios del sistema
 - **Permisos**: Control de acceso y permisos
 - **Perfil de Usuario**: Edición y gestión de perfil personal
+- **Acerca del Sistema**: Información completa del sistema con diseño moderno
 
 ### Seguridad
 - Autenticación de usuarios
@@ -155,7 +164,9 @@ sistema-de-guarderia/
 - La navegación principal se encuentra en `views/header.php`
 - Gestión de perfil de usuario en `views/perfil.php`
 - Sistema de login con UI moderna en `views/login.php`
-- **Nueva funcionalidad de horarios**: Implementada con filtros avanzados y control de permisos por rol
+- Funcionalidad de horarios implementada con filtros avanzados y control de permisos por rol
+- Sistema de permisos médicos especializados para usuarios Médico/Enfermería
+- Página Acerca del Sistema con diseño moderno de tarjetas
 
 ## 📞 Soporte
 
