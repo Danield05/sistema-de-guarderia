@@ -46,7 +46,14 @@ class AlertasController {
 
     public function listar() {
         $alertas = new Alertas();
-        $rspta = $alertas->listar();
+
+        // Si es maestro, mostrar solo alertas de sus niños asignados
+        if (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Maestro') {
+            $rspta = $alertas->listarParaMaestro($_SESSION['idusuario']);
+        } else {
+            $rspta = $alertas->listar();
+        }
+
         $data = Array();
 
         while ($reg = $rspta->fetch(PDO::FETCH_OBJ)) {

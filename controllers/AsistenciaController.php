@@ -111,10 +111,16 @@ class AsistenciaController {
         $fecha_inicio = isset($_POST["fecha_inicio"]) ? limpiarCadena($_POST["fecha_inicio"]) : "";
         $fecha_fin = isset($_POST["fecha_fin"]) ? limpiarCadena($_POST["fecha_fin"]) : "";
         $estado_id = isset($_POST["estado_id"]) ? limpiarCadena($_POST["estado_id"]) : "";
-        
-        $rspta = $asistencia->listarConFiltros($aula_id, $seccion_id, $fecha_inicio, $fecha_fin, $estado_id);
+
+        // Si es maestro, filtrar por sus niños asignados
+        if (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Maestro') {
+            $rspta = $asistencia->listarConFiltrosParaMaestro($aula_id, $seccion_id, $fecha_inicio, $fecha_fin, $estado_id, $_SESSION['idusuario']);
+        } else {
+            $rspta = $asistencia->listarConFiltros($aula_id, $seccion_id, $fecha_inicio, $fecha_fin, $estado_id);
+        }
+
         $data = Array();
-        
+
         while ($reg = $rspta->fetch(PDO::FETCH_OBJ)) {
             $data[] = array(
                 "0" => $reg->id_asistencia,
@@ -137,8 +143,16 @@ class AsistenciaController {
         $asistencia = new Asistencia();
         $aula_id = isset($_POST["aula_id"]) ? limpiarCadena($_POST["aula_id"]) : "";
         $seccion_id = isset($_POST["seccion_id"]) ? limpiarCadena($_POST["seccion_id"]) : "";
-        
-        $rspta = $asistencia->obtenerNinos($aula_id, $seccion_id);
+
+        // Si es maestro, filtrar por sus niños asignados
+        if (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Maestro') {
+            require_once "../models/Ninos.php";
+            $ninos = new Ninos();
+            $rspta = $ninos->listarParaMaestro($_SESSION['idusuario']);
+        } else {
+            $rspta = $asistencia->obtenerNinos($aula_id, $seccion_id);
+        }
+
         echo json_encode($rspta->fetchAll(PDO::FETCH_OBJ));
     }
 
@@ -166,7 +180,13 @@ class AsistenciaController {
         $asistencia = new Asistencia();
         $fecha = isset($_POST["fecha"]) ? limpiarCadena($_POST["fecha"]) : null; // null para estadísticas generales
 
-        $estadisticas = $asistencia->obtenerEstadisticas($fecha);
+        // Si es maestro, obtener estadísticas solo de sus niños asignados
+        if (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Maestro') {
+            $estadisticas = $asistencia->obtenerEstadisticasParaMaestro($fecha, $_SESSION['idusuario']);
+        } else {
+            $estadisticas = $asistencia->obtenerEstadisticas($fecha);
+        }
+
         echo json_encode($estadisticas);
     }
 }

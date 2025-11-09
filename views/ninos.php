@@ -6,7 +6,7 @@ if (!isset($_SESSION['nombre'])) {
 } else {
   require 'header.php';
 
-  if ((isset($_SESSION['ninos']) && $_SESSION['ninos'] == 1) || (isset($_SESSION['rol']) && $_SESSION['rol'] == 'Administrador') || (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Médico/Enfermería')) {
+  if ((isset($_SESSION['ninos']) && $_SESSION['ninos'] == 1) || (isset($_SESSION['rol']) && $_SESSION['rol'] == 'Administrador') || (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Médico/Enfermería') || (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Maestro')) {
 ?>
     <!-- 🔧 Quitamos padding lateral con clases personalizadas -->
     <main class="container-fluid py-5 px-3 main-dashboard" style="padding-top: 3rem; padding-bottom: 3rem;">
@@ -111,13 +111,23 @@ if (!isset($_SESSION['nombre'])) {
               <?php
               require_once "../models/Ninos.php";
               $ninos = new Ninos();
-              $rspta = $ninos->listar();
+
+              // Si es maestro, mostrar solo sus niños asignados
+              if (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Maestro') {
+                  $rspta = $ninos->listarParaMaestro($_SESSION['idusuario']);
+              } else {
+                  $rspta = $ninos->listar();
+              }
+
               while ($reg = $rspta->fetch(PDO::FETCH_OBJ)) {
                 echo '<tr style="border-bottom: 1px solid rgba(0,0,0,0.05); transition: all 0.3s ease;">';
                 echo '<td style="padding: 1rem;">';
                 if (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Médico/Enfermería') {
                   // Para médicos: solo botón de ver detalles médicos
                   echo '<button class="btn btn-info btn-sm" style="border-radius: 20px;" onclick="verDetalles(' . $reg->id_nino . ')"><i class="fa fa-user-md"></i> Ver Detalles Médicos</button>';
+                } elseif (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Maestro') {
+                  // Para maestros: solo botón de ver información básica
+                  echo '<button class="btn btn-info btn-sm" style="border-radius: 20px;" onclick="verDetalles(' . $reg->id_nino . ')"><i class="fa fa-eye"></i> Ver Información</button>';
                 } else {
                   // Para administradores: botones completos
                   echo '<button class="btn btn-warning btn-sm" style="margin-right: 0.5rem; border-radius: 20px;" onclick="mostrar(' . $reg->id_nino . ')"><i class="fa fa-pencil"></i> Editar</button>';

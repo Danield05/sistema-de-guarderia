@@ -129,7 +129,9 @@ if (strlen(session_id()) < 1) {
                     $mostrar_administracion = (isset($_SESSION['acceso']) && $_SESSION['acceso'] == 1) ||
                                             (isset($_SESSION['escritorio']) && $_SESSION['escritorio'] == 1) ||
                                             (isset($_SESSION['grupos']) && $_SESSION['grupos'] == 1) ||
-                                            (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Administrador');
+                                            (isset($_SESSION['asistencias']) && $_SESSION['asistencias'] == 1) ||
+                                            (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Administrador') ||
+                                            (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Maestro');
                     ?>
 
                     <?php if ($mostrar_administracion): ?>
@@ -147,7 +149,7 @@ if (strlen(session_id()) < 1) {
                                     <li><a href="permisos_ausencia.php" class="dropdown-item"><i class="fas fa-calendar-times"></i> <span>Permisos de Ausencia</span></a></li>
                                 <?php endif; ?>
 
-                                <?php if ((isset($_SESSION['asistencia']) && $_SESSION['asistencia'] == 1) || (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Administrador')): ?>
+                                <?php if ((isset($_SESSION['asistencia']) && $_SESSION['asistencia'] == 1) || (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Administrador') || (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Maestro')): ?>
                                     <li><a href="asistencia.php" class="dropdown-item"><i class="fas fa-calendar-check"></i> <span>Control de Asistencias</span></a></li>
                                 <?php endif; ?>
 
@@ -159,7 +161,8 @@ if (strlen(session_id()) < 1) {
                     <!-- Información Médica (Dropdown) -->
                     <?php
                     $mostrar_info_medica = (isset($_SESSION['escritorio']) && $_SESSION['escritorio'] == 1) ||
-                                         (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Médico/Enfermería');
+                                         (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Médico/Enfermería') ||
+                                         (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Maestro');
                     ?>
 
                     <?php if ($mostrar_info_medica): ?>

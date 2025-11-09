@@ -7,7 +7,7 @@ if (!isset($_SESSION['nombre'])) {
 }else{
 
 require 'header.php';
-if ((isset($_SESSION['grupos']) && $_SESSION['grupos']==1) || (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Administrador')) {
+if ((isset($_SESSION['grupos']) && $_SESSION['grupos']==1) || (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Administrador') || (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Maestro')) {
 
   require_once "../models/Aulas.php";
   require_once "../models/Secciones.php";

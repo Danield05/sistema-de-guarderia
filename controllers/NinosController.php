@@ -110,7 +110,14 @@ class NinosController {
 
     public function select() {
         $ninos = new Ninos();
-        $rspta = $ninos->listar();
+
+        // Si es maestro, mostrar solo sus niños asignados
+        if (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Maestro') {
+            $rspta = $ninos->listarParaMaestro($_SESSION['idusuario']);
+        } else {
+            $rspta = $ninos->listar();
+        }
+
         $html = '<option value="">Seleccionar niño</option>';
 
         while ($reg = $rspta->fetch(PDO::FETCH_OBJ)) {

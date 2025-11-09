@@ -40,10 +40,21 @@ class Alergias{
 
 	//listar registros
 	public function listar(){
-		$sql="SELECT a.id_alergia, a.tipo_alergia, a.descripcion, 
-		n.nombre_completo as nino, n.id_nino 
-		FROM alergias a 
-		LEFT JOIN ninos n ON a.id_nino=n.id_nino 
+		$sql="SELECT a.id_alergia, a.tipo_alergia, a.descripcion,
+		n.nombre_completo as nino, n.id_nino
+		FROM alergias a
+		LEFT JOIN ninos n ON a.id_nino=n.id_nino
+		ORDER BY a.id_alergia DESC";
+		return ejecutarConsulta($sql);
+	}
+
+	//listar registros para maestros (solo alergias de sus niños asignados)
+	public function listarParaMaestro($maestro_id){
+		$sql="SELECT a.id_alergia, a.tipo_alergia, a.descripcion,
+		n.nombre_completo as nino, n.id_nino
+		FROM alergias a
+		LEFT JOIN ninos n ON a.id_nino=n.id_nino
+		WHERE n.maestro_id='$maestro_id' AND n.estado=1
 		ORDER BY a.id_alergia DESC";
 		return ejecutarConsulta($sql);
 	}

@@ -45,10 +45,21 @@ class PermisosAusencia{
 
 	//listar registros
 	public function listar(){
-		$sql="SELECT p.id_permiso, p.tipo_permiso, p.descripcion, p.fecha_inicio, p.fecha_fin, p.hora_inicio, p.hora_fin, p.archivo_permiso, 
-		n.nombre_completo as nino, n.id_nino 
-		FROM permisos_ausencia p 
-		LEFT JOIN ninos n ON p.id_nino=n.id_nino 
+		$sql="SELECT p.id_permiso, p.tipo_permiso, p.descripcion, p.fecha_inicio, p.fecha_fin, p.hora_inicio, p.hora_fin, p.archivo_permiso,
+		n.nombre_completo as nino, n.id_nino
+		FROM permisos_ausencia p
+		LEFT JOIN ninos n ON p.id_nino=n.id_nino
+		ORDER BY p.id_permiso DESC";
+		return ejecutarConsulta($sql);
+	}
+
+	//listar registros para maestros (solo permisos de sus niños asignados)
+	public function listarParaMaestro($maestro_id){
+		$sql="SELECT p.id_permiso, p.tipo_permiso, p.descripcion, p.fecha_inicio, p.fecha_fin, p.hora_inicio, p.hora_fin, p.archivo_permiso,
+		n.nombre_completo as nino, n.id_nino
+		FROM permisos_ausencia p
+		LEFT JOIN ninos n ON p.id_nino=n.id_nino
+		WHERE n.maestro_id='$maestro_id' AND n.estado=1
 		ORDER BY p.id_permiso DESC";
 		return ejecutarConsulta($sql);
 	}

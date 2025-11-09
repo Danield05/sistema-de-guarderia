@@ -67,12 +67,26 @@ class PermisosAusenciaController {
 
     public function listar() {
         $permisos_ausencia = new PermisosAusencia();
-        $rspta = $permisos_ausencia->listar();
+
+        // Si es maestro, mostrar solo permisos de sus niños asignados
+        if (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Maestro') {
+            $rspta = $permisos_ausencia->listarParaMaestro($_SESSION['idusuario']);
+        } else {
+            $rspta = $permisos_ausencia->listar();
+        }
+
         $data = Array();
 
         while ($reg = $rspta->fetch(PDO::FETCH_OBJ)) {
+            // Para maestros, solo mostrar botón de ver
+            if (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Maestro') {
+                $acciones = '<button class="btn btn-info btn-xs" onclick="mostrar(' . $reg->id_permiso . ')"><i class="fa fa-eye"></i></button>';
+            } else {
+                $acciones = '<button class="btn btn-warning btn-xs" onclick="mostrar(' . $reg->id_permiso . ')"><i class="fa fa-pencil"></i></button>' . ' ' . '<button class="btn btn-danger btn-xs" onclick="eliminar(' . $reg->id_permiso . ')"><i class="fa fa-trash"></i></button>';
+            }
+
             $data[] = array(
-                "0" => '<button class="btn btn-warning btn-xs" onclick="mostrar(' . $reg->id_permiso . ')"><i class="fa fa-pencil"></i></button>' . ' ' . '<button class="btn btn-danger btn-xs" onclick="eliminar(' . $reg->id_permiso . ')"><i class="fa fa-trash"></i></button>',
+                "0" => $acciones,
                 "1" => $reg->nino,
                 "2" => $reg->tipo_permiso,
                 "3" => $reg->descripcion,

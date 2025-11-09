@@ -41,12 +41,26 @@ class EnfermedadesController {
 
     public function listar() {
         $enfermedades = new Enfermedades();
-        $rspta = $enfermedades->listar();
+
+        // Si es maestro, mostrar solo enfermedades de sus niños asignados
+        if (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Maestro') {
+            $rspta = $enfermedades->listarParaMaestro($_SESSION['idusuario']);
+        } else {
+            $rspta = $enfermedades->listar();
+        }
+
         $data = Array();
 
         while ($reg = $rspta->fetch(PDO::FETCH_OBJ)) {
+            // Para maestros, solo mostrar botón de ver
+            if (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Maestro') {
+                $acciones = '<button class="btn btn-info btn-xs" onclick="mostrar(' . $reg->id_enfermedad . ')"><i class="fa fa-eye"></i></button>';
+            } else {
+                $acciones = '<button class="btn btn-warning btn-xs" onclick="mostrar(' . $reg->id_enfermedad . ')"><i class="fa fa-pencil"></i></button>' . ' ' . '<button class="btn btn-danger btn-xs" onclick="eliminar(' . $reg->id_enfermedad . ')"><i class="fa fa-trash"></i></button>';
+            }
+
             $data[] = array(
-                "0" => '<button class="btn btn-warning btn-xs" onclick="mostrar(' . $reg->id_enfermedad . ')"><i class="fa fa-pencil"></i></button>' . ' ' . '<button class="btn btn-danger btn-xs" onclick="eliminar(' . $reg->id_enfermedad . ')"><i class="fa fa-trash"></i></button>',
+                "0" => $acciones,
                 "1" => $reg->nino,
                 "2" => $reg->nombre_enfermedad,
                 "3" => $reg->descripcion,

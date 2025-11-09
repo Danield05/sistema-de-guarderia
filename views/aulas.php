@@ -6,7 +6,7 @@ if (!isset($_SESSION['nombre'])) {
 } else {
   require 'header.php';
 
-  if ((isset($_SESSION['aulas']) && $_SESSION['aulas'] == 1) || $_SESSION['cargo'] == 'Administrador') {
+  if ((isset($_SESSION['aulas']) && $_SESSION['aulas'] == 1) || $_SESSION['cargo'] == 'Administrador' || $_SESSION['cargo'] == 'Maestro') {
 ?>
     <!-- 🔧 Quitamos padding lateral con clases personalizadas -->
     <main class="container-fluid py-5 px-3 main-dashboard" style="padding-top: 3rem; padding-bottom: 3rem;">
@@ -19,12 +19,14 @@ if (!isset($_SESSION['nombre'])) {
         </div>
       </div>
 
-      <!-- Botón para abrir modal de registro -->
+      <!-- Botón para abrir modal de registro (solo para administradores) -->
+      <?php if ($_SESSION['cargo'] == 'Administrador'): ?>
       <div class="mb-4">
         <button type="button" class="btn btn-primary" style="border-radius: 25px; padding: 0.75rem 2rem; font-weight: 600; box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);" onclick="mostrarFormulario(0)">
           <i class="fa fa-plus-circle"></i> Agregar Nueva Aula
         </button>
       </div>
+      <?php endif; ?>
 
       <!-- Tabla de aulas -->
       <div class="activity-feed">
@@ -36,21 +38,59 @@ if (!isset($_SESSION['nombre'])) {
                 <th style="border: none; padding: 1rem;"><i class="fa fa-cogs"></i> Acciones</th>
                 <th style="border: none; padding: 1rem;"><i class="fa fa-university"></i> Aula</th>
                 <th style="border: none; padding: 1rem;"><i class="fa fa-info-circle"></i> Descripción</th>
+                <?php if ($_SESSION['cargo'] == 'Maestro'): ?>
+                <th style="border: none; padding: 1rem;"><i class="fa fa-sitemap"></i> Secciones</th>
+                <th style="border: none; padding: 1rem;"><i class="fa fa-child"></i> Niños</th>
+                <?php endif; ?>
               </tr>
             </thead>
             <tbody id="tbllistado" style="background: rgba(255, 255, 255, 0.9);">
                 <?php
                 require_once "../models/Aulas.php";
+                require_once "../models/Consultas.php";
                 $aulas = new Aulas();
-                $rspta = $aulas->listar();
+                $consultas = new Consultas();
+
+                // Para maestros, mostrar solo aulas donde tienen niños asignados
+                if ($_SESSION['cargo'] == 'Maestro') {
+                  $rspta = $aulas->listarParaMaestro($_SESSION['idusuario']);
+                } else {
+                  $rspta = $aulas->listar();
+                }
+
                 while ($reg = $rspta->fetch(PDO::FETCH_OBJ)) {
                   echo '<tr style="border-bottom: 1px solid rgba(0,0,0,0.05); transition: all 0.3s ease;">';
                   echo '<td style="padding: 1rem;">';
-                  echo '<button class="btn btn-outline-warning btn-sm" style="margin-right: 0.5rem; border-radius: 20px;" onclick="mostrarFormulario(' . $reg->id_aula . ')"><i class="fa fa-pencil"></i> Editar</button>';
-                  echo '<button class="btn btn-outline-danger btn-sm" style="border-radius: 20px;" onclick="eliminar_aula(' . $reg->id_aula . ')"><i class="fa fa-trash"></i> Eliminar</button>';
+
+                  // Para maestros, solo mostrar botón de ver
+                  if ($_SESSION['cargo'] == 'Maestro') {
+                    echo '<button class="btn btn-outline-info btn-sm" style="border-radius: 20px;" onclick="verAula(' . $reg->id_aula . ')"><i class="fa fa-eye"></i> Ver</button>';
+                  } else {
+                    echo '<button class="btn btn-outline-warning btn-sm" style="margin-right: 0.5rem; border-radius: 20px;" onclick="mostrarFormulario(' . $reg->id_aula . ')"><i class="fa fa-pencil"></i> Editar</button>';
+                    echo '<button class="btn btn-outline-danger btn-sm" style="border-radius: 20px;" onclick="eliminar_aula(' . $reg->id_aula . ')"><i class="fa fa-trash"></i> Eliminar</button>';
+                  }
+
                   echo '</td>';
                   echo '<td style="padding: 1rem; font-weight: 600; color: #3c8dbc;">' . $reg->nombre_aula . '</td>';
                   echo '<td style="padding: 1rem; color: #666;">' . $reg->descripcion . '</td>';
+
+                  // Para maestros, mostrar información adicional
+                  if ($_SESSION['cargo'] == 'Maestro') {
+                    // Obtener secciones del aula para este maestro
+                    $secciones_rspta = $consultas->obtenerSeccionesPorAulaYMaestro($reg->id_aula, $_SESSION['idusuario']);
+                    $secciones = array();
+                    while ($sec = $secciones_rspta->fetch(PDO::FETCH_OBJ)) {
+                      $secciones[] = $sec->nombre_seccion;
+                    }
+
+                    // Contar niños en el aula para este maestro
+                    $ninos_rspta = $consultas->contarNinosPorAulaYMaestro($reg->id_aula, $_SESSION['idusuario']);
+                    $total_ninos = isset($ninos_rspta['total_ninos']) ? $ninos_rspta['total_ninos'] : 0;
+
+                    echo '<td style="padding: 1rem; color: #666;">' . implode(', ', $secciones) . '</td>';
+                    echo '<td style="padding: 1rem; font-weight: 600; color: #e74c3c;">' . $total_ninos . ' niños</td>';
+                  }
+
                   echo '</tr>';
                 }
                 ?>
@@ -119,6 +159,11 @@ if (!isset($_SESSION['nombre'])) {
       $('#modalLabel').html(id > 0 ? '<i class="fa fa-edit"></i> Editar Aula' : '<i class="fa fa-university"></i> Agregar Nueva Aula');
       $('#modal').modal('show');
 
+      // Habilitar campos para edición
+      $('#nombre_aula').prop('disabled', false);
+      $('#descripcion').prop('disabled', false);
+      $('button[type="submit"]').show();
+
       if (id > 0) {
         mostrar(id);
       }
@@ -131,6 +176,46 @@ if (!isset($_SESSION['nombre'])) {
         $('#idaula').val(data.id_aula);
         $('#nombre_aula').val(data.nombre_aula);
         $('#descripcion').val(data.descripcion);
+      }).fail(function(xhr, status, error) {
+        bootbox.alert("Error al cargar los datos del aula: " + xhr.responseText);
+      });
+    }
+
+    // Función para ver aula (solo lectura para maestros)
+    function verAula(id) {
+      $.post("../ajax/aulas.php?op=mostrar", {idaula: id}, function (data, status) {
+        data = JSON.parse(data);
+        $('#modalLabel').html('<i class="fa fa-eye"></i> Ver Aula');
+        $('#modal').modal('show');
+
+        $('#idaula').val(data.id_aula);
+        $('#nombre_aula').val(data.nombre_aula);
+        $('#descripcion').val(data.descripcion);
+
+        // Deshabilitar campos para solo lectura
+        $('#nombre_aula').prop('disabled', true);
+        $('#descripcion').prop('disabled', true);
+
+        // Ocultar botón de guardar
+        $('button[type="submit"]').hide();
+
+        // Para maestros, mostrar información adicional de secciones
+        <?php if ($_SESSION['cargo'] == 'Maestro'): ?>
+        // Agregar información de secciones después del formulario
+        setTimeout(function() {
+          if (!$('#secciones-info').length) {
+            $('#formulario').after('<div id="secciones-info" class="mt-4"></div>');
+          }
+
+          // Cargar información detallada de secciones
+          $.post("../ajax/aulas.php?op=detalle_secciones_maestro", {idaula: id, maestro_id: '<?php echo $_SESSION['idusuario']; ?>'}, function (detalle, status) {
+            $('#secciones-info').html(detalle);
+          }).fail(function(xhr, status, error) {
+            console.log("Error al cargar detalle de secciones: " + xhr.responseText);
+          });
+        }, 100);
+        <?php endif; ?>
+
       }).fail(function(xhr, status, error) {
         bootbox.alert("Error al cargar los datos del aula: " + xhr.responseText);
       });

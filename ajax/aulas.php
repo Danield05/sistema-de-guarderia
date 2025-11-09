@@ -29,7 +29,11 @@ switch ($_GET["op"]) {
 		break;
 
     case 'listar':
-		$aulasController->listar();
-		break;
+  $aulasController->listar();
+  break;
+
+    case 'detalle_secciones_maestro':
+  $aulasController->detalleSeccionesMaestro();
+  break;
 }
 ?>

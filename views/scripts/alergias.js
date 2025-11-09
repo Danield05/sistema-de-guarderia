@@ -27,6 +27,11 @@ function mostrarform(flag){
 	if(flag){
 		$('#modalAlergiaLabel').html('<i class="fa fa-plus-circle"></i> Nueva Alergia');
 		$('#modalAlergia').modal('show');
+		// Habilitar campos para edición
+		$("#id_nino").prop("disabled", false);
+		$("#tipo_alergia").prop("disabled", false);
+		$("#descripcion").prop("disabled", false);
+		$("#btnGuardar").show();
 	}else{
 		$('#modalAlergia').modal('hide');
 	}
@@ -50,8 +55,7 @@ function listar(){
 
             if (data.aaData && data.aaData.length > 0) {
                 $.each(data.aaData, function(index, alergia) {
-                    var acciones = '<button class="btn btn-outline-warning btn-sm" style="margin-right: 0.5rem; border-radius: 20px;" onclick="mostrar(' + alergia[4] + ')"><i class="fa fa-pencil"></i> Editar</button>' +
-                                   '<button class="btn btn-outline-danger btn-sm" style="border-radius: 20px;" onclick="eliminar(' + alergia[4] + ')"><i class="fa fa-trash"></i> Eliminar</button>';
+                    var acciones = '<button class="btn btn-outline-info btn-sm" style="margin-right: 0.5rem; border-radius: 20px;" onclick="mostrar(' + alergia[4] + ')"><i class="fa fa-eye"></i> Ver</button>';
 
                     var row = '<tr style="border-bottom: 1px solid rgba(0,0,0,0.05); transition: all 0.3s ease;">' +
                         '<td style="padding: 1rem;">' + acciones + '</td>' +
@@ -103,21 +107,29 @@ function guardaryeditar(e){
 }
 
 function mostrar(id_alergia){
-	$.post("../ajax/alergias.php?op=mostrar",{id_alergia : id_alergia},
-		function(data,status)
-		{
-			data=JSON.parse(data);
-			$('#modalAlergiaLabel').html('<i class="fa fa-edit"></i> Editar Alergia');
-			$('#modalAlergia').modal('show');
+$.post("../ajax/alergias.php?op=mostrar",{id_alergia : id_alergia},
+	function(data,status)
+	{
+		data=JSON.parse(data);
+		$('#modalAlergiaLabel').html('<i class="fa fa-eye"></i> Ver Alergia');
+		$('#modalAlergia').modal('show');
 
-			$("#id_alergia").val(data.id_alergia);
-			$("#id_nino").val(data.id_nino);
-			$("#tipo_alergia").val(data.tipo_alergia);
-			$("#descripcion").val(data.descripcion);
-		})
-		.fail(function(xhr, status, error) {
-			alert("Error al cargar los datos de la alergia");
-		});
+		$("#id_alergia").val(data.id_alergia);
+		$("#id_nino").val(data.id_nino);
+		$("#tipo_alergia").val(data.tipo_alergia);
+		$("#descripcion").val(data.descripcion);
+
+		// Deshabilitar campos para solo lectura
+		$("#id_nino").prop("disabled", true);
+		$("#tipo_alergia").prop("disabled", true);
+		$("#descripcion").prop("disabled", true);
+
+		// Ocultar botón de guardar
+		$("#btnGuardar").hide();
+	})
+	.fail(function(xhr, status, error) {
+		alert("Error al cargar los datos de la alergia");
+	});
 }
 
 //funcion para eliminar

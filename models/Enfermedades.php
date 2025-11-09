@@ -41,10 +41,21 @@ class Enfermedades{
 
 	//listar registros
 	public function listar(){
-		$sql="SELECT e.id_enfermedad, e.nombre_enfermedad, e.descripcion, e.fecha_diagnostico, 
-		n.nombre_completo as nino, n.id_nino 
-		FROM enfermedades e 
-		LEFT JOIN ninos n ON e.id_nino=n.id_nino 
+		$sql="SELECT e.id_enfermedad, e.nombre_enfermedad, e.descripcion, e.fecha_diagnostico,
+		n.nombre_completo as nino, n.id_nino
+		FROM enfermedades e
+		LEFT JOIN ninos n ON e.id_nino=n.id_nino
+		ORDER BY e.id_enfermedad DESC";
+		return ejecutarConsulta($sql);
+	}
+
+	//listar registros para maestros (solo enfermedades de sus niños asignados)
+	public function listarParaMaestro($maestro_id){
+		$sql="SELECT e.id_enfermedad, e.nombre_enfermedad, e.descripcion, e.fecha_diagnostico,
+		n.nombre_completo as nino, n.id_nino
+		FROM enfermedades e
+		LEFT JOIN ninos n ON e.id_nino=n.id_nino
+		WHERE n.maestro_id='$maestro_id' AND n.estado=1
 		ORDER BY e.id_enfermedad DESC";
 		return ejecutarConsulta($sql);
 	}

@@ -8,7 +8,7 @@ if (!isset($_SESSION['nombre'])) {
 
 require 'header.php';
 
-if ((isset($_SESSION['escritorio']) && $_SESSION['escritorio']==1) || (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Administrador') || (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Médico/Enfermería')) {
+if ((isset($_SESSION['escritorio']) && $_SESSION['escritorio']==1) || (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Administrador') || (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Médico/Enfermería') || (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Maestro')) {
 
 ?>
     <main class="container-fluid py-5 px-3 main-dashboard" style="padding-top: 3rem; padding-bottom: 3rem;">
@@ -24,9 +24,11 @@ if ((isset($_SESSION['escritorio']) && $_SESSION['escritorio']==1) || (isset($_S
       <div class="activity-feed">
         <div class="d-flex justify-content-between align-items-center mb-4">
           <h3 class="activity-title">🔔 Lista de Alertas</h3>
+          <?php if($_SESSION['cargo'] != 'Maestro'): ?>
           <button class="action-button" id="btnagregar" onclick="mostrarform(true)">
             <i class="fa fa-plus-circle"></i> Nueva Alerta
           </button>
+          <?php endif; ?>
         </div>
 
         <!-- Tabla de alertas con el mismo estilo que aulas -->

@@ -100,6 +100,17 @@ class Consultas{
 		return ejecutarConsulta($sql);
 	}
 
+	//metodo para obtener alertas recientes de los niños asignados a un maestro
+	public function alertas_recientes_para_maestro($maestro_id, $limite = 5){
+		$sql="SELECT al.id_alerta, al.fecha_alerta, al.mensaje, al.tipo, al.estado, n.nombre_completo
+		FROM alertas al
+		INNER JOIN ninos n ON al.id_nino=n.id_nino
+		WHERE n.maestro_id='$maestro_id' AND n.estado=1
+		ORDER BY al.fecha_alerta DESC
+		LIMIT $limite";
+		return ejecutarConsulta($sql);
+	}
+
 	//metodo para obtener resumen de aulas
 	public function resumen_aulas(){
 		$sql="SELECT
@@ -113,6 +124,41 @@ class Consultas{
 		GROUP BY a.id_aula, a.nombre_aula
 		ORDER BY a.nombre_aula";
 		return ejecutarConsulta($sql);
+	}
+
+	//metodo para obtener resumen de aulas para un maestro específico
+	public function resumen_aulas_para_maestro($maestro_id){
+		$sql="SELECT
+		a.id_aula,
+		a.nombre_aula,
+		COUNT(DISTINCT n.id_nino) as total_ninos,
+		COUNT(DISTINCT s.id_seccion) as total_secciones
+		FROM aulas a
+		LEFT JOIN ninos n ON a.id_aula=n.aula_id AND n.estado=1 AND n.maestro_id='$maestro_id'
+		LEFT JOIN secciones s ON a.id_aula=s.aula_id
+		WHERE n.maestro_id='$maestro_id' OR n.maestro_id IS NULL
+		GROUP BY a.id_aula, a.nombre_aula
+		HAVING COUNT(DISTINCT n.id_nino) > 0
+		ORDER BY a.nombre_aula";
+		return ejecutarConsulta($sql);
+	}
+
+	//metodo para obtener secciones por aula y maestro
+	public function obtenerSeccionesPorAulaYMaestro($aula_id, $maestro_id){
+		$sql="SELECT DISTINCT s.nombre_seccion
+		FROM secciones s
+		INNER JOIN ninos n ON s.id_seccion = n.seccion_id
+		WHERE s.aula_id = '$aula_id' AND n.maestro_id = '$maestro_id' AND n.estado = 1
+		ORDER BY s.nombre_seccion";
+		return ejecutarConsulta($sql);
+	}
+
+	//metodo para contar niños por aula y maestro
+	public function contarNinosPorAulaYMaestro($aula_id, $maestro_id){
+		$sql="SELECT COUNT(*) as total_ninos
+		FROM ninos
+		WHERE aula_id = '$aula_id' AND maestro_id = '$maestro_id' AND estado = 1";
+		return ejecutarConsultaSimpleFila($sql);
 	}
 }
 ?>

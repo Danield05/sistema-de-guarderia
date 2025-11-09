@@ -37,6 +37,21 @@ class UsuarioController {
                 $_SESSION['asistencias'] = 1;
                 $_SESSION['reportes'] = 1;
             }
+            // Permisos para Maestros
+            elseif ($fetch->nombre_rol == 'Maestro') {
+                $_SESSION['escritorio'] = 1;
+                $_SESSION['aulas'] = 1;
+                $_SESSION['secciones'] = 1;
+                $_SESSION['ninos'] = 1;
+                $_SESSION['grupos'] = 1;
+                $_SESSION['acceso'] = 0;
+                $_SESSION['enfermedades'] = 1;
+                $_SESSION['medicamentos'] = 1;
+                $_SESSION['alergias'] = 1;
+                $_SESSION['usuarios'] = 0;
+                $_SESSION['asistencias'] = 1;
+                $_SESSION['reportes'] = 1;
+            }
             // Otros roles tienen permisos básicos
             else {
                 $_SESSION['escritorio'] = 1;

@@ -89,15 +89,15 @@ class Asistencia{
 	//listar asistencia con filtros
 	public function listarConFiltros($aula_id = null, $seccion_id = null, $fecha_inicio = null, $fecha_fin = null, $estado_id = null){
 		$where_conditions = array();
-		
+
 		if ($aula_id) {
 			$where_conditions[] = "n.aula_id = '$aula_id'";
 		}
-		
+
 		if ($seccion_id) {
 			$where_conditions[] = "n.seccion_id = '$seccion_id'";
 		}
-		
+
 		if ($fecha_inicio && $fecha_fin) {
 			$where_conditions[] = "a.fecha BETWEEN '$fecha_inicio' AND '$fecha_fin'";
 		} elseif ($fecha_inicio) {
@@ -105,13 +105,48 @@ class Asistencia{
 		} elseif ($fecha_fin) {
 			$where_conditions[] = "a.fecha <= '$fecha_fin'";
 		}
-		
+
 		if ($estado_id) {
 			$where_conditions[] = "a.estado_id = '$estado_id'";
 		}
-		
+
 		$where_clause = !empty($where_conditions) ? 'WHERE ' . implode(' AND ', $where_conditions) : '';
-		
+
+		$sql="SELECT a.id_asistencia, n.nombre_completo, a.fecha, ea.nombre_estado, a.observaciones
+		FROM asistencias a
+		LEFT JOIN ninos n ON a.id_nino=n.id_nino
+		LEFT JOIN estados_asistencia ea ON a.estado_id=ea.id_estado
+		$where_clause
+		ORDER BY a.fecha DESC, n.nombre_completo";
+		return ejecutarConsulta($sql);
+	}
+
+	//listar asistencia con filtros para maestros (solo sus niños asignados)
+	public function listarConFiltrosParaMaestro($aula_id = null, $seccion_id = null, $fecha_inicio = null, $fecha_fin = null, $estado_id = null, $maestro_id){
+		$where_conditions = array("n.maestro_id = '$maestro_id'");
+
+		if ($aula_id) {
+			$where_conditions[] = "n.aula_id = '$aula_id'";
+		}
+
+		if ($seccion_id) {
+			$where_conditions[] = "n.seccion_id = '$seccion_id'";
+		}
+
+		if ($fecha_inicio && $fecha_fin) {
+			$where_conditions[] = "a.fecha BETWEEN '$fecha_inicio' AND '$fecha_fin'";
+		} elseif ($fecha_inicio) {
+			$where_conditions[] = "a.fecha >= '$fecha_inicio'";
+		} elseif ($fecha_fin) {
+			$where_conditions[] = "a.fecha <= '$fecha_fin'";
+		}
+
+		if ($estado_id) {
+			$where_conditions[] = "a.estado_id = '$estado_id'";
+		}
+
+		$where_clause = 'WHERE ' . implode(' AND ', $where_conditions);
+
 		$sql="SELECT a.id_asistencia, n.nombre_completo, a.fecha, ea.nombre_estado, a.observaciones
 		FROM asistencias a
 		LEFT JOIN ninos n ON a.id_nino=n.id_nino
@@ -354,6 +389,87 @@ class Asistencia{
 			$sqlPermisos = "SELECT COUNT(*) as total FROM asistencias a
 						   INNER JOIN ninos n ON a.id_nino = n.id_nino
 						   WHERE a.estado_id = 3 AND a.fecha = '$fecha' AND n.estado = 1";
+			$rsptaPermisos = ejecutarConsultaSimpleFila($sqlPermisos);
+			$permisos = $rsptaPermisos['total'];
+		}
+
+		return array(
+			'total_estudiantes' => $total_estudiantes,
+			'asistieron' => $asistieron,
+			'faltaron' => $faltaron,
+			'tardanzas' => $tardanzas,
+			'permisos' => $permisos
+		);
+	}
+
+	//obtener estadísticas de asistencia para maestros (solo sus niños asignados)
+	public function obtenerEstadisticasParaMaestro($fecha = null, $maestro_id){
+		// Si no se especifica fecha, mostrar estadísticas generales de todos los tiempos
+		if (!$fecha) {
+			// Total de niños activos asignados al maestro
+			$sqlTotal = "SELECT COUNT(*) as total FROM ninos WHERE estado = 1 AND maestro_id = '$maestro_id'";
+			$rsptaTotal = ejecutarConsultaSimpleFila($sqlTotal);
+			$total_estudiantes = $rsptaTotal['total'];
+
+			// Asistencias totales (estado_id = 1)
+			$sqlAsistieron = "SELECT COUNT(*) as total FROM asistencias a
+							 INNER JOIN ninos n ON a.id_nino = n.id_nino
+							 WHERE a.estado_id = 1 AND n.estado = 1 AND n.maestro_id = '$maestro_id'";
+			$rsptaAsistieron = ejecutarConsultaSimpleFila($sqlAsistieron);
+			$asistieron = $rsptaAsistieron['total'];
+
+			// Faltas totales (estado_id = 2)
+			$sqlFaltaron = "SELECT COUNT(*) as total FROM asistencias a
+						   INNER JOIN ninos n ON a.id_nino = n.id_nino
+						   WHERE a.estado_id = 2 AND n.estado = 1 AND n.maestro_id = '$maestro_id'";
+			$rsptaFaltaron = ejecutarConsultaSimpleFila($sqlFaltaron);
+			$faltaron = $rsptaFaltaron['total'];
+
+			// Tardanzas totales (estado_id = 4)
+			$sqlTardanzas = "SELECT COUNT(*) as total FROM asistencias a
+							INNER JOIN ninos n ON a.id_nino = n.id_nino
+							WHERE a.estado_id = 4 AND n.estado = 1 AND n.maestro_id = '$maestro_id'";
+			$rsptaTardanzas = ejecutarConsultaSimpleFila($sqlTardanzas);
+			$tardanzas = $rsptaTardanzas['total'];
+
+			// Permisos totales (estado_id = 3)
+			$sqlPermisos = "SELECT COUNT(*) as total FROM asistencias a
+						   INNER JOIN ninos n ON a.id_nino = n.id_nino
+						   WHERE a.estado_id = 3 AND n.estado = 1 AND n.maestro_id = '$maestro_id'";
+			$rsptaPermisos = ejecutarConsultaSimpleFila($sqlPermisos);
+			$permisos = $rsptaPermisos['total'];
+		} else {
+			// Estadísticas específicas de una fecha
+			// Total de niños activos asignados al maestro
+			$sqlTotal = "SELECT COUNT(*) as total FROM ninos WHERE estado = 1 AND maestro_id = '$maestro_id'";
+			$rsptaTotal = ejecutarConsultaSimpleFila($sqlTotal);
+			$total_estudiantes = $rsptaTotal['total'];
+
+			// Asistencias del día específico (estado_id = 1)
+			$sqlAsistieron = "SELECT COUNT(*) as total FROM asistencias a
+							 INNER JOIN ninos n ON a.id_nino = n.id_nino
+							 WHERE a.estado_id = 1 AND a.fecha = '$fecha' AND n.estado = 1 AND n.maestro_id = '$maestro_id'";
+			$rsptaAsistieron = ejecutarConsultaSimpleFila($sqlAsistieron);
+			$asistieron = $rsptaAsistieron['total'];
+
+			// Faltas del día específico (estado_id = 2)
+			$sqlFaltaron = "SELECT COUNT(*) as total FROM asistencias a
+						   INNER JOIN ninos n ON a.id_nino = n.id_nino
+						   WHERE a.estado_id = 2 AND a.fecha = '$fecha' AND n.estado = 1 AND n.maestro_id = '$maestro_id'";
+			$rsptaFaltaron = ejecutarConsultaSimpleFila($sqlFaltaron);
+			$faltaron = $rsptaFaltaron['total'];
+
+			// Tardanzas del día específico (estado_id = 4)
+			$sqlTardanzas = "SELECT COUNT(*) as total FROM asistencias a
+							INNER JOIN ninos n ON a.id_nino = n.id_nino
+							WHERE a.estado_id = 4 AND a.fecha = '$fecha' AND n.estado = 1 AND n.maestro_id = '$maestro_id'";
+			$rsptaTardanzas = ejecutarConsultaSimpleFila($sqlTardanzas);
+			$tardanzas = $rsptaTardanzas['total'];
+
+			// Permisos del día específico (estado_id = 3)
+			$sqlPermisos = "SELECT COUNT(*) as total FROM asistencias a
+						   INNER JOIN ninos n ON a.id_nino = n.id_nino
+						   WHERE a.estado_id = 3 AND a.fecha = '$fecha' AND n.estado = 1 AND n.maestro_id = '$maestro_id'";
 			$rsptaPermisos = ejecutarConsultaSimpleFila($sqlPermisos);
 			$permisos = $rsptaPermisos['total'];
 		}

@@ -42,10 +42,21 @@ class Medicamentos{
 
 	//listar registros
 	public function listar(){
-		$sql="SELECT m.id_medicamento, m.nombre_medicamento, m.dosis, m.frecuencia, m.observaciones, 
-		n.nombre_completo as nino, n.id_nino 
-		FROM medicamentos m 
-		LEFT JOIN ninos n ON m.id_nino=n.id_nino 
+		$sql="SELECT m.id_medicamento, m.nombre_medicamento, m.dosis, m.frecuencia, m.observaciones,
+		n.nombre_completo as nino, n.id_nino
+		FROM medicamentos m
+		LEFT JOIN ninos n ON m.id_nino=n.id_nino
+		ORDER BY m.id_medicamento DESC";
+		return ejecutarConsulta($sql);
+	}
+
+	//listar registros para maestros (solo medicamentos de sus niños asignados)
+	public function listarParaMaestro($maestro_id){
+		$sql="SELECT m.id_medicamento, m.nombre_medicamento, m.dosis, m.frecuencia, m.observaciones,
+		n.nombre_completo as nino, n.id_nino
+		FROM medicamentos m
+		LEFT JOIN ninos n ON m.id_nino=n.id_nino
+		WHERE n.maestro_id='$maestro_id' AND n.estado=1
 		ORDER BY m.id_medicamento DESC";
 		return ejecutarConsulta($sql);
 	}

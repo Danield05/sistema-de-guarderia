@@ -40,5 +40,14 @@ class Aulas{
 		$sql="SELECT * FROM aulas ORDER BY id_aula DESC";
 		return ejecutarConsulta($sql);
 	}
+
+	//listar registros para maestros (solo aulas donde tienen niños asignados)
+	public function listarParaMaestro($maestro_id){
+		$sql="SELECT DISTINCT a.* FROM aulas a
+		INNER JOIN ninos n ON a.id_aula = n.aula_id
+		WHERE n.maestro_id = '$maestro_id' AND n.estado = 1
+		ORDER BY a.id_aula DESC";
+		return ejecutarConsulta($sql);
+	}
 }
 ?>

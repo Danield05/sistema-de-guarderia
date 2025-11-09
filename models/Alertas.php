@@ -2,8 +2,6 @@
 //incluir la conexion de base de datos
 require "../config/Conexion.php";
 class Alertas{
-
-	//implementamos nuestro constructor
 	public function __construct(){
 
 	}
@@ -49,6 +47,16 @@ class Alertas{
 		$sql="SELECT a.id_alerta, n.nombre_completo as nino, a.mensaje, a.tipo, a.estado, a.fecha_alerta
 		FROM alertas a
 		LEFT JOIN ninos n ON a.id_nino=n.id_nino
+		ORDER BY a.fecha_alerta DESC, a.id_alerta DESC";
+		return ejecutarConsulta($sql);
+	}
+
+	//listar registros para maestros (solo alertas de sus niños asignados)
+	public function listarParaMaestro($maestro_id){
+		$sql="SELECT a.id_alerta, n.nombre_completo as nino, a.mensaje, a.tipo, a.estado, a.fecha_alerta
+		FROM alertas a
+		LEFT JOIN ninos n ON a.id_nino=n.id_nino
+		WHERE n.maestro_id='$maestro_id' AND n.estado=1
 		ORDER BY a.fecha_alerta DESC, a.id_alerta DESC";
 		return ejecutarConsulta($sql);
 	}
