@@ -21,7 +21,7 @@ class Usuario{
 		return ejecutarConsulta($sql);
 	}
 
-	public function editar($id_usuario, $nombre_completo, $dui, $email, $password, $rol_id, $telefono, $direccion, $estado_usuario_id){
+	public function editar($id_usuario, $nombre_completo, $dui, $email, $password, $rol_id, $telefono, $direccion, $estado_usuario_id, $fotografia = null){
 		$sql="UPDATE usuarios SET
 		nombre_completo='$nombre_completo',
 		dui='$dui',
@@ -30,12 +30,17 @@ class Usuario{
 		rol_id='$rol_id',
 		telefono='$telefono',
 		direccion='$direccion',
-		estado_usuario_id='$estado_usuario_id'
-		WHERE id_usuario='$id_usuario'";
+		estado_usuario_id='$estado_usuario_id'";
+
+		if ($fotografia !== null) {
+			$sql .= ", fotografia='$fotografia'";
+		}
+
+		$sql .= " WHERE id_usuario='$id_usuario'";
 		return ejecutarConsulta($sql);
 	}
 
-	public function editar_sin_password($id_usuario, $nombre_completo, $dui, $email, $rol_id, $telefono, $direccion, $estado_usuario_id){
+	public function editar_sin_password($id_usuario, $nombre_completo, $dui, $email, $rol_id, $telefono, $direccion, $estado_usuario_id, $fotografia = null){
 		$sql="UPDATE usuarios SET
 		nombre_completo='$nombre_completo',
 		dui='$dui',
@@ -43,8 +48,13 @@ class Usuario{
 		rol_id='$rol_id',
 		telefono='$telefono',
 		direccion='$direccion',
-		estado_usuario_id='$estado_usuario_id'
-		WHERE id_usuario='$id_usuario'";
+		estado_usuario_id='$estado_usuario_id'";
+
+		if ($fotografia !== null) {
+			$sql .= ", fotografia='$fotografia'";
+		}
+
+		$sql .= " WHERE id_usuario='$id_usuario'";
 		return ejecutarConsulta($sql);
 	}
 

@@ -4,8 +4,6 @@ if (strlen(session_id()) < 1)
 require_once "../models/Usuario.php";
 require_once "../controllers/UsuarioController.php";
 
-// Debug: Verificar que se está ejecutando
-// error_log("usuario.php ejecutándose - OP: " . ($_GET['op'] ?? 'none'));
 
 $usuario=new Usuario();
 $usuarioController = new UsuarioController();
@@ -166,13 +164,76 @@ switch ($_GET["op"]) {
 
 	break;
 
+	case 'mostrar_perfil':
+		// Mostrar datos del usuario logueado
+		$id_usuario_logueado = $_SESSION['idusuario'];
+		$rspta = $usuario->mostrar($id_usuario_logueado);
+		echo json_encode($rspta);
+	break;
+
+	case 'guardaryeditar_perfil':
+		// Editar perfil del usuario logueado
+		$id_usuario_logueado = $_SESSION['idusuario'];
+
+		// Verificar contraseña actual si se proporciona nueva contraseña
+		$clave_nueva = isset($_POST["clave_nueva"]) ? limpiarCadena($_POST["clave_nueva"]) : "";
+		$clave_actual = isset($_POST["clave_actual"]) ? limpiarCadena($_POST["clave_actual"]) : "";
+
+		if (!empty($clave_nueva)) {
+			// Verificar que la contraseña actual sea correcta
+			$clave_actual_hash = hash("SHA256", $clave_actual);
+			$usuario_actual = $usuario->mostrar_clave($id_usuario_logueado);
+
+			if ($usuario_actual['password'] !== $clave_actual_hash) {
+				echo "La contraseña actual es incorrecta";
+				break;
+			}
+		}
+
+		// Procesar imagen
+		if (!file_exists($_FILES['imagen']['tmp_name']) || !is_uploaded_file($_FILES['imagen']['tmp_name'])) {
+			$fotografia = isset($_POST["imagenactual"]) && !empty($_POST["imagenactual"]) ? $_POST["imagenactual"] : "";
+		} else {
+			$ext = explode(".", $_FILES["imagen"]["name"]);
+			if ($_FILES['imagen']['type'] == "image/jpg" || $_FILES['imagen']['type'] == "image/jpeg" || $_FILES['imagen']['type'] == "image/png") {
+				$fotografia = round(microtime(true)) . '.' . end($ext);
+				$target_path = "../files/usuarios/" . $fotografia;
+
+				if (move_uploaded_file($_FILES["imagen"]["tmp_name"], $target_path)) {
+					// Archivo subido correctamente
+				} else {
+					$fotografia = isset($_POST["imagenactual"]) && !empty($_POST["imagenactual"]) ? $_POST["imagenactual"] : "";
+				}
+			} else {
+				$fotografia = isset($_POST["imagenactual"]) && !empty($_POST["imagenactual"]) ? $_POST["imagenactual"] : "";
+			}
+		}
+
+		// Obtener datos del usuario actual para mantener el rol y estado
+		$usuario_actual = $usuario->mostrar($id_usuario_logueado);
+		$rol_id = $usuario_actual['rol_id'];
+		$estado_usuario_id = $usuario_actual['estado_usuario_id'];
+
+		// Hash de la nueva contraseña si se proporciona
+		$clavehash = !empty($clave_nueva) ? hash("SHA256", $clave_nueva) : $usuario_actual['password'];
+
+		// Actualizar usuario
+		if (!empty($clave_nueva)) {
+			$rspta = $usuario->editar($id_usuario_logueado, $nombre, $dui, $email, $clavehash, $rol_id, $telefono, $direccion, $estado_usuario_id, $fotografia);
+		} else {
+			$rspta = $usuario->editar_sin_password($id_usuario_logueado, $nombre, $dui, $email, $rol_id, $telefono, $direccion, $estado_usuario_id, $fotografia);
+		}
+
+		echo $rspta ? "Perfil actualizado correctamente" : "No se pudo actualizar el perfil";
+	break;
+
 	case 'salir':
 		//Limpiamos las variables de sesión
-        session_unset();
-        //Destruìmos la sesión
-        session_destroy();
-        //Redireccionamos al login
-        header("Location: ../index.php");
+	       session_unset();
+	       //Destruìmos la sesión
+	       session_destroy();
+	       //Redireccionamos al login
+	       header("Location: ../views/login.php");
 
 	break;
 }

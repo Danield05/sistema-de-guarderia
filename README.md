@@ -1,134 +1,160 @@
-# Sistema de Guardería
+# PEQUE CONTROL - Nursery Management System
 
-Un sistema integral de gestión para guarderías infantiles que facilita la administración educativa y operativa. Desarrollado con tecnologías modernas para proporcionar una experiencia de usuario intuitiva y eficiente.
+A comprehensive management system for childcare centers that facilitates educational and operational administration. Developed with modern technologies to provide an intuitive and efficient user experience.
 
-## ✨ Características Principales
+## ✨ Key Features
 
-### 👥 Gestión de Usuarios
-- Registro y administración de profesores/administradores
-- Sistema de permisos basado en roles
-- Gestión de perfiles con imágenes
-- Control de acceso seguro
+### 👥 User Management
+- Registration and administration of teachers/administrators
+- Role-based permission system
+- Profile management with images
+- Secure access control
 
-### 👨‍👩‍👧‍👦 Gestión de Grupos
-- Creación y organización de grupos de estudiantes
-- Asignación de profesores a grupos
-- Marcado de grupos favoritos
+### 👨‍👩‍👧‍👦 Academic Management
+- Classroom and section management
+- Student registration and tracking
+- Attendance control system
+- Assignment of responsible adults
 
-### 🔐 Sistema de Permisos
-- Gestión completa de permisos del sistema
-- Activación/desactivación de permisos
-- Control granular de acceso
+### 🏥 Medical Information
+- Disease tracking and management
+- Medication administration records
+- Allergy management system
+- Medical consultation logging
 
-### 📊 Panel de Control
-- Dashboard moderno con estadísticas
-- Interfaz responsive y moderna
-- Navegación intuitiva
+### 🔐 Permission System
+- Complete system permission management
+- Permission activation/deactivation
+- Granular access control
 
-### 📱 Interfaz Moderna
-- Diseño frontend moderno con CSS personalizado
-- Íconos expresivos y colores atractivos
-- Layout responsive para todos los dispositivos
+### 📊 Dashboard
+- Modern dashboard with statistics
+- Responsive and modern interface
+- Intuitive navigation
 
-## 🛠️ Tecnologías Utilizadas
+### 👤 User Profile
+- Personal profile editing
+- Password change functionality
+- Profile picture upload
+- Account information display
+
+### 📱 Modern Interface
+- Modern frontend design with custom CSS
+- Expressive icons and attractive colors
+- Responsive layout for all devices
+- Glassmorphism effects and animations
+
+## 🛠️ Technologies Used
 
 - **Backend**: PHP 7+
-- **Base de datos**: MySQL
-- **Frontend**: HTML5, CSS3, JavaScript
-- **Framework CSS**: Bootstrap 4.6.2
-- **Plugins**: DataTables, Font Awesome, AdminLTE
-- **Servidor**: XAMPP (Apache, MySQL, PHP)
+- **Database**: MySQL
+- **Frontend**: HTML5, CSS3, JavaScript (ES6+)
+- **CSS Framework**: Bootstrap 4.6.2
+- **Icons**: Font Awesome 6 (CDN)
+- **Libraries**: jQuery 3.6+, DataTables, Bootbox
+- **Server**: XAMPP (Apache, MySQL, PHP)
+- **Architecture**: MVC Pattern
 
-## 📋 Requisitos del Sistema
+## 📋 System Requirements
 
 - XAMPP (Apache, MySQL, PHP)
-- PHP 7.0 o superior
-- MySQL 5.6 o superior
-- Navegador web moderno
+- PHP 7.0 or higher
+- MySQL 5.6 or higher
+- Modern web browser (Chrome, Firefox, Safari, Edge)
+- Minimum 2GB RAM recommended
 
-## 🚀 Instalación y Configuración
+## 🚀 Installation and Setup
 
-1. **Instalar XAMPP**
-   - Descarga e instala XAMPP desde el sitio oficial
-   - Inicia los servicios Apache y MySQL
+1. **Install XAMPP**
+   - Download and install XAMPP from the official website
+   - Start Apache and MySQL services
 
-2. **Clonar el proyecto**
+2. **Clone the project**
    ```bash
    cd c:/xampp/htdocs/
-   git clone [url-del-repositorio] sistema-de-guarderia
+   git clone [repository-url] sistema-de-guarderia
    ```
 
-3. **Configurar la base de datos**
-   - Abre phpMyAdmin en `http://localhost/phpmyadmin`
-   - Crea una nueva base de datos llamada `sistema_guarderia`
-   - Importa el archivo `sis_school.sql` incluido en el proyecto
+3. **Configure the database**
+   - Open phpMyAdmin at `http://localhost/phpmyadmin`
+   - Create a new database named `sistema_guarderia`
+   - Import the `sis_school.sql` file included in the project
 
-4. **Configurar permisos**
-   - Asegúrate de que la carpeta `files/` tenga permisos de escritura
-   - Las carpetas `files/usuarios/` y `files/articulos/` deben ser escribibles
+4. **Configure permissions**
+   - Ensure the `files/` folder has write permissions
+   - The `files/usuarios/` folders must be writable
 
-5. **Acceder al sistema**
-   - Abre tu navegador y ve a: `http://localhost/sistema-de-guarderia`
-   - Usuario por defecto: admin/admin (verifica en la base de datos)
+5. **Access the system**
+   - Open your browser and go to: `http://localhost/sistema-de-guarderia`
+   - Default user: admin/admin (verify in database)
 
-## 📁 Estructura del Proyecto
+## 📁 Project Structure
 
 ```
 sistema-de-guarderia/
-├── ajax/              # Scripts AJAX para operaciones del servidor
-├── config/            # Configuración de base de datos
-├── controllers/       # Controladores de la aplicación
-├── models/            # Modelos de datos
-├── public/            # Archivos públicos (CSS, JS, imágenes)
-├── views/             # Vistas PHP
-│   ├── scripts/       # Scripts JavaScript específicos
-├── files/             # Archivos subidos (imágenes, etc.)
-├── index.php          # Punto de entrada principal
-└── README.md          # Este archivo
+├── ajax/              # AJAX scripts for server operations
+├── config/            # Database configuration
+├── controllers/       # Application controllers
+├── models/            # Data models
+├── public/            # Public files (CSS, JS, images)
+│   ├── css/           # Stylesheets
+│   ├── js/            # JavaScript libraries
+│   └── plugins/       # Third-party plugins
+├── views/             # PHP views
+│   ├── scripts/       # Specific JavaScript scripts
+├── files/             # Uploaded files (images, etc.)
+├── index.php          # Main entry point
+├── sis_school.sql     # Database schema
+└── README.md          # This file
 ```
 
-## 🎯 Funcionalidades del Sistema
+## 🎯 System Features
 
-### Panel de Administración
-- **Escritorio**: Dashboard con estadísticas generales
-- **Grupos**: Gestión completa de grupos de estudiantes
-- **Profesores**: Administración de usuarios del sistema
-- **Permisos**: Control de permisos y accesos
-- **Acerca de**: Información del sistema
+### Administrative Panel
+- **Dashboard**: General statistics dashboard
+- **Academic Management**: Classroom, section, and student management
+- **Attendance Control**: Student attendance tracking system
+- **Medical Information**: Disease, medication, and allergy management
+- **User Management**: System user administration
+- **Permissions**: Access control and permissions
+- **User Profile**: Personal profile editing and management
 
-### Seguridad
-- Autenticación de usuarios
-- Control de sesiones
-- Validación de permisos
-- Hashing de contraseñas (SHA256)
+### Security
+- User authentication
+- Session management
+- Permission validation
+- Password hashing (SHA256)
+- Secure file uploads
 
-## 🤝 Contribución
+## 🤝 Contributing
 
-¡Las contribuciones son bienvenidas! Para contribuir:
+Contributions are welcome! To contribute:
 
-1. Haz fork del proyecto
-2. Crea una rama para tu feature (`git checkout -b feature/nueva-funcionalidad`)
-3. Commit tus cambios (`git commit -am 'Agrega nueva funcionalidad'`)
-4. Push a la rama (`git push origin feature/nueva-funcionalidad`)
-5. Abre un Pull Request
+1. Fork the project
+2. Create a feature branch (`git checkout -b feature/new-feature`)
+3. Commit your changes (`git commit -am 'Add new feature'`)
+4. Push to the branch (`git push origin feature/new-feature`)
+5. Open a Pull Request
 
-## 📝 Notas de Desarrollo
+## 📝 Development Notes
 
-- El sistema utiliza el patrón MVC (Modelo-Vista-Controlador)
-- Las consultas AJAX se manejan en la carpeta `ajax/`
-- Los estilos modernos están en `public/css/frontend-modern.css`
-- La navegación principal se encuentra en `views/header.php`
+- The system uses MVC pattern (Model-View-Controller)
+- AJAX queries are handled in the `ajax/` folder
+- Modern styles are in `public/css/frontend-modern.css`
+- Main navigation is in `views/header.php`
+- User profile management in `views/perfil.php`
+- Login system with modern UI in `views/login.php`
 
-## 📞 Soporte
+## 📞 Support
 
-Para soporte técnico o preguntas:
-- Crea un issue en el repositorio
-- Contacta al administrador del sistema
+For technical support or questions:
+- Create an issue in the repository
+- Contact the system administrator
 
-## 📄 Licencia
+## 📄 License
 
-Este proyecto está bajo la Licencia MIT. Ver el archivo `LICENSE` para más detalles.
+This project is under the MIT License. See the `LICENSE` file for more details.
 
 ---
 
-**Desarrollado con ❤️ para facilitar la gestión educativa en guarderías**
+**Developed with ❤️ to facilitate educational management in childcare centers**

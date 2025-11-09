@@ -13,7 +13,7 @@ if (strlen(session_id()) < 1) {
 
     <!-- Estilos Principales -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="../public/css/font-awesome.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
     <!-- Favicon Moderno -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏠</text></svg>">
@@ -28,191 +28,10 @@ if (strlen(session_id()) < 1) {
     <link rel="stylesheet" href="../public/css/dashboard.css">
     <link rel="stylesheet" href="../public/css/frontend-modern.css">
     <link rel="stylesheet" href="../public/css/custom-tables.css">
-    
-    <!-- Estilos CSS para los dropdowns personalizados -->
-    <style>
-    .custom-caret {
-        display: inline-block;
-        width: 0;
-        height: 0;
-        margin-left: 8px;
-        vertical-align: middle;
-        border-top: 4px solid;
-        border-right: 4px solid transparent;
-        border-left: 4px solid transparent;
-    }
-    
-    .custom-dropdown.show .custom-caret {
-        transform: rotate(180deg);
-    }
-    
-    /* Estilos para el dropdown del usuario */
-    .user-profile-widget {
-        display: flex;
-        align-items: center;
-        padding: 8px 15px;
-        cursor: pointer;
-        transition: all 0.3s ease;
-    }
-    
-    .user-profile-widget:hover {
-        background-color: rgba(255, 255, 255, 0.1);
-        border-radius: 6px;
-    }
-    
-    .user-image {
-        width: 35px;
-        height: 35px;
-        border-radius: 50%;
-        margin-right: 10px;
-        object-fit: cover;
-        border: 2px solid rgba(255, 255, 255, 0.2);
-    }
-    
-    .user-info {
-        display: flex;
-        flex-direction: column;
-        line-height: 1.2;
-    }
-    
-    .user-name {
-        font-size: 14px;
-        font-weight: 600;
-        color: #fff;
-    }
-    
-    .user-role {
-        font-size: 12px;
-        color: rgba(255, 255, 255, 0.8);
-    }
-    
-    /* Estilos para el menú del dropdown del usuario */
-    .user-dropdown-menu {
-        min-width: 180px;
-        padding: 8px 0;
-        margin-top: 5px;
-        border-radius: 8px;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        background: rgba(255, 255, 255, 0.95);
-        backdrop-filter: blur(10px);
-    }
-    
-    .user-dropdown-menu .dropdown-item {
-        padding: 10px 20px;
-        color: #333;
-        text-decoration: none;
-        display: flex;
-        align-items: center;
-        transition: all 0.2s ease;
-    }
-    
-    .user-dropdown-menu .dropdown-item:hover {
-        background-color: #f8f9fa;
-        color: #007bff;
-    }
-    
-    .user-dropdown-menu .dropdown-item i {
-        margin-right: 10px;
-        width: 16px;
-        text-align: center;
-    }
-    
-    .user-dropdown-menu .divider {
-        height: 1px;
-        background-color: #e9ecef;
-        margin: 5px 0;
-    }
-    
-    .user-dropdown-menu .text-danger {
-        color: #dc3545 !important;
-    }
-    
-    .user-dropdown-menu .text-danger:hover {
-        background-color: #f8d7da;
-        color: #721c24 !important;
-    }
-    
-    /* Ocultar el caret automático de Bootstrap */
-    .dropdown-toggle::after {
-        display: none !important;
-    }
-    </style>
+    <link rel="stylesheet" href="../public/css/navbar-custom.css">
     
     <!-- JavaScript personalizado para dropdown del navbar -->
-    <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const dropdowns = document.querySelectorAll('.custom-dropdown');
-        
-        // Configurar cada dropdown
-        dropdowns.forEach(dropdown => {
-            const toggle = dropdown.querySelector('.dropdown-toggle');
-            const menu = dropdown.querySelector('.dropdown-menu');
-            const items = dropdown.querySelectorAll('.dropdown-item');
-
-            if (!toggle || !menu) return;
-
-            // Ocultar menú inicialmente
-            menu.style.display = 'none';
-
-            // Toggle dropdown al hacer clic
-            toggle.addEventListener('click', function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                
-                const isOpen = menu.style.display === 'block';
-                
-                // Cerrar todos los otros dropdowns
-                dropdowns.forEach(otherDropdown => {
-                    if (otherDropdown !== dropdown) {
-                        const otherMenu = otherDropdown.querySelector('.dropdown-menu');
-                        const otherToggle = otherDropdown.querySelector('.dropdown-toggle');
-                        if (otherMenu && otherToggle) {
-                            otherMenu.style.display = 'none';
-                            otherDropdown.classList.remove('show');
-                            otherToggle.setAttribute('aria-expanded', 'false');
-                        }
-                    }
-                });
-                
-                // Toggle este dropdown
-                if (isOpen) {
-                    menu.style.display = 'none';
-                    dropdown.classList.remove('show');
-                    toggle.setAttribute('aria-expanded', 'false');
-                } else {
-                    menu.style.display = 'block';
-                    dropdown.classList.add('show');
-                    toggle.setAttribute('aria-expanded', 'true');
-                }
-            });
-
-            // Cerrar al hacer clic en un elemento
-            items.forEach(item => {
-                item.addEventListener('click', function() {
-                    menu.style.display = 'none';
-                    dropdown.classList.remove('show');
-                    toggle.setAttribute('aria-expanded', 'false');
-                });
-            });
-        });
-        
-        // Cerrar dropdowns al hacer clic fuera
-        document.addEventListener('click', function(e) {
-            dropdowns.forEach(dropdown => {
-                if (!dropdown.contains(e.target)) {
-                    const menu = dropdown.querySelector('.dropdown-menu');
-                    const toggle = dropdown.querySelector('.dropdown-toggle');
-                    if (menu && toggle) {
-                        menu.style.display = 'none';
-                        dropdown.classList.remove('show');
-                        toggle.setAttribute('aria-expanded', 'false');
-                    }
-                }
-            });
-        });
-    });
-    </script>
+    <script src="../views/scripts/navbar.js"></script>
 </head>
 
 <body class="hold-transition">
@@ -294,12 +113,11 @@ if (strlen(session_id()) < 1) {
                             <ul class="dropdown-menu">
                                 <?php if (isset($_SESSION['acceso']) && $_SESSION['acceso'] == 1): ?>
                                     <li><a href="usuario.php" class="dropdown-item"><i class="fa fa-users"></i> Usuarios</a></li>
-                                    <li><a href="permiso.php" class="dropdown-item"><i class="fa fa-key"></i> Permisos</a></li>
                                 <?php endif; ?>
 
                                 <?php if (isset($_SESSION['escritorio']) && $_SESSION['escritorio'] == 1): ?>
-                                    <li><a href="alertas.php" class="dropdown-item"><i class="fa fa-bell"></i> Alertas</a></li>
-                                    <li><a href="permisos_ausencia.php" class="dropdown-item"><i class="fa fa-calendar-times"></i> Permisos de Ausencia</a></li>
+                                    <li><a href="alertas.php" class="dropdown-item"><i class="fas fa-bell"></i> Alertas</a></li>
+                                    <li><a href="permisos_ausencia.php" class="dropdown-item"><i class="fas fa-calendar-times"></i> Permisos de Ausencia</a></li>
                                 <?php endif; ?>
                             </ul>
                         </li>
@@ -317,9 +135,9 @@ if (strlen(session_id()) < 1) {
                                 <i class="fa fa-medkit"></i> Información Médica <span class="custom-caret"></span>
                             </a>
                             <ul class="dropdown-menu">
-                                <li><a href="enfermedades.php" class="dropdown-item"><i class="fa fa-stethoscope"></i> Enfermedades</a></li>
-                                <li><a href="medicamentos.php" class="dropdown-item"><i class="fa fa-pills"></i> Medicamentos</a></li>
-                                <li><a href="alergias.php" class="dropdown-item"><i class="fa fa-allergies"></i> Alergias</a></li>
+                                <li><a href="enfermedades.php" class="dropdown-item"><i class="fas fa-stethoscope"></i> Enfermedades</a></li>
+                                <li><a href="medicamentos.php" class="dropdown-item"><i class="fas fa-pills"></i> Medicamentos</a></li>
+                                <li><a href="alergias.php" class="dropdown-item"><i class="fas fa-allergies"></i> Alergias</a></li>
                             </ul>
                         </li>
                     <?php endif; ?>
@@ -331,7 +149,7 @@ if (strlen(session_id()) < 1) {
 
         <div class="navbar-right">
             <div class="real-time-clock">
-                <i class="fa fa-clock-o"></i> <span id="current-time"></span>
+                <i class="fas fa-clock"></i> <span id="current-time"></span>
             </div>
         </div>
     </header>
