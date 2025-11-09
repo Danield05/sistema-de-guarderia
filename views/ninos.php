@@ -6,7 +6,7 @@ if (!isset($_SESSION['nombre'])) {
 } else {
   require 'header.php';
 
-  if ((isset($_SESSION['ninos']) && $_SESSION['ninos'] == 1) || (isset($_SESSION['rol']) && $_SESSION['rol'] == 'Administrador')) {
+  if ((isset($_SESSION['ninos']) && $_SESSION['ninos'] == 1) || (isset($_SESSION['rol']) && $_SESSION['rol'] == 'Administrador') || (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Médico/Enfermería')) {
 ?>
     <!-- 🔧 Quitamos padding lateral con clases personalizadas -->
     <main class="container-fluid py-5 px-3 main-dashboard" style="padding-top: 3rem; padding-bottom: 3rem;">
@@ -14,16 +14,78 @@ if (!isset($_SESSION['nombre'])) {
       <!-- Título de la sección -->
       <div class="welcome-card">
         <div class="welcome-content">
-          <h1 class="welcome-title">👶 Gestión de Niños</h1>
-          <p class="welcome-subtitle">Administra la información de los niños en la guardería</p>
+          <h1 class="welcome-title">
+            <?php
+            if (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Médico/Enfermería') {
+              echo '🏥 Información de Niños';
+            } else {
+              echo '👶 Gestión de Niños';
+            }
+            ?>
+          </h1>
+          <p class="welcome-subtitle">
+            <?php
+            if (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Médico/Enfermería') {
+              echo 'Consulta la información médica de los niños';
+            } else {
+              echo 'Administra la información de los niños en la guardería';
+            }
+            ?>
+          </p>
         </div>
       </div>
 
-      <!-- Botón para abrir modal de registro -->
+      <!-- Botón para abrir modal de registro (solo para administradores) -->
+      <?php if (!isset($_SESSION['cargo']) || $_SESSION['cargo'] != 'Médico/Enfermería'): ?>
       <div class="mb-4">
         <button type="button" class="btn btn-primary" style="border-radius: 25px; padding: 0.75rem 2rem; font-weight: 600; box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);" onclick="mostrarFormulario(0)">
           <i class="fa fa-plus-circle"></i> Agregar Nuevo Niño
         </button>
+      </div>
+      <?php endif; ?>
+
+      <!-- Filtros de búsqueda -->
+      <div class="mb-4">
+        <div class="row">
+          <div class="col-md-4">
+            <div class="form-group">
+              <label for="filtro-nombre" style="font-weight: 600; color: #3c8dbc;">
+                <i class="fa fa-search"></i> Buscar por Nombre
+              </label>
+              <input type="text" class="form-control" id="filtro-nombre" placeholder="Escriba el nombre del niño..." style="border-radius: 10px; border: 2px solid #e9ecef; padding: 0.75rem; font-size: 0.95rem;">
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="form-group">
+              <label for="filtro-aula" style="font-weight: 600; color: #3c8dbc;">
+                <i class="fa fa-university"></i> Filtrar por Aula
+              </label>
+              <select class="form-control" id="filtro-aula" style="border-radius: 10px; border: 2px solid #e9ecef; padding: 0.75rem; font-size: 0.95rem; min-height: 45px;">
+                <option value="">Todas las aulas</option>
+              </select>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="form-group">
+              <label for="filtro-seccion" style="font-weight: 600; color: #3c8dbc;">
+                <i class="fa fa-sitemap"></i> Filtrar por Sección
+              </label>
+              <select class="form-control" id="filtro-seccion" style="border-radius: 10px; border: 2px solid #e9ecef; padding: 0.75rem; font-size: 0.95rem; min-height: 45px;">
+                <option value="">Todas las secciones</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12">
+            <button type="button" class="btn btn-primary" onclick="aplicarFiltros()" style="border-radius: 25px; padding: 0.5rem 2rem; font-weight: 600; box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);">
+              <i class="fa fa-filter"></i> Aplicar Filtros
+            </button>
+            <button type="button" class="btn btn-secondary ml-2" onclick="limpiarFiltros()" style="border-radius: 25px; padding: 0.5rem 2rem; font-weight: 600;">
+              <i class="fa fa-times"></i> Limpiar Filtros
+            </button>
+          </div>
+        </div>
       </div>
 
       <!-- Tabla de niños -->
@@ -53,11 +115,17 @@ if (!isset($_SESSION['nombre'])) {
               while ($reg = $rspta->fetch(PDO::FETCH_OBJ)) {
                 echo '<tr style="border-bottom: 1px solid rgba(0,0,0,0.05); transition: all 0.3s ease;">';
                 echo '<td style="padding: 1rem;">';
-                echo '<button class="btn btn-warning btn-sm" style="margin-right: 0.5rem; border-radius: 20px;" onclick="mostrar(' . $reg->id_nino . ')"><i class="fa fa-pencil"></i> Editar</button>';
-                if ($reg->estado == 1) {
-                  echo '<button class="btn btn-danger btn-sm" style="border-radius: 20px;" onclick="desactivar(' . $reg->id_nino . ')"><i class="fa fa-ban"></i> Desactivar</button>';
+                if (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Médico/Enfermería') {
+                  // Para médicos: solo botón de ver detalles médicos
+                  echo '<button class="btn btn-info btn-sm" style="border-radius: 20px;" onclick="verDetalles(' . $reg->id_nino . ')"><i class="fa fa-user-md"></i> Ver Detalles Médicos</button>';
                 } else {
-                  echo '<button class="btn btn-success btn-sm" style="border-radius: 20px;" onclick="activar(' . $reg->id_nino . ')"><i class="fa fa-check"></i> Activar</button>';
+                  // Para administradores: botones completos
+                  echo '<button class="btn btn-warning btn-sm" style="margin-right: 0.5rem; border-radius: 20px;" onclick="mostrar(' . $reg->id_nino . ')"><i class="fa fa-pencil"></i> Editar</button>';
+                  if ($reg->estado == 1) {
+                    echo '<button class="btn btn-danger btn-sm" style="border-radius: 20px;" onclick="desactivar(' . $reg->id_nino . ')"><i class="fa fa-ban"></i> Desactivar</button>';
+                  } else {
+                    echo '<button class="btn btn-success btn-sm" style="border-radius: 20px;" onclick="activar(' . $reg->id_nino . ')"><i class="fa fa-check"></i> Activar</button>';
+                  }
                 }
                 echo '</td>';
                 echo '<td style="padding: 1rem; font-weight: 600; color: #3c8dbc;">' . $reg->nombre_completo . '</td>';
@@ -83,7 +151,8 @@ if (!isset($_SESSION['nombre'])) {
         </div>
       </div>
 
-      <!-- Modal para registro y edición -->
+      <!-- Modal para registro y edición (solo para administradores) -->
+      <?php if (!isset($_SESSION['cargo']) || $_SESSION['cargo'] != 'Médico/Enfermería'): ?>
       <div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
         <div class="modal-dialog modal-xl" role="document">
           <div class="modal-content" style="border-radius: 20px; border: none; box-shadow: 0 20px 60px rgba(0,0,0,0.2);">
@@ -198,6 +267,7 @@ if (!isset($_SESSION['nombre'])) {
           </div>
         </div>
       </div>
+      <?php endif; ?>
     </main>
 
 <?php

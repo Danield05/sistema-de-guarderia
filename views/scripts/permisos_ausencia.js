@@ -32,7 +32,9 @@ function mostrarform(flag){
 	limpiar();
 	if(flag){
 		$("#modalPermiso").modal('show');
-		$("#modalPermisoLabel").html('<i class="fa fa-plus-circle"></i> Nuevo Permiso de Ausencia');
+		var titulo = '<i class="fa fa-plus-circle"></i> ';
+		titulo += (isMedicoGlobal === 'true') ? 'Nuevo Permiso Médico' : 'Nuevo Permiso de Ausencia';
+		$("#modalPermisoLabel").html(titulo);
 	}else{
 		$("#modalPermiso").modal('hide');
 	}
@@ -54,10 +56,22 @@ function listar(){
             var tbody = $('#permisosTableBody');
             tbody.empty();
 
+            // Usar variable global definida en PHP
+
             if (data.aaData && data.aaData.length > 0) {
                 $.each(data.aaData, function(index, permiso) {
-                    var acciones = '<button class="btn btn-outline-warning btn-sm" style="margin-right: 0.5rem; border-radius: 20px;" onclick="mostrar(' + permiso[9] + ')"><i class="fa fa-pencil"></i> Editar</button>' +
+                    // Filtrar solo permisos médicos para usuarios médicos
+                    if (isMedicoGlobal === 'true' && permiso[2] !== 'Médico') {
+                        return true; // continue to next iteration
+                    }
+
+                    var acciones = '';
+                    if (isMedicoGlobal === 'true') {
+                        acciones = '<button class="btn btn-outline-warning btn-sm" style="margin-right: 0.5rem; border-radius: 20px;" onclick="mostrar(' + permiso[9] + ')"><i class="fa fa-pencil"></i> Editar</button>';
+                    } else {
+                        acciones = '<button class="btn btn-outline-warning btn-sm" style="margin-right: 0.5rem; border-radius: 20px;" onclick="mostrar(' + permiso[9] + ')"><i class="fa fa-pencil"></i> Editar</button>' +
                                    '<button class="btn btn-outline-danger btn-sm" style="border-radius: 20px;" onclick="eliminar(' + permiso[9] + ')"><i class="fa fa-trash"></i> Eliminar</button>';
+                    }
 
                     var archivoLink = permiso[8] ? '<a href="../files/permisos/' + permiso[8] + '" target="_blank" class="btn btn-outline-info btn-sm" style="border-radius: 20px;"><i class="fa fa-file"></i> Ver</a>' : 'Sin archivo';
 

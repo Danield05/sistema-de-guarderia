@@ -6,7 +6,7 @@ if (!isset($_SESSION['nombre'])) {
 } else {
   require 'header.php';
 
-  if (isset($_SESSION['escritorio']) && $_SESSION['escritorio'] == 1) {
+  if ((isset($_SESSION['escritorio']) && $_SESSION['escritorio'] == 1) || (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Médico/Enfermería')) {
     $user_id = $_SESSION["idusuario"];
     require_once "../models/Consultas.php";
     $consulta = new Consultas();
@@ -23,37 +23,75 @@ if (!isset($_SESSION['nombre'])) {
       <!-- Tarjeta de bienvenida -->
       <div class="welcome-card">
         <div class="welcome-content">
-          <h1 class="welcome-title">🎓 Bienvenido, <?php echo $_SESSION['nombre']; ?></h1>
-          <p class="welcome-subtitle">Gestiona tu guardería de manera más eficiente</p>
+          <h1 class="welcome-title">🏥 Bienvenido, <?php echo $_SESSION['nombre']; ?></h1>
+          <p class="welcome-subtitle">
+            <?php
+            if (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Médico/Enfermería') {
+              echo 'Gestiona la salud y bienestar de los niños';
+            } else {
+              echo 'Gestiona tu guardería de manera más eficiente';
+            }
+            ?>
+          </p>
         </div>
       </div>
 
       <!-- Estadísticas principales -->
       <div class="dashboard-grid">
-        <div class="metric-card metric-card-light-bg">
-          <div class="metric-icon">🏫</div>
-          <div class="metric-value">
-            <?php
-            $rspta = $consulta->resumen_aulas();
-            echo $rspta->rowCount();
-            ?>
+        <?php if (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Médico/Enfermería'): ?>
+          <!-- Estadísticas para Médico/Enfermería -->
+          <div class="metric-card metric-card-light-bg">
+            <div class="metric-icon">🏥</div>
+            <div class="metric-value">
+              <?php
+              $alertasSalud = $consulta->contar_alertas_por_estado();
+              echo isset($alertasSalud['total']) ? $alertasSalud['total'] : 0;
+              ?>
+            </div>
+            <div class="metric-label">Alertas de Salud</div>
           </div>
-          <div class="metric-label">Aulas Registradas</div>
-        </div>
 
-        <div class="metric-card metric-card-light-bg">
-          <div class="metric-icon">👨‍🎓</div>
-          <div class="metric-value"><?php echo $totalestudiantes; ?></div>
-          <div class="metric-label">Niños Totales</div>
-        </div>
+          <div class="metric-card metric-card-light-bg">
+            <div class="metric-icon">⚠️</div>
+            <div class="metric-value">
+              <?php echo isset($alertasSalud['pendientes']) ? $alertasSalud['pendientes'] : 0; ?>
+            </div>
+            <div class="metric-label">Alertas Pendientes</div>
+          </div>
 
-        <div class="metric-card metric-card-light-bg">
-          <div class="metric-icon">📊</div>
-          <div class="metric-value"><?php echo $totalsecciones; ?></div>
-          <div class="metric-label">Secciones Totales</div>
-        </div>
+          <div class="metric-card metric-card-light-bg">
+            <div class="metric-icon">👨‍🎓</div>
+            <div class="metric-value"><?php echo $totalestudiantes; ?></div>
+            <div class="metric-label">Niños a Cargo</div>
+          </div>
+        <?php else: ?>
+          <!-- Estadísticas para Administradores -->
+          <div class="metric-card metric-card-light-bg">
+            <div class="metric-icon">🏫</div>
+            <div class="metric-value">
+              <?php
+              $rspta = $consulta->resumen_aulas();
+              echo $rspta->rowCount();
+              ?>
+            </div>
+            <div class="metric-label">Aulas Registradas</div>
+          </div>
+
+          <div class="metric-card metric-card-light-bg">
+            <div class="metric-icon">👨‍🎓</div>
+            <div class="metric-value"><?php echo $totalestudiantes; ?></div>
+            <div class="metric-label">Niños Totales</div>
+          </div>
+
+          <div class="metric-card metric-card-light-bg">
+            <div class="metric-icon">📊</div>
+            <div class="metric-value"><?php echo $totalsecciones; ?></div>
+            <div class="metric-label">Secciones Totales</div>
+          </div>
+        <?php endif; ?>
       </div>
-      <!-- Aulas disponibles -->
+      <!-- Aulas disponibles (solo para administradores) -->
+      <?php if (!isset($_SESSION['cargo']) || $_SESSION['cargo'] != 'Médico/Enfermería'): ?>
       <div class="activity-feed">
         <h3 class="activity-title">🏫 Aulas Disponibles</h3>
         <?php
@@ -97,14 +135,35 @@ if (!isset($_SESSION['nombre'])) {
           </div>
         <?php } ?>
       </div>
+      <?php endif; ?>
 
       <!-- Alertas recientes -->
       <div class="activity-feed">
         <h3 class="activity-title">🔔 Alertas Recientes</h3>
         <?php
-        $rsptalertas = $consulta->alertas_recientes(5);
-        if ($rsptalertas->rowCount() > 0) {
-          while ($regalerta = $rsptalertas->fetch(PDO::FETCH_OBJ)) {
+        // Filtrar alertas por rol del usuario
+        if (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Médico/Enfermería') {
+          // Para médicos, mostrar solo alertas de salud recientes
+          $rsptalertas = $consulta->alertas_recientes(10); // Obtener más para filtrar
+          $alertasFiltradas = array();
+          while ($alerta = $rsptalertas->fetch(PDO::FETCH_OBJ)) {
+            if ($alerta->tipo == 'Salud') {
+              $alertasFiltradas[] = $alerta;
+              if (count($alertasFiltradas) >= 5) break; // Limitar a 5
+            }
+          }
+        } else {
+          // Para administradores, mostrar todas las alertas recientes
+          $rsptalertas = $consulta->alertas_recientes(5);
+          $alertasFiltradas = array();
+          while ($alerta = $rsptalertas->fetch(PDO::FETCH_OBJ)) {
+            $alertasFiltradas[] = $alerta;
+          }
+        }
+
+        if (count($alertasFiltradas) > 0) {
+          foreach ($alertasFiltradas as $regalerta) {
+
             $tipo_class = "";
             $tipo_icon = "🔔";
             switch($regalerta->tipo) {
@@ -139,7 +198,7 @@ if (!isset($_SESSION['nombre'])) {
               </div>
               <p class="mb-1 mt-2"><?php echo $regalerta->mensaje; ?></p>
             </div>
-        <?php
+          <?php
           }
         } else {
         ?>
@@ -154,32 +213,55 @@ if (!isset($_SESSION['nombre'])) {
       <div class="quick-actions">
         <h3 class="activity-title">⚡ Acciones Rápidas</h3>
         <div class="row">
-          <div class="col-md-3 mb-3">
-            <a href="aulas.php" class="action-button">🏫 Gestionar Aulas</a>
-          </div>
-          <div class="col-md-3 mb-3">
-            <a href="ninos.php" class="action-button">👶 Gestionar Niños</a>
-          </div>
-          <div class="col-md-3 mb-3">
-            <a href="asistencia.php" class="action-button">📅 Control de Asistencia</a>
-          </div>
-          <div class="col-md-3 mb-3">
-            <a href="alertas.php" class="action-button">🔔 Gestionar Alertas</a>
-          </div>
-          <?php if (isset($_SESSION['acceso']) && $_SESSION['acceso'] == 1): ?>
-            <div class="col-md-3 mb-3">
-              <a href="usuario.php" class="action-button">👨‍🏫 Gestionar Usuarios</a>
+          <?php if (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Médico/Enfermería'): ?>
+            <!-- Acciones para Médico/Enfermería -->
+            <div class="col-md-4 mb-3">
+              <a href="alertas.php" class="action-button">🔔 Gestionar Alertas de Salud</a>
             </div>
-            <div class="col-md-3 mb-3">
+            <div class="col-md-4 mb-3">
               <a href="enfermedades.php" class="action-button">🏥 Información Médica</a>
             </div>
+            <div class="col-md-4 mb-3">
+              <a href="medicamentos.php" class="action-button">💊 Medicamentos</a>
+            </div>
+            <div class="col-md-4 mb-3">
+              <a href="alergias.php" class="action-button">🤧 Alergias</a>
+            </div>
+            <div class="col-md-4 mb-3">
+              <a href="ninos.php" class="action-button">👶 Ver Niños</a>
+            </div>
+            <div class="col-md-4 mb-3">
+              <a href="acerca.php" class="action-button">ℹ️ Acerca del Sistema</a>
+            </div>
+          <?php else: ?>
+            <!-- Acciones para Administradores -->
             <div class="col-md-3 mb-3">
-              <a href="permisos_ausencia.php" class="action-button">📋 Permisos</a>
+              <a href="aulas.php" class="action-button">🏫 Gestionar Aulas</a>
+            </div>
+            <div class="col-md-3 mb-3">
+              <a href="ninos.php" class="action-button">👶 Gestionar Niños</a>
+            </div>
+            <div class="col-md-3 mb-3">
+              <a href="asistencia.php" class="action-button">📅 Control de Asistencia</a>
+            </div>
+            <div class="col-md-3 mb-3">
+              <a href="alertas.php" class="action-button">🔔 Gestionar Alertas</a>
+            </div>
+            <?php if (isset($_SESSION['acceso']) && $_SESSION['acceso'] == 1): ?>
+              <div class="col-md-3 mb-3">
+                <a href="usuario.php" class="action-button">👨‍🏫 Gestionar Usuarios</a>
+              </div>
+              <div class="col-md-3 mb-3">
+                <a href="enfermedades.php" class="action-button">🏥 Información Médica</a>
+              </div>
+              <div class="col-md-3 mb-3">
+                <a href="permisos_ausencia.php" class="action-button">📋 Permisos</a>
+              </div>
+            <?php endif; ?>
+            <div class="col-md-3 mb-3">
+              <a href="acerca.php" class="action-button">ℹ️ Acerca del Sistema</a>
             </div>
           <?php endif; ?>
-          <div class="col-md-3 mb-3">
-            <a href="acerca.php" class="action-button">ℹ️ Acerca del Sistema</a>
-          </div>
         </div>
       </div>
     </main>

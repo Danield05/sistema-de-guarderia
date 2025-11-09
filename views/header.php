@@ -150,6 +150,8 @@ if (strlen(session_id()) < 1) {
                                 <?php if ((isset($_SESSION['asistencia']) && $_SESSION['asistencia'] == 1) || (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Administrador')): ?>
                                     <li><a href="asistencia.php" class="dropdown-item"><i class="fas fa-calendar-check"></i> <span>Control de Asistencias</span></a></li>
                                 <?php endif; ?>
+
+                                <li><a href="ninos.php" class="dropdown-item"><i class="fas fa-baby"></i> <span> Ver Niños</span></a></li>
                             </ul>
                         </li>
                     <?php endif; ?>

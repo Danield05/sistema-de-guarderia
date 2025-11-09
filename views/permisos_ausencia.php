@@ -9,7 +9,7 @@ if (!isset($_SESSION['nombre'])) {
 $_SESSION['modern_layout'] = true;
 
 require 'header.php';
-if ((isset($_SESSION['escritorio']) && $_SESSION['escritorio']==1) || (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Administrador')) {
+if ((isset($_SESSION['escritorio']) && $_SESSION['escritorio']==1) || (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Administrador') || (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Médico/Enfermería')) {
 ?>
 <main class="container-fluid py-5 px-3 main-dashboard" style="padding-top: 3rem; padding-bottom: 3rem;">
       <!-- Header de la página -->
@@ -24,9 +24,20 @@ if ((isset($_SESSION['escritorio']) && $_SESSION['escritorio']==1) || (isset($_S
       <div class="activity-feed">
         <div class="d-flex justify-content-between align-items-center mb-4">
           <h3 class="activity-title">📋 Lista de Permisos de Ausencia</h3>
-          <button type="button" class="btn btn-primary" style="border-radius: 25px; padding: 0.75rem 2rem; font-weight: 600; box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);" onclick="mostrarform(true)">
-            <i class="fa fa-plus-circle"></i> Nuevo Permiso
-          </button>
+          <?php if (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Médico/Enfermería'): ?>
+            <button type="button" class="btn btn-primary" style="border-radius: 25px; padding: 0.75rem 2rem; font-weight: 600; box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);" onclick="mostrarform(true)">
+              <i class="fa fa-plus-circle"></i> Nuevo Permiso Médico
+            </button>
+          <?php elseif ((isset($_SESSION['escritorio']) && $_SESSION['escritorio']==1) || (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Administrador')): ?>
+            <button type="button" class="btn btn-primary" style="border-radius: 25px; padding: 0.75rem 2rem; font-weight: 600; box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);" onclick="mostrarform(true)">
+              <i class="fa fa-plus-circle"></i>
+              <?php if (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Médico/Enfermería'): ?>
+                Nuevo Permiso Médico
+              <?php else: ?>
+                Nuevo Permiso
+              <?php endif; ?>
+            </button>
+          <?php endif; ?>
         </div>
 
         <!-- Tabla de registros -->
@@ -42,7 +53,9 @@ if ((isset($_SESSION['escritorio']) && $_SESSION['escritorio']==1) || (isset($_S
                 <th style="border: none; padding: 1rem;"><i class="fa fa-calendar-minus"></i> Fecha Fin</th>
                 <th style="border: none; padding: 1rem;"><i class="fa fa-clock"></i> Hora Inicio</th>
                 <th style="border: none; padding: 1rem;"><i class="fa fa-clock"></i> Hora Fin</th>
+                <?php if ((isset($_SESSION['escritorio']) && $_SESSION['escritorio']==1) || (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Administrador')): ?>
                 <th style="border: none; padding: 1rem;"><i class="fa fa-file"></i> Archivo</th>
+                <?php endif; ?>
               </tr>
             </thead>
             <tbody style="background: rgba(255, 255, 255, 0.9);" id="permisosTableBody">
@@ -62,7 +75,12 @@ if ((isset($_SESSION['escritorio']) && $_SESSION['escritorio']==1) || (isset($_S
         <div class="modal-content" style="border-radius: 20px; border: none; box-shadow: 0 20px 60px rgba(0,0,0,0.2);">
           <div class="modal-header" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%); color: white; border-radius: 20px 20px 0 0; border-bottom: none; padding: 2rem;">
             <h4 class="modal-title" id="modalPermisoLabel" style="font-weight: 600; font-size: 1.5rem;">
-                <i class="fa fa-calendar-times"></i> Nuevo Permiso de Ausencia
+                <i class="fa fa-calendar-times"></i>
+                <?php if (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Médico/Enfermería'): ?>
+                  Nuevo Permiso Médico
+                <?php else: ?>
+                  Nuevo Permiso de Ausencia
+                <?php endif; ?>
               </h4>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="color: white; opacity: 0.8;">
               <span aria-hidden="true" style="font-size: 2rem;">&times;</span>
@@ -93,9 +111,13 @@ if ((isset($_SESSION['escritorio']) && $_SESSION['escritorio']==1) || (isset($_S
                           <i class="fa fa-tag"></i> Tipo de Permiso *
                         </label>
                         <select class="form-control" name="tipo_permiso" id="tipo_permiso" required style="border-radius: 10px; border: 2px solid #e9ecef; padding: 0.75rem; font-size: 0.95rem; font-weight: 400; height: auto; background: white;">
-                          <option value="Médico">🏥 Médico</option>
-                          <option value="Personal">👤 Personal</option>
-                          <option value="Otro">📝 Otro</option>
+                          <?php if (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Médico/Enfermería'): ?>
+                            <option value="Médico">🏥 Médico</option>
+                          <?php else: ?>
+                            <option value="Médico">🏥 Médico</option>
+                            <option value="Personal">👤 Personal</option>
+                            <option value="Otro">📝 Otro</option>
+                          <?php endif; ?>
                         </select>
                       </div>
                     </div>
@@ -203,6 +225,10 @@ if ((isset($_SESSION['escritorio']) && $_SESSION['escritorio']==1) || (isset($_S
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
 <script src="../public/js/bootbox.min.js"></script>
 <script src="../public/js/custom-tables.js"></script>
+<script>
+    // Variable global para determinar si es médico
+    var isMedicoGlobal = '<?php echo (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Médico/Enfermería') ? 'true' : 'false'; ?>';
+</script>
 <script src="scripts/permisos_ausencia.js"></script>
 <?php
 require 'footer.php';

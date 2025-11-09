@@ -8,7 +8,7 @@ if (!isset($_SESSION['nombre'])) {
 
 require 'header.php';
 
-if ((isset($_SESSION['escritorio']) && $_SESSION['escritorio']==1) || (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Administrador')) {
+if ((isset($_SESSION['escritorio']) && $_SESSION['escritorio']==1) || (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Administrador') || (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Médico/Enfermería')) {
 
 ?>
     <main class="container-fluid py-5 px-3 main-dashboard" style="padding-top: 3rem; padding-bottom: 3rem;">
@@ -78,10 +78,14 @@ if ((isset($_SESSION['escritorio']) && $_SESSION['escritorio']==1) || (isset($_S
                 <label for="tipo"><i class="fa fa-tag"></i> Tipo de Alerta</label>
                 <select class="form-control" name="tipo" id="tipo" required>
                   <option value="">Seleccione el tipo</option>
-                  <option value="Inasistencia">Inasistencia</option>
-                  <option value="Conducta">Conducta</option>
-                  <option value="Desarrollo">Desarrollo</option>
-                  <option value="Salud">Salud</option>
+                  <?php if (isset($_SESSION['cargo']) && $_SESSION['cargo'] == 'Médico/Enfermería'): ?>
+                    <option value="Salud">Salud</option>
+                  <?php else: ?>
+                    <option value="Inasistencia">Inasistencia</option>
+                    <option value="Conducta">Conducta</option>
+                    <option value="Desarrollo">Desarrollo</option>
+                    <option value="Salud">Salud</option>
+                  <?php endif; ?>
                 </select>
               </div>
             </div>

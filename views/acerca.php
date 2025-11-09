@@ -10,6 +10,8 @@ $_SESSION['modern_layout'] = true;
 
 require 'header.php';
 ?>
+<link rel="stylesheet" href="../views/styles/acerca.css">
+
 <main class="container-fluid py-5 px-3 main-dashboard" style="padding-top: 3rem; padding-bottom: 3rem;">
       <!-- Header de la página -->
       <div class="welcome-card">
@@ -22,79 +24,119 @@ require 'header.php';
       <!-- Contenedor principal -->
       <div class="activity-feed">
         <div class="about-content">
-          <div class="about-section">
-            <h3 class="section-title">🏫 Sobre el Sistema de Guardería</h3>
-            <p>El <strong>Sistema de Guardería</strong> es una plataforma integral diseñada para facilitar la gestión administrativa y educativa de guarderías infantiles. Este sistema permite a los administradores y profesores llevar un control eficiente de los grupos, alumnos, asistencia, conducta, calificaciones y cursos.</p>
-          </div>
+          <div class="about-grid">
+            <div class="about-card">
+              <div class="card-icon">
+                <i class="fas fa-school"></i>
+              </div>
+              <h3>Sobre el Sistema de Guardería</h3>
+              <p>El <strong>Sistema de Guardería</strong> es una plataforma integral diseñada para facilitar la gestión administrativa y educativa de guarderías infantiles. Este sistema permite a los administradores y profesores llevar un control eficiente de los grupos, alumnos, asistencia, conducta, calificaciones y cursos.</p>
+            </div>
 
-          <div class="about-section">
-            <h3 class="section-title">✨ Características Principales</h3>
-            <div class="features-grid">
-              <div class="feature-item">
-                <i class="fa fa-users feature-icon"></i>
-                <div class="feature-content">
-                  <h4>Gestión de Grupos</h4>
-                  <p>Crear y administrar grupos de estudiantes con facilidad.</p>
-                </div>
+            <div class="about-card">
+              <div class="card-icon">
+                <i class="fas fa-star"></i>
               </div>
-              <div class="feature-item">
-                <i class="fa fa-child feature-icon"></i>
-                <div class="feature-content">
-                  <h4>Control de Alumnos</h4>
-                  <p>Registrar y mantener información detallada de cada alumno.</p>
+              <h3>Características Principales</h3>
+              <div class="features-list">
+                <div class="feature-item">
+                  <i class="fas fa-users"></i>
+                  <span>Gestión de Grupos</span>
                 </div>
-              </div>
-              <div class="feature-item">
-                <i class="fa fa-calendar-check-o feature-icon"></i>
-                <div class="feature-content">
-                  <h4>Asistencia</h4>
-                  <p>Registrar y monitorear la asistencia diaria de los estudiantes.</p>
+                <div class="feature-item">
+                  <i class="fas fa-baby"></i>
+                  <span>Control de Alumnos</span>
                 </div>
-              </div>
-              <div class="feature-item">
-                <i class="fa fa-smile-o feature-icon"></i>
-                <div class="feature-content">
-                  <h4>Conducta</h4>
-                  <p>Evaluar y registrar el comportamiento de los alumnos.</p>
+                <div class="feature-item">
+                  <i class="fas fa-calendar-check"></i>
+                  <span>Asistencia</span>
                 </div>
-              </div>
-              <div class="feature-item">
-                <i class="fa fa-graduation-cap feature-icon"></i>
-                <div class="feature-content">
-                  <h4>Calificaciones</h4>
-                  <p>Gestionar calificaciones y evaluaciones académicas.</p>
+                <div class="feature-item">
+                  <i class="fas fa-smile"></i>
+                  <span>Conducta</span>
                 </div>
-              </div>
-              <div class="feature-item">
-                <i class="fa fa-book feature-icon"></i>
-                <div class="feature-content">
-                  <h4>Cursos</h4>
-                  <p>Organizar y asignar cursos a los diferentes grupos.</p>
+                <div class="feature-item">
+                  <i class="fas fa-graduation-cap"></i>
+                  <span>Calificaciones</span>
                 </div>
-              </div>
-              <div class="feature-item">
-                <i class="fa fa-key feature-icon"></i>
-                <div class="feature-content">
-                  <h4>Permisos y Usuarios</h4>
-                  <p>Control de acceso basado en roles para profesores y administradores.</p>
+                <div class="feature-item">
+                  <i class="fas fa-book"></i>
+                  <span>Cursos</span>
+                </div>
+                <div class="feature-item">
+                  <i class="fas fa-shield-alt"></i>
+                  <span>Permisos y Usuarios</span>
+                </div>
+                <div class="feature-item">
+                  <i class="fas fa-stethoscope"></i>
+                  <span>Información Médica</span>
                 </div>
               </div>
             </div>
-          </div>
 
-          <div class="about-section">
-            <h3 class="section-title">🛠️ Tecnologías Utilizadas</h3>
-            <p>El sistema está desarrollado utilizando tecnologías web modernas como PHP, MySQL, HTML, CSS y JavaScript, con frameworks como AdminLTE para una interfaz de usuario intuitiva y responsive.</p>
-          </div>
+            <div class="about-card">
+              <div class="card-icon">
+                <i class="fas fa-code"></i>
+              </div>
+              <h3>Tecnologías Utilizadas</h3>
+              <div class="tech-grid">
+                <div class="tech-badge">
+                  <i class="fab fa-php"></i>
+                  <span>PHP 7+</span>
+                </div>
+                <div class="tech-badge">
+                  <i class="fas fa-database"></i>
+                  <span>MySQL</span>
+                </div>
+                <div class="tech-badge">
+                  <i class="fab fa-html5"></i>
+                  <span>HTML5</span>
+                </div>
+                <div class="tech-badge">
+                  <i class="fab fa-css3-alt"></i>
+                  <span>CSS3</span>
+                </div>
+                <div class="tech-badge">
+                  <i class="fab fa-js-square"></i>
+                  <span>JavaScript</span>
+                </div>
+                <div class="tech-badge">
+                  <i class="fab fa-bootstrap"></i>
+                  <span>Bootstrap 5</span>
+                </div>
+              </div>
+              <p>El sistema está desarrollado utilizando tecnologías web modernas con frameworks como AdminLTE para una interfaz de usuario intuitiva y responsive.</p>
+            </div>
 
-          <div class="about-section">
-            <h3 class="section-title">🎯 Objetivo</h3>
-            <p>Nuestro objetivo es proporcionar una herramienta eficiente y fácil de usar que ayude a mejorar la calidad educativa en las guarderías, permitiendo un seguimiento detallado del desarrollo de los niños y facilitando la comunicación entre padres, profesores y administradores.</p>
-          </div>
+            <div class="about-card">
+              <div class="card-icon">
+                <i class="fas fa-bullseye"></i>
+              </div>
+              <h3>Objetivo</h3>
+              <p>Nuestro objetivo es proporcionar una herramienta eficiente y fácil de usar que ayude a mejorar la calidad educativa en las guarderías, permitiendo un seguimiento detallado del desarrollo de los niños y facilitando la comunicación entre padres, profesores y administradores.</p>
+            </div>
 
-          <div class="about-section">
-            <h3 class="section-title">📞 Soporte</h3>
-            <p>Para más información o soporte, contacta al administrador del sistema.</p>
+            <div class="about-card full-width">
+              <div class="card-icon">
+                <i class="fas fa-phone"></i>
+              </div>
+              <h3>Soporte</h3>
+              <p>Para más información o soporte técnico, contacta al administrador del sistema.</p>
+              <div class="contact-grid">
+                <div class="contact-info">
+                  <i class="fas fa-envelope"></i>
+                  <span>admin@pequecontrol.com</span>
+                </div>
+                <div class="contact-info">
+                  <i class="fas fa-phone"></i>
+                  <span>(503) 1234-5678</span>
+                </div>
+                <div class="contact-info">
+                  <i class="fas fa-clock"></i>
+                  <span>Lunes a Viernes 8:00 AM - 5:00 PM</span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
