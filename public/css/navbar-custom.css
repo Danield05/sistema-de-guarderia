@@ -78,7 +78,7 @@
 
 .user-dropdown-menu .dropdown-item:hover {
     background-color: #f8f9fa;
-    color: #007bff;
+    color: #2c3e50;
 }
 
 .user-dropdown-menu .dropdown-item i {
@@ -94,12 +94,12 @@
 }
 
 .user-dropdown-menu .text-danger {
-    color: #dc3545 !important;
+    color: #e74c3c !important;
 }
 
 .user-dropdown-menu .text-danger:hover {
     background-color: #f8d7da;
-    color: #721c24 !important;
+    color: #c0392b !important;
 }
 
 /* Ocultar el caret automático de Bootstrap */
