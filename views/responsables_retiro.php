@@ -70,6 +70,7 @@ if ((isset($_SESSION['escritorio']) && $_SESSION['escritorio']==1) || (isset($_S
                 <th style="border: none; padding: 1rem;"><i class="fa fa-phone"></i> Teléfono</th>
                 <th style="border: none; padding: 1rem;"><i class="fa fa-calendar-plus"></i> Inicio</th>
                 <th style="border: none; padding: 1rem;"><i class="fa fa-calendar-minus"></i> Fin</th>
+                <th style="border: none; padding: 1rem;"><i class="fa fa-file-pdf-o"></i> Documento</th>
               </tr>
             </thead>
             <tbody style="background: rgba(255, 255, 255, 0.9);" id="responsablesTableBody">
@@ -165,10 +166,59 @@ if ((isset($_SESSION['escritorio']) && $_SESSION['escritorio']==1) || (isset($_S
                 </div>
               </div>
               <input class="form-control" type="hidden" name="id_responsable" id="id_responsable">
+
+              <!-- Sección de preview del PDF -->
+              <div class="row mt-4" id="previewSection" style="display: none;">
+                <div class="col-12">
+                  <div class="form-group">
+                    <label style="font-weight: 600; color: #3c8dbc; margin-bottom: 0.5rem;">
+                      <i class="fa fa-file-pdf-o"></i> Preview del Documento
+                    </label>
+                    <div style="border: 2px solid #e9ecef; border-radius: 10px; padding: 1rem; background: #f8f9fa; max-height: 400px; overflow-y: auto;">
+                      <div id="pdfPreview" style="font-family: 'Courier New', monospace; font-size: 12px; line-height: 1.4;">
+                        <!-- El preview se cargará aquí -->
+                      </div>
+                    </div>
+                    <div class="mt-3 text-center">
+                      <button type="button" class="btn btn-success" id="btnGenerarDocumentoFinal" style="border-radius: 15px; margin-right: 10px;">
+                        <i class="fa fa-save"></i> Generar y Guardar PDF
+                      </button>
+                      <button type="button" class="btn btn-primary" id="btnFirmarDocumento" style="border-radius: 15px;">
+                        <i class="fa fa-signature"></i> Firmar y Guardar
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Sección de firma digital -->
+              <div class="row mt-4" id="firmaSection" style="display: none;">
+                <div class="col-12">
+                  <div class="form-group">
+                    <label style="font-weight: 600; color: #3c8dbc; margin-bottom: 0.5rem;">
+                      <i class="fa fa-signature"></i> Firma Digital del Responsable
+                    </label>
+                    <div style="border: 2px solid #e9ecef; border-radius: 10px; padding: 1rem; background: #f8f9fa;">
+                      <canvas id="signatureCanvas" width="400" height="200" style="border: 1px solid #ccc; background: white; cursor: crosshair;"></canvas>
+                      <div class="mt-2">
+                        <button type="button" class="btn btn-sm btn-warning" id="clearSignature" style="border-radius: 15px;">
+                          <i class="fa fa-eraser"></i> Limpiar Firma
+                        </button>
+                        <button type="button" class="btn btn-sm btn-success" id="saveSignature" style="border-radius: 15px;">
+                          <i class="fa fa-save"></i> Guardar Documento Firmado
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
             <div class="modal-footer" style="border-top: none; padding: 2rem; background: #f8f9fa; border-radius: 0 0 20px 20px;">
               <button type="button" class="btn btn-secondary" data-dismiss="modal" style="border-radius: 25px; padding: 0.5rem 2rem; font-weight: 600; border: none; background: #6c757d;">
                 <i class="fa fa-times"></i> Cerrar
+              </button>
+              <button type="button" id="btnGenerarPDF" class="btn btn-primary" onclick="generarPreviewPDF()" style="border-radius: 25px; padding: 0.5rem 2rem; font-weight: 600; border: none; background: linear-gradient(135deg, #007bff 0%, #6610f2 100%); box-shadow: 0 4px 15px rgba(0, 123, 255, 0.4); display: none;">
+                <i class="fa fa-file-pdf-o"></i> Generar PDF
               </button>
               <?php if($_SESSION['cargo'] != 'Maestro'): ?>
               <button type="submit" id="btnGuardar" class="btn btn-success" style="border-radius: 25px; padding: 0.5rem 2rem; font-weight: 600; border: none; background: linear-gradient(135deg, #28a745 0%, #20c997 100%); box-shadow: 0 4px 15px rgba(40, 167, 69, 0.4);">

@@ -34,7 +34,23 @@ switch ($_GET["op"]) {
 		break;
 
     case 'listarPorNino':
-		$responsables_retiroController->listarPorNino();
-		break;
+  $responsables_retiroController->listarPorNino();
+  break;
+
+    case 'iniciarFirmaDocumento':
+  $responsables_retiroController->iniciarFirmaDocumento();
+  break;
+
+    case 'guardarDocumentoPDF':
+  $responsables_retiroController->guardarDocumentoPDF();
+  break;
+
+    case 'guardarFirmaDocumento':
+  $responsables_retiroController->guardarFirmaDocumento();
+  break;
+
+    case 'obtenerPreviewPDF':
+  $responsables_retiroController->obtenerPreviewPDF();
+  break;
 }
 ?>

@@ -122,5 +122,11 @@ class ResponsablesRetiro{
 		$sql .= " ORDER BY r.id_responsable DESC";
 		return ejecutarConsulta($sql);
 	}
+
+	// Método para actualizar la URL del documento firmado
+	public function actualizarDocumentoFirmado($id_responsable, $documento_url){
+		$sql="UPDATE responsables_retiro SET autorizacion_firma=? WHERE id_responsable=?";
+		return ejecutarConsulta_preparada($sql, [$documento_url, $id_responsable]);
+	}
 }
 ?>
